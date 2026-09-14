@@ -1,0 +1,22 @@
+# XAMPP / local files
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+
+# Database backups
+database_backup.sql
+old_database.sql
+
+# Test copies
+food_process_system_test/
