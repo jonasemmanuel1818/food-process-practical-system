@@ -703,6 +703,17 @@ Student View
 
 </a>
 
+<a
+    href="settings.php"
+    class="nav-link-custom"
+>
+    <i class="bi bi-gear"></i>
+
+    <span>
+        Settings
+    </span>
+</a>
+
 
 <div class="logout">
 

@@ -1494,6 +1494,18 @@ a {
 
     </div>
 
+    <a
+    href="settings.php"
+    class="nav-link-custom"
+    >
+    <i class="bi bi-gear"></i>
+
+    <span>
+        Settings
+    </span>
+    </a>
+
+
 
     <a
         href="logout.php"
