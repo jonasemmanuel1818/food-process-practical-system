@@ -173,7 +173,7 @@ if (isset($_POST['login'])) {
             inset: 0;
 
             background:
-                rgba(15, 88, 112, 0.86);
+                rgba(15, 88, 112, 0.78);
 
             z-index: 1;
         }
@@ -470,7 +470,7 @@ if (isset($_POST['login'])) {
 
             max-width: 570px;
 
-            margin-top: 100px;
+            margin-top: 85px;
         }
 
 
@@ -853,9 +853,9 @@ if (isset($_POST['login'])) {
 
         .register-section {
 
-            margin-top: 35px;
+            margin-top: 22px;
 
-            padding-top: 25px;
+            padding-top: 18px;
 
             border-top:
                 1px solid #cad7dd;
@@ -973,7 +973,7 @@ if (isset($_POST['login'])) {
 
             .login-container {
 
-                margin-top: 100px;
+                margin-top: 75px;
             }
 
         }
