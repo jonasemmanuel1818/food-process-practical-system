@@ -161,7 +161,7 @@ if (isset($_POST['login'])) {
 
 
         /* =====================================================
-           BLUE OVERLAY ON IMAGE
+           BLUE IMAGE OVERLAY
         ===================================================== */
 
         .left-panel::before {
@@ -250,7 +250,7 @@ if (isset($_POST['login'])) {
 
 
         /* =====================================================
-           SMALL LINE UNDER TITLE
+           LINE UNDER TITLE
         ===================================================== */
 
         .left-line {
@@ -310,7 +310,7 @@ if (isset($_POST['login'])) {
 
 
         /* =====================================================
-           FOOTER SMALL LINE
+           FOOTER LINE
         ===================================================== */
 
         .footer-divider {
@@ -470,7 +470,7 @@ if (isset($_POST['login'])) {
 
             max-width: 570px;
 
-            margin-top: 85px;
+            margin-top: 75px;
         }
 
 
@@ -573,13 +573,13 @@ if (isset($_POST['login'])) {
             align-items: center;
 
             padding:
-                0 18px;
+                0 16px;
 
             cursor: pointer;
 
             color: #35566a;
 
-            font-size: 17px;
+            font-size: 15px;
 
             transition:
                 border-color 0.2s ease,
@@ -713,7 +713,7 @@ if (isset($_POST['login'])) {
 
             width: 100%;
 
-            height: 48px;
+            height: 53px;
 
             padding:
                 0 18px;
@@ -768,7 +768,7 @@ if (isset($_POST['login'])) {
 
 
         /* =====================================================
-           PASSWORD EYE BUTTON
+           PASSWORD TOGGLE
         ===================================================== */
 
         .password-toggle {
@@ -871,6 +871,8 @@ if (isset($_POST['login'])) {
             color: #173f53;
 
             font-size: 15px;
+
+            line-height: 1.5;
         }
 
 
@@ -980,32 +982,43 @@ if (isset($_POST['login'])) {
 
 
         /* =====================================================
-           MOBILE
+           MOBILE VIEW
         ===================================================== */
 
         @media (max-width: 800px) {
+
 
             .login-page {
 
                 display: block;
 
-                overflow: visible;
+                overflow-x: hidden;
+
+                overflow-y: visible;
             }
 
 
-            /* LEFT */
+            /* ---------------------------------------------
+               LEFT IMAGE SECTION
+            --------------------------------------------- */
 
             .left-panel {
 
                 width: 100%;
 
-                min-height: 500px;
+                min-height: 510px;
 
-                align-items: flex-start;
+                display: block;
+
+                align-items: initial;
             }
 
 
             .left-content {
+
+                width: 100%;
+
+                max-width: none;
 
                 padding:
                     55px 35px 0;
@@ -1019,34 +1032,72 @@ if (isset($_POST['login'])) {
                 font-size: 40px;
 
                 line-height: 1.12;
+
+                letter-spacing: -0.7px;
+            }
+
+
+            .left-line {
+
+                width: 42px;
+
+                margin-top: 25px;
+
+                margin-bottom: 20px;
             }
 
 
             .left-description {
 
+                max-width: 520px;
+
                 font-size: 16px;
 
-                line-height: 1.6;
+                line-height: 1.65;
             }
 
+
+            /* ---------------------------------------------
+               LEFT FOOTER
+            --------------------------------------------- */
 
             .left-footer {
 
                 left: 35px;
 
-                bottom: 55px;
+                right: 35px;
+
+                bottom: 48px;
 
                 font-size: 12px;
             }
 
 
-            .footer-items {
+            .footer-divider {
 
-                gap: 9px;
+                width: 38px;
+
+                margin-bottom: 15px;
             }
 
 
-            /* RIGHT */
+            .footer-items {
+
+                display: flex;
+
+                flex-wrap: wrap;
+
+                gap: 7px 9px;
+
+                white-space: normal;
+
+                line-height: 1.5;
+            }
+
+
+            /* ---------------------------------------------
+               RIGHT LOGIN SECTION
+            --------------------------------------------- */
 
             .right-panel {
 
@@ -1054,40 +1105,229 @@ if (isset($_POST['login'])) {
 
                 min-height: 700px;
 
+                display: flex;
+
+                align-items: flex-start;
+
+                justify-content: center;
+
                 padding:
-                    70px 35px;
+                    75px 35px 60px;
+
+                overflow: hidden;
             }
 
 
+            /* ---------------------------------------------
+               TOP DECORATION
+            --------------------------------------------- */
+
             .top-decoration {
 
-                opacity: 0.7;
+                top: -210px;
+
+                right: -170px;
+
+                width: 390px;
+
+                height: 390px;
+
+                border-width: 22px;
+
+                opacity: 0.8;
             }
 
 
             .top-decoration-inner {
 
-                opacity: 0.7;
+                top: -175px;
+
+                right: -135px;
+
+                width: 325px;
+
+                height: 325px;
+
+                opacity: 0.8;
             }
 
 
+            /* ---------------------------------------------
+               LEARNING MESSAGE
+            --------------------------------------------- */
+
             .top-message {
 
-                top: 30px;
+                position: absolute;
+
+                top: 28px;
 
                 left: 35px;
 
                 right: auto;
 
+                width: 210px;
+
                 font-size: 12px;
+
+                line-height: 1.5;
             }
 
+
+            .top-message-line {
+
+                width: 42px;
+
+                margin-top: 11px;
+            }
+
+
+            /* ---------------------------------------------
+               LOGIN CONTAINER
+            --------------------------------------------- */
 
             .login-container {
 
-                margin-top: 85px;
+                width: 100%;
+
+                max-width: 570px;
+
+                margin-top: 72px;
             }
 
+
+            /* ---------------------------------------------
+               ACCOUNT TYPE
+            --------------------------------------------- */
+
+            .account-type {
+
+                margin-bottom: 25px;
+            }
+
+
+            .role-options {
+
+                grid-template-columns: 1fr;
+
+                gap: 12px;
+            }
+
+
+            .role-option {
+
+                height: 50px;
+
+                padding:
+                    0 15px;
+
+                font-size: 15px;
+            }
+
+
+            .role-icon {
+
+                font-size: 20px;
+
+                margin-right: 13px;
+            }
+
+
+            .radio-circle {
+
+                width: 20px;
+
+                height: 20px;
+            }
+
+
+            .radio-circle::after {
+
+                width: 9px;
+
+                height: 9px;
+            }
+
+
+            /* ---------------------------------------------
+               FORM GROUPS
+            --------------------------------------------- */
+
+            .form-group {
+
+                margin-bottom: 21px;
+            }
+
+
+            .field-label {
+
+                margin-bottom: 9px;
+
+                font-size: 14px;
+            }
+
+
+            /* ---------------------------------------------
+               INPUTS
+            --------------------------------------------- */
+
+            .form-control {
+
+                width: 100%;
+
+                height: 51px;
+
+                font-size: 15px;
+
+                padding-left: 15px;
+
+                padding-right: 15px;
+            }
+
+
+            .password-input {
+
+                padding-right: 52px;
+            }
+
+
+            /* ---------------------------------------------
+               SIGN IN
+            --------------------------------------------- */
+
+            .login-button {
+
+                height: 54px;
+
+                font-size: 18px;
+
+                margin-top: 2px;
+            }
+
+
+            /* ---------------------------------------------
+               REGISTER
+            --------------------------------------------- */
+
+            .register-section {
+
+                margin-top: 23px;
+
+                padding-top: 18px;
+            }
+
+
+            .register-section p {
+
+                font-size: 13px;
+
+                line-height: 1.5;
+            }
+
+
+            /* ---------------------------------------------
+               DOT PATTERN
+            --------------------------------------------- */
 
             .dot-pattern {
 
@@ -1097,15 +1337,21 @@ if (isset($_POST['login'])) {
         }
 
 
+
         /* =====================================================
            SMALL MOBILE
         ===================================================== */
 
         @media (max-width: 520px) {
 
+
+            /* ---------------------------------------------
+               LEFT SIDE
+            --------------------------------------------- */
+
             .left-panel {
 
-                min-height: 510px;
+                min-height: 520px;
             }
 
 
@@ -1118,48 +1364,122 @@ if (isset($_POST['login'])) {
 
             .left-title {
 
-                font-size: 34px;
+                font-size: 33px;
 
                 line-height: 1.12;
+
+                letter-spacing: -0.5px;
+            }
+
+
+            .left-line {
+
+                width: 38px;
+
+                margin-top: 22px;
+
+                margin-bottom: 18px;
             }
 
 
             .left-description {
 
-                font-size: 15px;
+                font-size: 14px;
 
-                line-height: 1.6;
+                line-height: 1.65;
+
+                max-width: 100%;
             }
 
+
+            /* ---------------------------------------------
+               LEFT FOOTER
+            --------------------------------------------- */
 
             .left-footer {
 
                 left: 25px;
 
-                bottom: 45px;
-            }
+                right: 25px;
 
-
-            .footer-items {
-
-                gap: 7px;
+                bottom: 35px;
 
                 font-size: 10px;
             }
 
 
-            .right-panel {
+            .footer-divider {
 
-                padding:
-                    65px 25px;
+                width: 35px;
+
+                height: 1px;
+
+                margin-bottom: 12px;
             }
 
 
+            .footer-items {
+
+                gap: 5px 7px;
+
+                line-height: 1.4;
+            }
+
+
+            /* ---------------------------------------------
+               RIGHT SIDE
+            --------------------------------------------- */
+
+            .right-panel {
+
+                min-height: 680px;
+
+                padding:
+                    65px 25px 50px;
+            }
+
+
+            /* ---------------------------------------------
+               DECORATION
+            --------------------------------------------- */
+
+            .top-decoration {
+
+                top: -180px;
+
+                right: -155px;
+
+                width: 330px;
+
+                height: 330px;
+
+                border-width: 18px;
+            }
+
+
+            .top-decoration-inner {
+
+                top: -150px;
+
+                right: -120px;
+
+                width: 275px;
+
+                height: 275px;
+            }
+
+
+            /* ---------------------------------------------
+               LEARNING MESSAGE
+            --------------------------------------------- */
+
             .top-message {
+
+                top: 24px;
 
                 left: 25px;
 
-                top: 25px;
+                width: 190px;
 
                 font-size: 11px;
             }
@@ -1167,54 +1487,102 @@ if (isset($_POST['login'])) {
 
             .top-message-line {
 
-                width: 42px;
+                width: 38px;
 
-                margin-top: 12px;
+                margin-top: 9px;
             }
 
 
+            /* ---------------------------------------------
+               LOGIN FORM
+            --------------------------------------------- */
+
             .login-container {
 
-                margin-top: 75px;
+                margin-top: 65px;
+            }
+
+
+            .account-type {
+
+                margin-bottom: 23px;
             }
 
 
             .role-options {
 
-                grid-template-columns:
-                    1fr;
-
-                gap: 12px;
+                gap: 10px;
             }
 
 
             .role-option {
 
-                height: 56px;
+                height: 48px;
 
-                font-size: 15px;
+                padding:
+                    0 13px;
+
+                font-size: 14px;
+            }
+
+
+            .role-icon {
+
+                font-size: 19px;
+
+                margin-right: 11px;
+            }
+
+
+            .radio-circle {
+
+                width: 19px;
+
+                height: 19px;
+            }
+
+
+            .form-group {
+
+                margin-bottom: 19px;
+            }
+
+
+            .field-label {
+
+                font-size: 13px;
+
+                margin-bottom: 8px;
             }
 
 
             .form-control {
 
-                height: 51px;
+                height: 49px;
 
-                font-size: 15px;
+                font-size: 14px;
             }
 
 
             .login-button {
 
-                height: 55px;
+                height: 52px;
 
-                font-size: 18px;
+                font-size: 17px;
+            }
+
+
+            .register-section {
+
+                margin-top: 21px;
+
+                padding-top: 16px;
             }
 
 
             .register-section p {
 
-                font-size: 13px;
+                font-size: 12px;
             }
 
         }
@@ -1231,13 +1599,11 @@ if (isset($_POST['login'])) {
 
 
     <!-- =================================================
-         LEFT IMAGE SIDE
+         LEFT IMAGE / BRANDING SIDE
     ================================================== -->
 
     <section class="left-panel">
 
-
-        <!-- MAIN LEFT CONTENT -->
 
         <div class="left-content">
 
@@ -1334,7 +1700,7 @@ if (isset($_POST['login'])) {
     <section class="right-panel">
 
 
-        <!-- TOP CIRCLES -->
+        <!-- TOP CIRCLE DECORATION -->
 
         <div class="top-decoration"></div>
 
@@ -1362,11 +1728,10 @@ if (isset($_POST['login'])) {
 
 
         <!-- =================================================
-             LOGIN CONTAINER
+             LOGIN FORM
         ================================================== -->
 
         <div class="login-container">
-
 
 
             <!-- ERROR MESSAGE -->
@@ -1383,15 +1748,12 @@ if (isset($_POST['login'])) {
 
 
 
-            <!-- =================================================
-                 LOGIN FORM
-            ================================================== -->
-
             <form method="POST">
 
 
-
-                <!-- ACCOUNT TYPE -->
+                <!-- =================================================
+                     ACCOUNT TYPE
+                ================================================== -->
 
                 <div class="account-type">
 
@@ -1401,7 +1763,6 @@ if (isset($_POST['login'])) {
                         Account Type
 
                     </label>
-
 
 
                     <div class="role-options">
@@ -1642,7 +2003,7 @@ if (isset($_POST['login'])) {
 
 
         <!-- =================================================
-             DOT DECORATION
+             DOT PATTERN
         ================================================== -->
 
         <div class="dot-pattern"></div>
