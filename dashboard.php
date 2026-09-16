@@ -73,10 +73,7 @@ $submission_status = [];
 
 for ($i = 1; $i <= 4; $i++) {
 
-    /* -----------------------------------------------------
-       DEFAULT STATUS
-       ----------------------------------------------------- */
-
+    /* Default status */
     $status = "not_started";
 
 
@@ -253,6 +250,8 @@ $completed_count = 0;
 
 $in_progress_count = 0;
 
+$not_started_count = 0;
+
 
 for ($i = 1; $i <= 4; $i++) {
 
@@ -262,6 +261,10 @@ for ($i = 1; $i <= 4; $i++) {
 
     if ($practical_status[$i] === "in_progress") {
         $in_progress_count++;
+    }
+
+    if ($practical_status[$i] === "not_started") {
+        $not_started_count++;
     }
 }
 
@@ -319,6 +322,22 @@ function getStatusClass($status)
     }
 }
 
+
+function getStatusIcon($status)
+{
+    switch ($status) {
+
+        case "completed":
+            return "bi-check-circle-fill";
+
+        case "in_progress":
+            return "bi-arrow-repeat";
+
+        default:
+            return "bi-circle";
+    }
+}
+
 ?>
 
 
@@ -336,7 +355,7 @@ function getStatusClass($status)
 >
 
 <title>
-    Food Process Practical Learning System
+    Student Dashboard | Food Process Practical Learning System
 </title>
 
 
@@ -445,7 +464,7 @@ a {
 
     color: #ffffff;
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     display: flex;
 
@@ -488,6 +507,22 @@ a {
     font-weight: 600;
 
     color: #455a64;
+}
+
+
+.user-role {
+
+    display: block;
+
+    font-size: 10px;
+
+    color: #8a959d;
+
+    font-weight: normal;
+
+    text-align: right;
+
+    margin-top: 2px;
 }
 
 
@@ -643,27 +678,215 @@ a {
 
     margin-left: 245px;
 
-    padding: 96px 30px 90px;
+    padding: 94px 30px 90px;
 
     min-height: 100vh;
 }
 
 
-.page-header {
+/* =========================================================
+   WELCOME SECTION
+   ========================================================= */
+
+.welcome-section {
+
+    background: #ffffff;
+
+    border: 1px solid #d9dee3;
+
+    border-radius: 8px;
+
+    padding: 25px 27px;
 
     margin-bottom: 25px;
+
+    position: relative;
+
+    overflow: hidden;
 }
 
 
-.page-header h1 {
+.welcome-section::before {
 
-    margin: 0 0 5px;
+    content: "";
 
-    font-size: 25px;
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 5px;
+
+    background: #1f5f75;
+}
+
+
+.welcome-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.welcome-label {
+
+    color: #1f5f75;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.7px;
+
+    margin-bottom: 7px;
+}
+
+
+.welcome-section h1 {
+
+    margin: 0 0 7px;
+
+    font-size: 27px;
 
     font-weight: 600;
 
     color: #263238;
+}
+
+
+.welcome-section p {
+
+    margin: 0;
+
+    color: #738089;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   OVERALL PROGRESS
+   ========================================================= */
+
+.overall-card {
+
+    background: #f8fafb;
+
+    border: 1px solid #dfe5e8;
+
+    border-radius: 7px;
+
+    padding: 20px 21px;
+
+    margin-top: 22px;
+}
+
+
+.overall-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 11px;
+}
+
+
+.overall-title {
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #455a64;
+}
+
+
+.overall-percentage {
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #1f5f75;
+}
+
+
+.overall-progress {
+
+    height: 9px;
+
+    background: #e2e8eb;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+
+.overall-progress-bar {
+
+    height: 100%;
+
+    background: #1f5f75;
+
+    border-radius: 20px;
+
+    transition: width 0.3s ease;
+}
+
+
+.overall-bottom {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 9px;
+
+    font-size: 11px;
+
+    color: #7d8990;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-header {
+
+    margin-bottom: 20px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.page-header h2 {
+
+    margin: 0 0 5px;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    color: #37474f;
 }
 
 
@@ -673,7 +896,25 @@ a {
 
     color: #7b8790;
 
-    font-size: 14px;
+    font-size: 13px;
+}
+
+
+.practical-count {
+
+    white-space: nowrap;
+
+    padding: 7px 11px;
+
+    background: #edf4f6;
+
+    color: #1f5f75;
+
+    border-radius: 5px;
+
+    font-size: 11px;
+
+    font-weight: 600;
 }
 
 
@@ -687,7 +928,7 @@ a {
 
     border: 1px solid #d9dee3;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
     margin-bottom: 25px;
 }
@@ -743,9 +984,9 @@ a {
 
     border: 1px solid #dce2e5;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
-    padding: 19px;
+    padding: 20px;
 
     display: flex;
 
@@ -753,18 +994,49 @@ a {
 
     transition:
         border-color 0.15s ease,
-        box-shadow 0.15s ease;
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
 }
 
 
 .practical-card:hover {
 
-    border-color: #b8c8cf;
+    border-color: #b6c7ce;
 
     box-shadow:
-        0 3px 10px rgba(0,0,0,0.05);
+        0 5px 16px rgba(25, 55, 65, 0.07);
+
+    transform: translateY(-2px);
 }
 
+
+/* Completed card */
+
+.practical-card.card-completed {
+
+    border-top: 3px solid #28734a;
+}
+
+
+/* In progress card */
+
+.practical-card.card-progress {
+
+    border-top: 3px solid #b88a27;
+}
+
+
+/* Not started card */
+
+.practical-card.card-not-started {
+
+    border-top: 3px solid #d5dadd;
+}
+
+
+/* =========================================================
+   PRACTICAL TOP
+   ========================================================= */
 
 .practical-top {
 
@@ -774,21 +1046,21 @@ a {
 
     justify-content: space-between;
 
-    margin-bottom: 14px;
+    margin-bottom: 15px;
 }
 
 
 .practical-icon {
 
-    width: 42px;
+    width: 45px;
 
-    height: 42px;
+    height: 45px;
 
     background: #edf4f6;
 
     color: #1f5f75;
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     display: flex;
 
@@ -814,45 +1086,23 @@ a {
 }
 
 
-.practical-card h6 {
-
-    margin: 0 0 8px;
-
-    font-size: 15px;
-
-    line-height: 1.4;
-
-    font-weight: 600;
-
-    color: #37474f;
-}
-
-
-.practical-card p {
-
-    margin: 0 0 13px;
-
-    color: #7a858c;
-
-    font-size: 13px;
-
-    line-height: 1.55;
-
-    flex-grow: 1;
-}
-
-
 /* =========================================================
-   PRACTICAL STATUS
+   STATUS
    ========================================================= */
 
 .status {
 
-    display: inline-block;
+    display: inline-flex;
 
-    padding: 4px 8px;
+    align-items: center;
 
-    border-radius: 3px;
+    gap: 5px;
+
+    width: fit-content;
+
+    padding: 5px 9px;
+
+    border-radius: 4px;
 
     font-size: 10px;
 
@@ -891,6 +1141,38 @@ a {
 
 
 /* =========================================================
+   PRACTICAL TITLE
+   ========================================================= */
+
+.practical-card h6 {
+
+    margin: 0 0 8px;
+
+    font-size: 15px;
+
+    line-height: 1.45;
+
+    font-weight: 600;
+
+    color: #37474f;
+}
+
+
+.practical-card p {
+
+    margin: 0 0 15px;
+
+    color: #7a858c;
+
+    font-size: 13px;
+
+    line-height: 1.55;
+
+    flex-grow: 1;
+}
+
+
+/* =========================================================
    SUBMISSION STATUS
    ========================================================= */
 
@@ -902,7 +1184,7 @@ a {
 
     justify-content: space-between;
 
-    padding: 8px 10px;
+    padding: 9px 10px;
 
     margin-bottom: 15px;
 
@@ -954,7 +1236,7 @@ a {
 
 .progress-area {
 
-    margin-bottom: 16px;
+    margin-bottom: 17px;
 }
 
 
@@ -964,7 +1246,7 @@ a {
 
     justify-content: space-between;
 
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 
     font-size: 11px;
 
@@ -1006,11 +1288,11 @@ a {
 
     gap: 7px;
 
-    padding: 9px 12px;
+    padding: 10px 12px;
 
     border: 1px solid #1f5f75;
 
-    border-radius: 4px;
+    border-radius: 5px;
 
     background: #1f5f75;
 
@@ -1021,7 +1303,8 @@ a {
     font-weight: 600;
 
     transition:
-        background 0.15s ease;
+        background 0.15s ease,
+        border-color 0.15s ease;
 }
 
 
@@ -1029,17 +1312,19 @@ a {
 
     background: #17495a;
 
+    border-color: #17495a;
+
     color: #ffffff;
 }
 
 
 /* =========================================================
-   BOTTOM SUMMARY
+   SUMMARY SECTION
    ========================================================= */
 
 .summary-section {
 
-    margin-top: 28px;
+    margin-top: 25px;
 }
 
 
@@ -1049,9 +1334,9 @@ a {
 
     border: 1px solid #d9dee3;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
-    min-height: 112px;
+    min-height: 105px;
 
     padding: 18px 20px;
 
@@ -1060,16 +1345,29 @@ a {
     align-items: center;
 
     gap: 15px;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+.summary-card:hover {
+
+    border-color: #bdcbd0;
+
+    box-shadow:
+        0 3px 12px rgba(25, 55, 65, 0.05);
 }
 
 
 .summary-icon {
 
-    width: 42px;
+    width: 44px;
 
-    height: 42px;
+    height: 44px;
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     background: #edf4f6;
 
@@ -1101,11 +1399,21 @@ a {
 
 .summary-number {
 
-    font-size: 25px;
+    font-size: 24px;
 
     font-weight: 600;
 
     color: #37474f;
+}
+
+
+.summary-description {
+
+    color: #9aa3a8;
+
+    font-size: 10px;
+
+    margin-top: 2px;
 }
 
 
@@ -1188,7 +1496,45 @@ a {
 
 
 /* =========================================================
-   RESPONSIVE
+   MODAL IMPROVEMENTS
+   ========================================================= */
+
+.modal-content {
+
+    border: 1px solid #d9dee3;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+}
+
+
+.modal-header {
+
+    border-bottom: 1px solid #e5e9eb;
+
+    background: #fafbfc;
+}
+
+
+.modal-title {
+
+    color: #37474f;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+
+.modal-title i {
+
+    color: #1f5f75;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
    ========================================================= */
 
 @media (max-width: 992px) {
@@ -1211,6 +1557,10 @@ a {
     }
 }
 
+
+/* =========================================================
+   RESPONSIVE - MOBILE/TABLET
+   ========================================================= */
 
 @media (max-width: 768px) {
 
@@ -1270,7 +1620,7 @@ a {
 
         margin-left: 68px;
 
-        padding: 90px 18px 75px;
+        padding: 88px 18px 75px;
     }
 
 
@@ -1284,8 +1634,44 @@ a {
 
         display: none;
     }
+
+
+    .user-role {
+
+        display: none;
+    }
+
+
+    .welcome-section {
+
+        padding: 22px 21px;
+    }
+
+
+    .welcome-section h1 {
+
+        font-size: 23px;
+    }
+
+
+    .page-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .practical-count {
+
+        align-self: flex-start;
+    }
 }
 
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 576px) {
 
@@ -1297,9 +1683,27 @@ a {
     }
 
 
-    .page-header h1 {
+    .welcome-section {
+
+        padding: 20px 18px;
+    }
+
+
+    .welcome-section h1 {
 
         font-size: 21px;
+    }
+
+
+    .welcome-section p {
+
+        font-size: 12px;
+    }
+
+
+    .overall-card {
+
+        padding: 17px;
     }
 
 
@@ -1309,9 +1713,51 @@ a {
     }
 
 
+    .section-header {
+
+        padding: 15px;
+    }
+
+
+    .section-header h5 {
+
+        font-size: 14px;
+    }
+
+
+    .section-header small {
+
+        display: none;
+    }
+
+
+    .practical-card {
+
+        padding: 17px;
+    }
+
+
     .summary-card {
 
-        min-height: 95px;
+        min-height: 92px;
+
+        padding: 15px;
+    }
+
+
+    .summary-icon {
+
+        width: 39px;
+
+        height: 39px;
+
+        font-size: 17px;
+    }
+
+
+    .summary-number {
+
+        font-size: 21px;
     }
 
 
@@ -1322,6 +1768,77 @@ a {
         align-items: flex-start;
 
         gap: 4px;
+    }
+
+
+    .footer {
+
+        font-size: 9px;
+
+        padding: 0 8px;
+
+        text-align: center;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .sidebar {
+
+        width: 58px;
+    }
+
+
+    .main-content {
+
+        margin-left: 58px;
+    }
+
+
+    .footer {
+
+        left: 58px;
+    }
+
+
+    .top-header {
+
+        height: 62px;
+    }
+
+
+    .sidebar {
+
+        top: 62px;
+    }
+
+
+    .main-content {
+
+        padding-top: 82px;
+    }
+
+
+    .brand-icon {
+
+        width: 36px;
+
+        height: 36px;
+
+        font-size: 18px;
+    }
+
+
+    .user-avatar {
+
+        width: 35px;
+
+        height: 35px;
     }
 }
 
@@ -1363,11 +1880,19 @@ a {
 
     <div class="user-area">
 
-        <div class="user-name">
+        <div>
 
-            <?php
-            echo htmlspecialchars($user_name);
-            ?>
+            <div class="user-name">
+
+                <?php
+                echo htmlspecialchars($user_name);
+                ?>
+
+            </div>
+
+            <span class="user-role">
+                Student
+            </span>
 
         </div>
 
@@ -1494,17 +2019,19 @@ a {
 
     </div>
 
+
     <a
-    href="settings.php"
-    class="nav-link-custom"
+        href="settings.php"
+        class="nav-link-custom"
     >
-    <i class="bi bi-gear"></i>
 
-    <span>
-        Settings
-    </span>
+        <i class="bi bi-gear"></i>
+
+        <span>
+            Settings
+        </span>
+
     </a>
-
 
 
     <a
@@ -1531,23 +2058,137 @@ a {
 <main class="main-content">
 
 
-    <!-- PAGE HEADER -->
+    <!-- =====================================================
+         WELCOME + OVERALL PROGRESS
+         ===================================================== -->
+
+    <section class="welcome-section">
+
+        <div class="welcome-content">
+
+            <div class="welcome-label">
+
+                Student Learning Dashboard
+
+            </div>
+
+
+            <h1>
+
+                Welcome,
+                <?php
+                echo htmlspecialchars($user_name);
+                ?>.
+
+            </h1>
+
+
+            <p>
+
+                Continue your laboratory practical activities,
+                complete the required tasks, run simulations,
+                and track your learning progress.
+
+            </p>
+
+
+            <div class="overall-card">
+
+                <div class="overall-top">
+
+                    <span class="overall-title">
+
+                        Overall Practical Progress
+
+                    </span>
+
+
+                    <span class="overall-percentage">
+
+                        <?php
+                        echo $overall_progress;
+                        ?>%
+
+                    </span>
+
+                </div>
+
+
+                <div class="overall-progress">
+
+                    <div
+                        class="overall-progress-bar"
+                        style="width: <?php echo $overall_progress; ?>%;"
+                    ></div>
+
+                </div>
+
+
+                <div class="overall-bottom">
+
+                    <span>
+
+                        <?php
+                        echo $completed_count;
+                        ?>
+                        of
+                        <?php
+                        echo $total_practicals;
+                        ?>
+                        practicals completed
+
+                    </span>
+
+
+                    <span>
+
+                        <?php
+                        echo $in_progress_count;
+                        ?>
+                        in progress
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
 
     <div class="page-header">
 
-        <h1>
-            Practical Activities
-        </h1>
+        <div>
+
+            <h2>
+                Laboratory Practicals
+            </h2>
 
 
-        <p>
+            <p>
+                Select a practical to start, continue, or review your work.
+            </p>
 
-            Welcome,
-            <?php echo htmlspecialchars($user_name); ?>.
+        </div>
 
-            Select a laboratory practical to continue your work.
 
-        </p>
+        <div class="practical-count">
+
+            <i class="bi bi-journal-check me-1"></i>
+
+            <?php
+            echo $total_practicals;
+            ?>
+            Practicals
+
+        </div>
 
     </div>
 
@@ -1559,32 +2200,27 @@ a {
 
     <div class="section-card">
 
-
         <div class="section-header">
 
             <h5>
 
                 <i class="bi bi-journal-text me-2"></i>
 
-                Laboratory Practicals
+                Practical Activities
 
             </h5>
 
 
             <small>
 
-                <?php echo $total_practicals; ?>
-
-                practical activities
+                Laboratory learning programme
 
             </small>
 
         </div>
 
 
-
         <div class="section-body">
-
 
             <div class="row g-3">
 
@@ -1592,10 +2228,32 @@ a {
                 <?php for ($i = 1; $i <= 4; $i++): ?>
 
 
+                    <?php
+
+                    $card_class = "";
+
+                    if ($practical_status[$i] === "completed") {
+
+                        $card_class = "card-completed";
+
+                    } elseif ($practical_status[$i] === "in_progress") {
+
+                        $card_class = "card-progress";
+
+                    } else {
+
+                        $card_class = "card-not-started";
+                    }
+
+                    ?>
+
+
                     <div class="col-md-6">
 
 
-                        <div class="practical-card">
+                        <div
+                            class="practical-card <?php echo $card_class; ?>"
+                        >
 
 
                             <!-- PRACTICAL TOP -->
@@ -1614,11 +2272,36 @@ a {
 
                                 <div class="practical-index">
 
-                                    Practical <?php echo $i; ?>
+                                    Practical
+                                    <?php
+                                    echo str_pad($i, 2, "0", STR_PAD_LEFT);
+                                    ?>
 
                                 </div>
 
                             </div>
+
+
+
+                            <!-- STATUS -->
+
+                            <span
+                                class="status <?php echo getStatusClass($practical_status[$i]); ?>"
+                            >
+
+                                <i
+                                    class="bi <?php echo getStatusIcon($practical_status[$i]); ?>"
+                                ></i>
+
+                                <?php
+
+                                echo getStatusText(
+                                    $practical_status[$i]
+                                );
+
+                                ?>
+
+                            </span>
 
 
 
@@ -1651,31 +2334,6 @@ a {
                                 ?>
 
                             </p>
-
-
-
-                            <!-- PRACTICAL STATUS -->
-
-                            <span
-                                class="status
-                                <?php
-
-                                echo getStatusClass(
-                                    $practical_status[$i]
-                                );
-
-                                ?>"
-                            >
-
-                                <?php
-
-                                echo getStatusText(
-                                    $practical_status[$i]
-                                );
-
-                                ?>
-
-                            </span>
 
 
 
@@ -1742,22 +2400,21 @@ a {
                                 <div class="progress-text">
 
                                     <span>
+
                                         Activity Progress
+
                                     </span>
 
 
                                     <span>
 
                                         <?php
-
                                         echo $practical_progress[$i];
-
                                         ?>%
 
                                     </span>
 
                                 </div>
-
 
 
                                 <div class="progress">
@@ -1806,13 +2463,13 @@ a {
 
                                     echo '
                                         <i class="bi bi-arrow-right"></i>
-                                        Continue
+                                        Continue Practical
                                     ';
 
                                 } else {
 
                                     echo '
-                                        <i class="bi bi-play"></i>
+                                        <i class="bi bi-play-fill"></i>
                                         Start Practical
                                     ';
                                 }
@@ -1839,7 +2496,7 @@ a {
 
 
     <!-- =====================================================
-         BOTTOM SUMMARY
+         DASHBOARD SUMMARY
          ===================================================== -->
 
     <div class="summary-section">
@@ -1876,6 +2533,13 @@ a {
 
                         </div>
 
+
+                        <div class="summary-description">
+
+                            Available
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -1900,7 +2564,7 @@ a {
                     <div class="summary-content">
 
                         <small>
-                            Completion
+                            Completed
                         </small>
 
 
@@ -1909,6 +2573,13 @@ a {
                             <?php
                             echo $completed_count;
                             ?>
+
+                        </div>
+
+
+                        <div class="summary-description">
+
+                            Practicals finished
 
                         </div>
 
@@ -1948,6 +2619,13 @@ a {
 
                         </div>
 
+
+                        <div class="summary-description">
+
+                            Currently working
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -1981,6 +2659,13 @@ a {
                             <?php
                             echo $overall_progress;
                             ?>%
+
+                        </div>
+
+
+                        <div class="summary-description">
+
+                            Learning progress
 
                         </div>
 
@@ -2165,21 +2850,27 @@ a {
                 <ul class="info-list">
 
                     <li>
+
                         Laboratory Technician —
                         Contact through the laboratory office.
+
                     </li>
 
 
                     <li>
+
                         Responsible Lecturer —
                         Contact through the department office.
+
                     </li>
 
 
                     <li>
+
                         Emergency Medical Services —
                         Use the official emergency number provided
                         by your institution.
+
                     </li>
 
                 </ul>
@@ -2237,43 +2928,57 @@ a {
                 <ul class="info-list">
 
                     <li>
+
                         Follow laboratory rules and instructions
                         from the responsible staff.
+
                     </li>
 
 
                     <li>
+
                         Wear the required personal protective
                         equipment.
+
                     </li>
 
 
                     <li>
+
                         Keep the working area clean and organized.
+
                     </li>
 
 
                     <li>
+
                         Handle laboratory equipment carefully and
                         only as instructed.
+
                     </li>
 
 
                     <li>
+
                         Report accidents, damaged equipment, or
                         unsafe conditions immediately.
+
                     </li>
 
 
                     <li>
+
                         Do not operate laboratory equipment without
                         proper authorization.
+
                     </li>
 
 
                     <li>
+
                         Know the location of laboratory emergency
                         and safety equipment.
+
                     </li>
 
                 </ul>
@@ -2339,25 +3044,33 @@ a {
                 <ol class="info-list">
 
                     <li>
+
                         Laboratory Orientation
+
                     </li>
 
 
                     <li>
+
                         Physical Separation:
                         Centrifugation and Sieve Analysis
+
                     </li>
 
 
                     <li>
+
                         Thermal Processing in Foods:
                         Heat Penetration
+
                     </li>
 
 
                     <li>
+
                         Drying:
                         Spray Drying and Freeze Drying
+
                     </li>
 
                 </ol>
