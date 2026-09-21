@@ -162,7 +162,7 @@ $stmt->close();
 
 
 /* =========================================================
-   PRACTICAL NAMES
+   PRACTICAL INFORMATION
 ========================================================= */
 
 $practical_names = [
@@ -204,10 +204,10 @@ $practical_icons = [
     rel="stylesheet"
 >
 
-<!-- Chart.js -->
 <script
     src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
 ></script>
+
 
 <style>
 
@@ -228,10 +228,7 @@ body {
     margin: 0;
     background: var(--background);
     color: var(--text);
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 
@@ -243,6 +240,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+
     width: 245px;
     height: 100vh;
 
@@ -303,6 +301,7 @@ body {
 
 .nav-section-divider {
     height: 1px;
+
     background: rgba(255,255,255,.12);
 
     margin: 22px 8px;
@@ -312,6 +311,7 @@ body {
     padding: 0 13px 12px;
 
     font-size: 11px;
+
     text-transform: uppercase;
     letter-spacing: .08em;
 
@@ -409,11 +409,6 @@ body {
     padding: 32px;
 }
 
-
-/* =========================================================
-   PAGE HEADER
-========================================================= */
-
 .page-header {
     margin-bottom: 25px;
 }
@@ -484,7 +479,7 @@ body {
 
 
 /* =========================================================
-   FILTER PANEL
+   FILTER
 ========================================================= */
 
 .panel {
@@ -510,6 +505,7 @@ body {
 .filter-buttons {
     display: flex;
     flex-wrap: wrap;
+
     gap: 8px;
 }
 
@@ -537,6 +533,7 @@ body {
 .filter-btn.active {
     background: var(--lab-blue);
     color: white;
+
     border-color: var(--lab-blue);
 }
 
@@ -590,8 +587,8 @@ body {
     color: #5e6b72;
 
     font-size: 11px;
-    text-transform: uppercase;
 
+    text-transform: uppercase;
     letter-spacing: .04em;
 
     border-bottom: 1px solid var(--border);
@@ -702,17 +699,20 @@ body {
 
 
 /* =========================================================
-   RESULT MODAL
+   MODAL
 ========================================================= */
 
 .modal-content {
     border: 0;
+
     border-radius: 10px;
+
     overflow: hidden;
 }
 
 .modal-header {
     background: var(--lab-dark);
+
     color: white;
 
     padding: 18px 22px;
@@ -753,6 +753,7 @@ body {
 
 .result-section {
     border: 1px solid var(--border);
+
     border-radius: 8px;
 
     padding: 18px;
@@ -890,6 +891,7 @@ body {
 
     .table-panel-header {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -944,9 +946,7 @@ body {
         <span>Register Admin</span>
     </a>
 
-
     <div class="nav-section-divider"></div>
-
 
     <div class="sidebar-heading">
         Account
@@ -985,6 +985,7 @@ body {
         <div class="admin-info">
 
             <div class="admin-avatar">
+
                 <?= strtoupper(
                     substr(
                         $current_user['full_name'],
@@ -992,6 +993,7 @@ body {
                         1
                     )
                 ) ?>
+
             </div>
 
             <div class="admin-details">
@@ -1041,6 +1043,7 @@ body {
         ================================================== -->
 
         <div class="row g-4 mb-4">
+
 
             <div class="col-6 col-xl-3">
 
@@ -1124,6 +1127,7 @@ body {
                 </div>
 
             </div>
+
 
         </div>
 
@@ -1233,13 +1237,16 @@ body {
                         <?php foreach ($simulations as $simulation): ?>
 
                             <?php
-                            $p =
-                                (int)
+
+                            $p = (int)
                                 $simulation['practical_number'];
+
+                            $simulation_id =
+                                (int) $simulation['id'];
 
                             $modal_id =
                                 "simulationModal_" .
-                                (int)$simulation['id'];
+                                $simulation_id;
 
                             $input_json =
                                 htmlspecialchars(
@@ -1262,6 +1269,7 @@ body {
                                     ENT_QUOTES,
                                     'UTF-8'
                                 );
+
                             ?>
 
                             <tr>
@@ -1269,15 +1277,19 @@ body {
                                 <td>
 
                                     <div class="student-name">
+
                                         <?= htmlspecialchars(
                                             $simulation['full_name']
                                         ) ?>
+
                                     </div>
 
                                     <div class="student-username">
+
                                         @<?= htmlspecialchars(
                                             $simulation['username']
                                         ) ?>
+
                                     </div>
 
                                 </td>
@@ -1349,10 +1361,11 @@ body {
                             ================================================== -->
 
                             <div
-                                class="modal fade"
+                                class="modal fade simulation-modal"
                                 id="<?= $modal_id ?>"
                                 tabindex="-1"
                                 aria-hidden="true"
+                                data-practical="<?= $p ?>"
                             >
 
                                 <div
@@ -1360,6 +1373,7 @@ body {
                                 >
 
                                     <div class="modal-content">
+
 
                                         <div class="modal-header">
 
@@ -1388,12 +1402,15 @@ body {
                                             <div class="result-student">
 
                                                 <h4>
+
                                                     <?= htmlspecialchars(
                                                         $simulation['full_name']
                                                     ) ?>
+
                                                 </h4>
 
                                                 <p>
+
                                                     @<?= htmlspecialchars(
                                                         $simulation['username']
                                                     ) ?>
@@ -1418,13 +1435,16 @@ body {
                                             <div class="result-section">
 
                                                 <h5>
+
                                                     <i class="bi bi-calculator me-2"></i>
+
                                                     Calculated Results
+
                                                 </h5>
 
                                                 <div
-                                                    class="row g-3"
-                                                    id="resultValues_<?= $simulation['id'] ?>"
+                                                    class="row g-3 simulation-results"
+                                                    id="resultValues_<?= $simulation_id ?>"
                                                     data-results="<?= $result_json ?>"
                                                 >
 
@@ -1448,26 +1468,25 @@ body {
                                             <div class="result-section">
 
                                                 <h5>
+
                                                     <i class="bi bi-bar-chart-line me-2"></i>
 
                                                     Simulation Graph
+
                                                 </h5>
 
-                                                <div
-                                                    class="chart-container"
-                                                >
+                                                <div class="chart-container">
 
                                                     <canvas
-                                                        id="chart_<?= $simulation['id'] ?>"
+                                                        id="chart_<?= $simulation_id ?>"
                                                     ></canvas>
 
                                                 </div>
 
                                                 <div
-                                                    id="chartMessage_<?= $simulation['id'] ?>"
-                                                    class="no-chart d-none"
-                                                >
-                                                </div>
+                                                    id="chartMessage_<?= $simulation_id ?>"
+                                                    class="no-chart d-none chart-message"
+                                                ></div>
 
                                             </div>
 
@@ -1477,14 +1496,16 @@ body {
                                             <div class="result-section">
 
                                                 <h5>
+
                                                     <i class="bi bi-sliders me-2"></i>
 
                                                     Input Parameters
+
                                                 </h5>
 
                                                 <div
-                                                    class="row g-3"
-                                                    id="inputValues_<?= $simulation['id'] ?>"
+                                                    class="row g-3 simulation-inputs"
+                                                    id="inputValues_<?= $simulation_id ?>"
                                                     data-inputs="<?= $input_json ?>"
                                                 >
 
@@ -1512,6 +1533,7 @@ body {
                             </div>
 
                         <?php endforeach; ?>
+
 
                     <?php else: ?>
 
@@ -1553,9 +1575,7 @@ body {
 </div>
 
 
-<!-- =========================================================
-     BOOTSTRAP
-========================================================= -->
+<!-- Bootstrap -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -1565,24 +1585,52 @@ body {
 <script>
 
 /* =========================================================
-   HELPERS
+   CHART STORAGE
+   Prevents duplicate Chart.js instances
 ========================================================= */
 
-function formatLabel(key) {
+const simulationCharts = {};
 
-    return String(key)
+
+/* =========================================================
+   FORMAT LABEL
+========================================================= */
+
+function formatLabel(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
         .replace(/_/g, " ")
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .replace(/\b\w/g, function(letter) {
-            return letter.toUpperCase();
-        });
-
+        .replace(
+            /([a-z])([A-Z])/g,
+            "$1 $2"
+        )
+        .replace(
+            /\b\w/g,
+            function(letter) {
+                return letter.toUpperCase();
+            }
+        );
 }
 
 
+/* =========================================================
+   FORMAT VALUE
+========================================================= */
+
 function formatValue(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
         return "—";
     }
 
@@ -1594,8 +1642,10 @@ function formatValue(value) {
 
         return Number.isInteger(value)
             ? value.toString()
-            : value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
-
+            : value
+                .toFixed(3)
+                .replace(/0+$/, "")
+                .replace(/\.$/, "");
     }
 
     if (typeof value === "boolean") {
@@ -1607,19 +1657,21 @@ function formatValue(value) {
     }
 
     return String(value);
-
 }
 
 
 /* =========================================================
-   BUILD RESULT BOXES
+   BUILD VALUE BOXES
 ========================================================= */
 
 function buildValueBoxes(container, data) {
 
     container.innerHTML = "";
 
-    if (!data || typeof data !== "object") {
+    if (
+        !data ||
+        typeof data !== "object"
+    ) {
 
         container.innerHTML = `
             <div class="col-12">
@@ -1633,17 +1685,19 @@ function buildValueBoxes(container, data) {
     }
 
 
-    let entries = Object.entries(data)
-        .filter(function(entry) {
+    const entries =
+        Object.entries(data).filter(
+            function(entry) {
 
-            const value = entry[1];
+                const value = entry[1];
 
-            return (
-                value === null ||
-                typeof value !== "object"
-            );
+                return (
+                    value === null ||
+                    typeof value !== "object"
+                );
 
-        });
+            }
+        );
 
 
     if (entries.length === 0) {
@@ -1660,48 +1714,65 @@ function buildValueBoxes(container, data) {
     }
 
 
-    entries.forEach(function(entry) {
+    entries.forEach(
+        function(entry) {
 
-        const key = entry[0];
-        const value = entry[1];
+            const key = entry[0];
+            const value = entry[1];
 
-        const col = document.createElement("div");
+            const col =
+                document.createElement("div");
 
-        col.className =
-            "col-6 col-md-4 col-lg-3";
+            col.className =
+                "col-6 col-md-4 col-lg-3";
 
+            const box =
+                document.createElement("div");
 
-        col.innerHTML = `
-            <div class="result-box">
-                <small>
-                    ${formatLabel(key)}
-                </small>
+            box.className =
+                "result-box";
 
-                <strong>
-                    ${formatValue(value)}
-                </strong>
-            </div>
-        `;
+            const small =
+                document.createElement("small");
 
-        container.appendChild(col);
+            small.textContent =
+                formatLabel(key);
 
-    });
+            const strong =
+                document.createElement("strong");
 
+            strong.textContent =
+                formatValue(value);
+
+            box.appendChild(small);
+            box.appendChild(strong);
+
+            col.appendChild(box);
+
+            container.appendChild(col);
+
+        }
+    );
 }
 
 
 /* =========================================================
-   FIND GRAPH DATA
+   FIND ARRAY
 ========================================================= */
 
 function findArray(data, possibleKeys) {
 
-    if (!data || typeof data !== "object") {
+    if (
+        !data ||
+        typeof data !== "object"
+    ) {
         return null;
     }
 
 
-    for (const key of possibleKeys) {
+    for (
+        const key of possibleKeys
+    ) {
 
         if (
             Array.isArray(data[key]) &&
@@ -1714,14 +1785,12 @@ function findArray(data, possibleKeys) {
 
     }
 
-
     return null;
-
 }
 
 
 /* =========================================================
-   DRAW GRAPH
+   DRAW SIMULATION CHART
 ========================================================= */
 
 function drawSimulationChart(
@@ -1731,341 +1800,62 @@ function drawSimulationChart(
 ) {
 
     const resultData =
-        simulation.results;
+        simulation.results || {};
 
+    /*
+     * IMPORTANT:
+     * This is the actual practical belonging
+     * to the simulation record.
+     *
+     * It is NOT the page filter.
+     */
     const practical =
-        simulation.practical;
+        Number(simulation.practical || 0);
 
 
-    /*
-     * -------------------------------------------------------
-     * PRACTICAL 3
-     * Thermal Processing
-     * -------------------------------------------------------
-     */
+    /* ---------------------------------------------------------
+       Remove previous chart
+    --------------------------------------------------------- */
 
-    if (practical === 3) {
+    if (canvas._chartInstance) {
 
-        let labels =
-            findArray(
-                resultData,
-                [
-                    "labels",
-                    "times",
-                    "time",
-                    "simulation_time",
-                    "time_data"
-                ]
-            );
-
-        let values =
-            findArray(
-                resultData,
-                [
-                    "temperatures",
-                    "temperature",
-                    "values",
-                    "temperature_data",
-                    "product_temperature"
-                ]
-            );
-
-
-        /*
-         * Sometimes the arrays may be nested inside
-         * a graph/chart object.
-         */
-
-        if (
-            (!labels || !values) &&
-            resultData.chart &&
-            typeof resultData.chart === "object"
-        ) {
-
-            labels =
-                findArray(
-                    resultData.chart,
-                    [
-                        "labels",
-                        "times",
-                        "time"
-                    ]
-                );
-
-            values =
-                findArray(
-                    resultData.chart,
-                    [
-                        "data",
-                        "values",
-                        "temperatures",
-                        "temperature"
-                    ]
-                );
-
+        try {
+            canvas._chartInstance.destroy();
+        } catch (error) {
+            console.warn(error);
         }
 
-
-        if (labels && values) {
-
-            const length =
-                Math.min(
-                    labels.length,
-                    values.length
-                );
-
-            labels = labels.slice(0, length);
-            values = values.slice(0, length);
-
-
-            new Chart(canvas, {
-
-                type: "line",
-
-                data: {
-
-                    labels: labels,
-
-                    datasets: [
-
-                        {
-                            label:
-                                "Product Temperature",
-
-                            data: values,
-
-                            borderWidth: 2,
-
-                            pointRadius: 2,
-
-                            tension: .25,
-
-                            fill: false
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    interaction: {
-                        intersect: false,
-                        mode: "index"
-                    },
-
-                    plugins: {
-
-                        legend: {
-                            display: true
-                        },
-
-                        tooltip: {
-                            enabled: true
-                        }
-
-                    },
-
-                    scales: {
-
-                        x: {
-
-                            title: {
-                                display: true,
-                                text: "Simulation Time"
-                            }
-
-                        },
-
-                        y: {
-
-                            title: {
-                                display: true,
-                                text: "Temperature"
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            });
-
-            return;
-        }
-
+        canvas._chartInstance = null;
     }
 
 
-    /*
-     * -------------------------------------------------------
-     * PRACTICAL 4
-     * Drying
-     * -------------------------------------------------------
-     */
+    if (simulationCharts[canvas.id]) {
 
-    if (practical === 4) {
-
-        let labels =
-            findArray(
-                resultData,
-                [
-                    "labels",
-                    "times",
-                    "time",
-                    "simulation_time"
-                ]
-            );
-
-        let values =
-            findArray(
-                resultData,
-                [
-                    "values",
-                    "moisture",
-                    "moisture_content",
-                    "drying_rate",
-                    "data"
-                ]
-            );
-
-
-        if (
-            (!labels || !values) &&
-            resultData.chart &&
-            typeof resultData.chart === "object"
-        ) {
-
-            labels =
-                findArray(
-                    resultData.chart,
-                    [
-                        "labels",
-                        "times",
-                        "time"
-                    ]
-                );
-
-            values =
-                findArray(
-                    resultData.chart,
-                    [
-                        "data",
-                        "values",
-                        "moisture",
-                        "moisture_content"
-                    ]
-                );
-
+        try {
+            simulationCharts[
+                canvas.id
+            ].destroy();
+        } catch (error) {
+            console.warn(error);
         }
 
-
-        if (labels && values) {
-
-            const length =
-                Math.min(
-                    labels.length,
-                    values.length
-                );
-
-            labels = labels.slice(0, length);
-            values = values.slice(0, length);
-
-
-            new Chart(canvas, {
-
-                type: "line",
-
-                data: {
-
-                    labels: labels,
-
-                    datasets: [
-
-                        {
-                            label:
-                                "Drying Process",
-
-                            data: values,
-
-                            borderWidth: 2,
-
-                            pointRadius: 2,
-
-                            tension: .25,
-
-                            fill: false
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    interaction: {
-                        intersect: false,
-                        mode: "index"
-                    },
-
-                    plugins: {
-
-                        legend: {
-                            display: true
-                        }
-
-                    },
-
-                    scales: {
-
-                        x: {
-
-                            title: {
-                                display: true,
-                                text: "Simulation Time"
-                            }
-
-                        },
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            title: {
-                                display: true,
-                                text: "Value"
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            });
-
-            return;
-        }
-
+        simulationCharts[
+            canvas.id
+        ] = null;
     }
 
 
-    /*
-     * -------------------------------------------------------
-     * PRACTICAL 2
-     * Physical Separation
-     * -------------------------------------------------------
-     */
+    canvas.style.display = "block";
+
+    messageBox.classList.add("d-none");
+
+    messageBox.innerHTML = "";
+
+
+    /* =========================================================
+       PRACTICAL 2
+       SIEVE ANALYSIS
+    ========================================================= */
 
     if (practical === 2) {
 
@@ -2093,6 +1883,81 @@ function drawSimulationChart(
             );
 
 
+        /*
+         * IMPORTANT FIX:
+         *
+         * Practical 2 stores graph information
+         * inside:
+         *
+         * resultData.sieveResults
+         *
+         */
+
+        if (
+            (!labels || !values) &&
+            Array.isArray(
+                resultData.sieveResults
+            ) &&
+            resultData.sieveResults.length > 0
+        ) {
+
+            labels =
+                resultData.sieveResults.map(
+                    function(item) {
+
+                        if (
+                            !item ||
+                            typeof item !== "object"
+                        ) {
+                            return "";
+                        }
+
+                        return (
+                            item.sieve ??
+                            item.sieveSize ??
+                            item.sieve_size ??
+                            item.name ??
+                            ""
+                        );
+                    }
+                );
+
+
+            values =
+                resultData.sieveResults.map(
+                    function(item) {
+
+                        if (
+                            !item ||
+                            typeof item !== "object"
+                        ) {
+                            return 0;
+                        }
+
+                        const value =
+                            item.percentageRetained ??
+                            item.percentRetained ??
+                            item.percentage_retained ??
+                            item.percentagePassing ??
+                            item.percentPassing ??
+                            item.percentage_passing ??
+                            0;
+
+                        const number =
+                            Number(value);
+
+                        return Number.isFinite(number)
+                            ? number
+                            : 0;
+                    }
+                );
+        }
+
+
+        /*
+         * Check nested chart object
+         */
+
         if (
             (!labels || !values) &&
             resultData.chart &&
@@ -2105,7 +1970,8 @@ function drawSimulationChart(
                     [
                         "labels",
                         "sieve_sizes",
-                        "sieve_size"
+                        "sieve_size",
+                        "particle_sizes"
                     ]
                 );
 
@@ -2113,17 +1979,21 @@ function drawSimulationChart(
                 findArray(
                     resultData.chart,
                     [
-                        "data",
                         "values",
+                        "data",
                         "percentage_retained",
-                        "percentage_passing"
+                        "percent_retained",
+                        "percentage_passing",
+                        "percent_passing"
                     ]
                 );
-
         }
 
 
-        if (labels && values) {
+        if (
+            labels &&
+            values
+        ) {
 
             const length =
                 Math.min(
@@ -2131,87 +2001,532 @@ function drawSimulationChart(
                     values.length
                 );
 
-            labels = labels.slice(0, length);
-            values = values.slice(0, length);
+            labels =
+                labels.slice(
+                    0,
+                    length
+                );
+
+            values =
+                values.slice(
+                    0,
+                    length
+                ).map(
+                    function(value) {
+
+                        const number =
+                            Number(value);
+
+                        return Number.isFinite(number)
+                            ? number
+                            : 0;
+                    }
+                );
 
 
-            new Chart(canvas, {
+            const chart =
+                new Chart(
+                    canvas.getContext("2d"),
+                    {
+                        type: "bar",
 
-                type: "bar",
+                        data: {
 
-                data: {
+                            labels:
+                                labels.map(
+                                    formatLabel
+                                ),
 
-                    labels: labels,
+                            datasets: [
 
-                    datasets: [
+                                {
+                                    label:
+                                        "Percentage Retained",
 
-                        {
-                            label:
-                                "Separation Result",
+                                    data:
+                                        values,
 
-                            data: values,
+                                    borderWidth: 1
+                                }
 
-                            borderWidth: 1
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    plugins: {
-
-                        legend: {
-                            display: true
-                        }
-
-                    },
-
-                    scales: {
-
-                        x: {
-
-                            title: {
-                                display: true,
-                                text: "Category / Sieve Size"
-                            }
+                            ]
 
                         },
 
-                        y: {
+                        options: {
 
-                            beginAtZero: true,
+                            responsive: true,
 
-                            title: {
-                                display: true,
-                                text: "Percentage / Value"
+                            maintainAspectRatio: false,
+
+                            plugins: {
+
+                                legend: {
+                                    display: true
+                                }
+
+                            },
+
+                            scales: {
+
+                                x: {
+
+                                    title: {
+                                        display: true,
+                                        text: "Sieve Size"
+                                    }
+
+                                },
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    title: {
+                                        display: true,
+                                        text: "Percentage"
+                                    }
+
+                                }
+
                             }
 
                         }
 
                     }
+                );
 
-                }
 
-            });
+            canvas._chartInstance =
+                chart;
+
+            simulationCharts[
+                canvas.id
+            ] = chart;
 
             return;
         }
-
     }
 
 
-    /*
-     * -------------------------------------------------------
-     * NO GRAPH DATA
-     * -------------------------------------------------------
-     */
+    /* =========================================================
+       PRACTICAL 3
+       THERMAL PROCESSING
+    ========================================================= */
+
+    if (practical === 3) {
+
+        let labels =
+            findArray(
+                resultData,
+                [
+                    "labels",
+                    "times",
+                    "time",
+                    "simulation_time",
+                    "time_data"
+                ]
+            );
+
+        let values =
+            findArray(
+                resultData,
+                [
+                    "values",
+                    "temperature",
+                    "temperatures",
+                    "product_temperature",
+                    "product_temperatures",
+                    "temperature_data"
+                ]
+            );
+
+
+        /*
+         * Check nested chart object
+         */
+
+        if (
+            (!labels || !values) &&
+            resultData.chart &&
+            typeof resultData.chart === "object"
+        ) {
+
+            labels =
+                findArray(
+                    resultData.chart,
+                    [
+                        "labels",
+                        "times",
+                        "time",
+                        "simulation_time"
+                    ]
+                );
+
+            values =
+                findArray(
+                    resultData.chart,
+                    [
+                        "values",
+                        "temperature",
+                        "temperatures",
+                        "product_temperature",
+                        "product_temperatures",
+                        "data"
+                    ]
+                );
+        }
+
+
+        if (
+            labels &&
+            values
+        ) {
+
+            const length =
+                Math.min(
+                    labels.length,
+                    values.length
+                );
+
+            labels =
+                labels.slice(
+                    0,
+                    length
+                );
+
+            values =
+                values.slice(
+                    0,
+                    length
+                ).map(
+                    function(value) {
+
+                        const number =
+                            Number(value);
+
+                        return Number.isFinite(number)
+                            ? number
+                            : null;
+                    }
+                );
+
+
+            const chart =
+                new Chart(
+                    canvas.getContext("2d"),
+                    {
+                        type: "line",
+
+                        data: {
+
+                            labels:
+                                labels.map(
+                                    formatLabel
+                                ),
+
+                            datasets: [
+
+                                {
+                                    label:
+                                        "Product Temperature",
+
+                                    data:
+                                        values,
+
+                                    borderWidth: 2,
+
+                                    pointRadius: 2,
+
+                                    tension: 0.25,
+
+                                    fill: false
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            interaction: {
+
+                                intersect: false,
+
+                                mode: "index"
+
+                            },
+
+                            plugins: {
+
+                                legend: {
+                                    display: true
+                                }
+
+                            },
+
+                            scales: {
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Simulation Time"
+
+                                    }
+
+                                },
+
+                                y: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Temperature"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            canvas._chartInstance =
+                chart;
+
+            simulationCharts[
+                canvas.id
+            ] = chart;
+
+            return;
+        }
+    }
+
+
+    /* =========================================================
+       PRACTICAL 4
+       DRYING
+    ========================================================= */
+
+    if (practical === 4) {
+
+        let labels =
+            findArray(
+                resultData,
+                [
+                    "labels",
+                    "times",
+                    "time",
+                    "simulation_time"
+                ]
+            );
+
+        let values =
+            findArray(
+                resultData,
+                [
+                    "values",
+                    "moisture",
+                    "moisture_content",
+                    "drying_rate",
+                    "data"
+                ]
+            );
+
+
+        /*
+         * Check nested chart object
+         */
+
+        if (
+            (!labels || !values) &&
+            resultData.chart &&
+            typeof resultData.chart === "object"
+        ) {
+
+            labels =
+                findArray(
+                    resultData.chart,
+                    [
+                        "labels",
+                        "times",
+                        "time",
+                        "simulation_time"
+                    ]
+                );
+
+            values =
+                findArray(
+                    resultData.chart,
+                    [
+                        "values",
+                        "data",
+                        "moisture",
+                        "moisture_content",
+                        "drying_rate"
+                    ]
+                );
+        }
+
+
+        if (
+            labels &&
+            values
+        ) {
+
+            const length =
+                Math.min(
+                    labels.length,
+                    values.length
+                );
+
+            labels =
+                labels.slice(
+                    0,
+                    length
+                );
+
+            values =
+                values.slice(
+                    0,
+                    length
+                ).map(
+                    function(value) {
+
+                        const number =
+                            Number(value);
+
+                        return Number.isFinite(number)
+                            ? number
+                            : null;
+                    }
+                );
+
+
+            const chart =
+                new Chart(
+                    canvas.getContext("2d"),
+                    {
+                        type: "line",
+
+                        data: {
+
+                            labels:
+                                labels.map(
+                                    formatLabel
+                                ),
+
+                            datasets: [
+
+                                {
+                                    label:
+                                        "Drying Process",
+
+                                    data:
+                                        values,
+
+                                    borderWidth: 2,
+
+                                    pointRadius: 2,
+
+                                    tension: 0.25,
+
+                                    fill: false
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            interaction: {
+
+                                intersect: false,
+
+                                mode: "index"
+
+                            },
+
+                            plugins: {
+
+                                legend: {
+                                    display: true
+                                }
+
+                            },
+
+                            scales: {
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Simulation Time"
+
+                                    }
+
+                                },
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Moisture / Drying Value"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            canvas._chartInstance =
+                chart;
+
+            simulationCharts[
+                canvas.id
+            ] = chart;
+
+            return;
+        }
+    }
+
+
+    /* =========================================================
+       NO GRAPH DATA
+    ========================================================= */
 
     canvas.style.display = "none";
 
@@ -2231,104 +2546,255 @@ function drawSimulationChart(
 ========================================================= */
 
 document
-    .querySelectorAll(".modal")
-    .forEach(function(modal) {
+    .querySelectorAll(".simulation-modal")
+    .forEach(
+        function(modal) {
 
-        modal.addEventListener(
-            "shown.bs.modal",
-            function() {
-
-                const id =
-                    modal.id.replace(
-                        "simulationModal_",
-                        ""
-                    );
+            modal.addEventListener(
+                "shown.bs.modal",
+                function() {
 
 
-                const resultContainer =
-                    document.getElementById(
-                        "resultValues_" + id
-                    );
+                    /*
+                     * Get the simulation ID
+                     */
 
-                const inputContainer =
-                    document.getElementById(
-                        "inputValues_" + id
-                    );
-
-                const canvas =
-                    document.getElementById(
-                        "chart_" + id
-                    );
-
-                const messageBox =
-                    document.getElementById(
-                        "chartMessage_" + id
-                    );
-
-
-                let results = {};
-
-                let inputs = {};
-
-
-                try {
-
-                    results =
-                        JSON.parse(
-                            resultContainer.dataset.results
+                    const id =
+                        modal.id.replace(
+                            "simulationModal_",
+                            ""
                         );
 
-                } catch (error) {
 
-                    results = {};
-
-                }
-
-
-                try {
-
-                    inputs =
-                        JSON.parse(
-                            inputContainer.dataset.inputs
+                    const resultContainer =
+                        document.getElementById(
+                            "resultValues_" + id
                         );
 
-                } catch (error) {
+                    const inputContainer =
+                        document.getElementById(
+                            "inputValues_" + id
+                        );
 
-                    inputs = {};
+                    const canvas =
+                        document.getElementById(
+                            "chart_" + id
+                        );
 
-                }
-
-
-                buildValueBoxes(
-                    resultContainer,
-                    results
-                );
-
-                buildValueBoxes(
-                    inputContainer,
-                    inputs
-                );
+                    const messageBox =
+                        document.getElementById(
+                            "chartMessage_" + id
+                        );
 
 
-                drawSimulationChart(
-                    canvas,
-                    messageBox,
-                    {
-                        practical:
-                            <?= (int)($filter ?: 0) ?>,
-                        results:
-                            results
+                    if (
+                        !resultContainer ||
+                        !inputContainer ||
+                        !canvas ||
+                        !messageBox
+                    ) {
+                        return;
                     }
-                );
 
-            }
 
-        );
+                    /*
+                     * =================================================
+                     * IMPORTANT FIX
+                     *
+                     * Read the ACTUAL practical number belonging
+                     * to this simulation record.
+                     *
+                     * Do NOT use PHP $filter here.
+                     *
+                     * When "All Simulations" is selected,
+                     * $filter = 0.
+                     *
+                     * The modal itself may belong to P2, P3 or P4.
+                     * =================================================
+                     */
 
-    });
+                    const practical =
+                        parseInt(
+                            modal.dataset.practical || "0",
+                            10
+                        );
+
+
+                    let results = {};
+                    let inputs = {};
+
+
+                    /*
+                     * Read saved results
+                     */
+
+                    try {
+
+                        const rawResults =
+                            resultContainer.dataset.results;
+
+                        if (rawResults) {
+
+                            results =
+                                JSON.parse(
+                                    rawResults
+                                );
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Unable to read simulation results:",
+                            error
+                        );
+
+                        results = {};
+                    }
+
+
+                    /*
+                     * Read saved inputs
+                     */
+
+                    try {
+
+                        const rawInputs =
+                            inputContainer.dataset.inputs;
+
+                        if (rawInputs) {
+
+                            inputs =
+                                JSON.parse(
+                                    rawInputs
+                                );
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Unable to read simulation inputs:",
+                            error
+                        );
+
+                        inputs = {};
+                    }
+
+
+                    /*
+                     * Display calculated values
+                     */
+
+                    buildValueBoxes(
+                        resultContainer,
+                        results
+                    );
+
+
+                    /*
+                     * Display input parameters
+                     */
+
+                    buildValueBoxes(
+                        inputContainer,
+                        inputs
+                    );
+
+
+                    /*
+                     * Draw correct graph
+                     */
+
+                    drawSimulationChart(
+                        canvas,
+                        messageBox,
+                        {
+                            practical:
+                                practical,
+
+                            results:
+                                results,
+
+                            inputs:
+                                inputs
+                        }
+                    );
+
+                }
+            );
+
+
+            /*
+             * Clean chart when modal closes
+             */
+
+            modal.addEventListener(
+                "hidden.bs.modal",
+                function() {
+
+                    const canvas =
+                        modal.querySelector(
+                            "canvas"
+                        );
+
+                    if (!canvas) {
+                        return;
+                    }
+
+
+                    if (
+                        canvas._chartInstance
+                    ) {
+
+                        try {
+
+                            canvas
+                                ._chartInstance
+                                .destroy();
+
+                        } catch (error) {
+
+                            console.warn(
+                                error
+                            );
+                        }
+
+                        canvas._chartInstance =
+                            null;
+                    }
+
+
+                    if (
+                        simulationCharts[
+                            canvas.id
+                        ]
+                    ) {
+
+                        try {
+
+                            simulationCharts[
+                                canvas.id
+                            ].destroy();
+
+                        } catch (error) {
+
+                            console.warn(
+                                error
+                            );
+                        }
+
+                        simulationCharts[
+                            canvas.id
+                        ] = null;
+                    }
+
+                }
+            );
+
+        }
+    );
 
 </script>
 
-
 </body>
+
 </html>

@@ -2016,16 +2016,17 @@ function generateReport() {
 async function saveSimulationResults() {
 
     if (!simulationData) {
-
         alert("Please run the simulation first.");
-
         return;
     }
 
     const data = simulationData;
 
-    const inputData = {
+    /* =====================================================
+       INPUT DATA
+       ===================================================== */
 
+    const inputData = {
         initialTemp:
             data.parameters.initialTemp,
 
@@ -2040,9 +2041,12 @@ async function saveSimulationResults() {
 
         coolingTime:
             data.parameters.coolingTime
-
     };
 
+
+    /* =====================================================
+       RESULT DATA
+       ===================================================== */
 
     const resultData = {
 
@@ -2061,6 +2065,11 @@ async function saveSimulationResults() {
         regressionSlope:
             data.regressionSlope,
 
+
+        /* =================================================
+           HEATING REGRESSION
+           ================================================= */
+
         heatingRegression: {
 
             f:
@@ -2076,9 +2085,19 @@ async function saveSimulationResults() {
                 data.heatingRegression.intercept,
 
             r2:
-                data.heatingRegression.r2
+                data.heatingRegression.r2,
 
+            x:
+                data.heatingRegression.x,
+
+            y:
+                data.heatingRegression.y
         },
+
+
+        /* =================================================
+           COOLING REGRESSION
+           ================================================= */
 
         coolingRegression: {
 
@@ -2095,19 +2114,176 @@ async function saveSimulationResults() {
                 data.coolingRegression.intercept,
 
             r2:
-                data.coolingRegression.r2
+                data.coolingRegression.r2,
+
+            x:
+                data.coolingRegression.x,
+
+            y:
+                data.coolingRegression.y
+        },
+
+
+        /* =================================================
+           CHART DATA
+           ================================================= */
+
+        chartData: {
+
+            /* ---------------------------------------------
+               Temperature Chart
+               --------------------------------------------- */
+
+            temperature: {
+
+                labels:
+                    data.data.map(
+                        item => item.time
+                    ),
+
+                retortTemperature:
+                    data.data.map(
+                        item => item.retortTemp
+                    ),
+
+                productTemperature:
+                    data.data.map(
+                        item => item.productTemp
+                    )
+            },
+
+
+            /* ---------------------------------------------
+               Heating Regression Chart
+               --------------------------------------------- */
+
+            heatingRegression: {
+
+                points:
+                    data.heatingRegression.x.map(
+                        (x, index) => ({
+                            x: x,
+                            y:
+                                data.heatingRegression.y[index]
+                        })
+                    ),
+
+                line:
+                    (function () {
+
+                        const x =
+                            data.heatingRegression.x;
+
+                        if (!x.length) {
+                            return [];
+                        }
+
+                        const min =
+                            Math.min(...x);
+
+                        const max =
+                            Math.max(...x);
+
+                        return [
+
+                            {
+                                x: min,
+
+                                y:
+                                    data.heatingRegression.slope *
+                                        min +
+                                    data.heatingRegression.intercept
+                            },
+
+                            {
+                                x: max,
+
+                                y:
+                                    data.heatingRegression.slope *
+                                        max +
+                                    data.heatingRegression.intercept
+                            }
+
+                        ];
+
+                    })()
+            },
+
+
+            /* ---------------------------------------------
+               Cooling Regression Chart
+               --------------------------------------------- */
+
+            coolingRegression: {
+
+                points:
+                    data.coolingRegression.x.map(
+                        (x, index) => ({
+                            x: x,
+                            y:
+                                data.coolingRegression.y[index]
+                        })
+                    ),
+
+                line:
+                    (function () {
+
+                        const x =
+                            data.coolingRegression.x;
+
+                        if (!x.length) {
+                            return [];
+                        }
+
+                        const min =
+                            Math.min(...x);
+
+                        const max =
+                            Math.max(...x);
+
+                        return [
+
+                            {
+                                x: min,
+
+                                y:
+                                    data.coolingRegression.slope *
+                                        min +
+                                    data.coolingRegression.intercept
+                            },
+
+                            {
+                                x: max,
+
+                                y:
+                                    data.coolingRegression.slope *
+                                        max +
+                                    data.coolingRegression.intercept
+                            }
+
+                        ];
+
+                    })()
+            }
 
         }
 
     };
 
 
-    const formData = new FormData();
+    /* =====================================================
+       FORM DATA
+       ===================================================== */
+
+    const formData =
+        new FormData();
+
 
     formData.append(
         "input_data",
         JSON.stringify(inputData)
     );
+
 
     formData.append(
         "result_data",
@@ -2115,16 +2291,27 @@ async function saveSimulationResults() {
     );
 
 
+    /* =====================================================
+       SAVE BUTTON
+       ===================================================== */
+
     const button =
         get("saveResultsButton");
 
 
     if (button) {
+
         button.disabled = true;
+
         button.innerHTML =
             '<i class="bi bi-hourglass-split"></i> Saving...';
+
     }
 
+
+    /* =====================================================
+       SEND TO PHP
+       ===================================================== */
 
     try {
 
@@ -2142,6 +2329,10 @@ async function saveSimulationResults() {
             await response.json();
 
 
+        /* =================================================
+           SUCCESS
+           ================================================= */
+
         if (result.success) {
 
             setSimulationStatus(
@@ -2149,16 +2340,25 @@ async function saveSimulationResults() {
                 "success"
             );
 
+
             alert(
                 "Simulation results saved successfully."
             );
 
-        } else {
+        }
+
+
+        /* =================================================
+           ERROR
+           ================================================= */
+
+        else {
 
             alert(
                 result.message ||
                 "Could not save simulation results."
             );
+
 
             if (button) {
                 button.disabled = false;
@@ -2167,16 +2367,20 @@ async function saveSimulationResults() {
         }
 
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Save Results Error:",
             error
         );
 
+
         alert(
             "Unable to connect to the database."
         );
+
 
         if (button) {
             button.disabled = false;
@@ -2184,6 +2388,10 @@ async function saveSimulationResults() {
 
     }
 
+
+    /* =====================================================
+       RESTORE BUTTON
+       ===================================================== */
 
     if (button) {
 
@@ -2193,7 +2401,6 @@ async function saveSimulationResults() {
     }
 
 }
-
 
 /* =========================================================
    DOM READY

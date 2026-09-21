@@ -69,10 +69,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function calculateRCF() {
 
-        const rpm = parseFloat(rpmInput.value) || 0;
-        const radius = parseFloat(radiusInput.value) || 0;
+        const rpm =
+            parseFloat(rpmInput.value) || 0;
 
-        return 1.118e-5 * radius * Math.pow(rpm, 2);
+        const radius =
+            parseFloat(radiusInput.value) || 0;
+
+        return 1.118e-5 *
+            radius *
+            Math.pow(rpm, 2);
     }
 
 
@@ -144,7 +149,10 @@ document.addEventListener("DOMContentLoaded", function () {
             calculateRCF();
 
         const separationIndex =
-            calculateSeparationIndex(rcf, time);
+            calculateSeparationIndex(
+                rcf,
+                time
+            );
 
 
         rcfResult.textContent =
@@ -171,18 +179,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         centrifugeInterpretation.textContent =
-            getInterpretation(separationIndex);
+            getInterpretation(
+                separationIndex
+            );
 
 
-        updateCentrifugeChart(rpm, rcf);
+        updateCentrifugeChart(
+            rpm,
+            rcf
+        );
 
 
         return {
+
             rpm: rpm,
+
             radius: radius,
+
             time: time,
+
             rcf: rcf,
-            separationIndex: separationIndex
+
+            separationIndex:
+                separationIndex
+
         };
     }
 
@@ -194,100 +214,133 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateCentrifugeChart(rpm, rcf) {
 
         const ctx =
-            document.getElementById("centrifugeChart");
+            document.getElementById(
+                "centrifugeChart"
+            );
 
         if (!ctx) {
             return;
         }
 
+
         if (centrifugeChart) {
+
             centrifugeChart.destroy();
+
         }
+
 
         const rpmValues = [];
         const rcfValues = [];
 
         const steps = 6;
 
-        for (let i = 1; i <= steps; i++) {
+
+        for (
+            let i = 1;
+            i <= steps;
+            i++
+        ) {
 
             const value =
                 (rpm / steps) * i;
+
 
             rpmValues.push(
                 Math.round(value)
             );
 
+
             rcfValues.push(
+
                 1.118e-5 *
-                (parseFloat(radiusInput.value) || 0) *
-                Math.pow(value, 2)
+
+                (parseFloat(
+                    radiusInput.value
+                ) || 0) *
+
+                Math.pow(
+                    value,
+                    2
+                )
+
             );
+
         }
 
 
         centrifugeChart =
-            new Chart(ctx, {
+            new Chart(
+                ctx,
+                {
 
-                type: "line",
+                    type: "line",
 
-                data: {
+                    data: {
 
-                    labels: rpmValues,
+                        labels:
+                            rpmValues,
 
-                    datasets: [{
+                        datasets: [
 
-                        label: "RCF",
+                            {
 
-                        data: rcfValues,
+                                label: "RCF",
 
-                        tension: 0.3,
+                                data:
+                                    rcfValues,
 
-                        fill: false
+                                tension: 0.3,
 
-                    }]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    scales: {
-
-                        x: {
-
-                            title: {
-
-                                display: true,
-
-                                text: "RPM"
+                                fill: false
 
                             }
 
-                        },
+                        ]
 
-                        y: {
+                    },
 
-                            title: {
+                    options: {
 
-                                display: true,
+                        responsive: true,
 
-                                text: "Relative Centrifugal Force"
+                        maintainAspectRatio:
+                            false,
+
+                        scales: {
+
+                            x: {
+
+                                title: {
+
+                                    display: true,
+
+                                    text: "RPM"
+
+                                }
 
                             },
 
-                            beginAtZero: true
+                            y: {
+
+                                title: {
+
+                                    display: true,
+
+                                    text: "Relative Centrifugal Force"
+
+                                },
+
+                                beginAtZero: true
+
+                            }
 
                         }
 
                     }
 
                 }
-
-            });
+            );
     }
 
 
@@ -298,72 +351,86 @@ document.addEventListener("DOMContentLoaded", function () {
     function calculateSieveAnalysis() {
 
         const sampleMass =
-            parseFloat(sampleMassInput.value) || 0;
+            parseFloat(
+                sampleMassInput.value
+            ) || 0;
 
         let total = 0;
 
         const results = [];
 
 
-        sieveMassInputs.forEach(function (input) {
+        sieveMassInputs.forEach(
+            function (input) {
 
-            const sieve =
-                input.dataset.sieve;
+                const sieve =
+                    input.dataset.sieve;
 
-            const mass =
-                parseFloat(input.value) || 0;
+                const mass =
+                    parseFloat(
+                        input.value
+                    ) || 0;
 
-            total += mass;
 
-            results.push({
+                total += mass;
 
-                sieve: sieve,
 
-                mass: mass,
+                results.push({
 
-                percentageRetained: 0,
+                    sieve: sieve,
 
-                cumulativeRetained: 0,
+                    mass: mass,
 
-                percentagePassing: 0
+                    percentageRetained: 0,
 
-            });
+                    cumulativeRetained: 0,
 
-        });
+                    percentagePassing: 0
+
+                });
+
+            }
+        );
 
 
         let cumulative = 0;
 
 
-        results.forEach(function (item) {
+        results.forEach(
+            function (item) {
 
-            if (sampleMass > 0) {
+                if (sampleMass > 0) {
 
-                item.percentageRetained =
-                    (item.mass / sampleMass) * 100;
+                    item.percentageRetained =
+                        (
+                            item.mass /
+                            sampleMass
+                        ) * 100;
 
-            } else {
+                } else {
 
-                item.percentageRetained = 0;
+                    item.percentageRetained =
+                        0;
+
+                }
+
+
+                cumulative +=
+                    item.percentageRetained;
+
+
+                item.cumulativeRetained =
+                    cumulative;
+
+
+                item.percentagePassing =
+                    Math.max(
+                        0,
+                        100 - cumulative
+                    );
 
             }
-
-
-            cumulative +=
-                item.percentageRetained;
-
-
-            item.cumulativeRetained =
-                cumulative;
-
-
-            item.percentagePassing =
-                Math.max(
-                    0,
-                    100 - cumulative
-                );
-
-        });
+        );
 
 
         const difference =
@@ -372,10 +439,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let balance = 0;
 
+
         if (sampleMass > 0) {
 
             balance =
-                (total / sampleMass) * 100;
+                (
+                    total /
+                    sampleMass
+                ) * 100;
 
         }
 
@@ -390,25 +461,33 @@ document.addEventListener("DOMContentLoaded", function () {
             balance.toFixed(2) + "%";
 
 
-        updateSieveTable(results);
+        updateSieveTable(
+            results
+        );
 
-        updateSieveChart(results);
+        updateSieveChart(
+            results
+        );
 
 
         return {
 
-            sampleMass: sampleMass,
+            sampleMass:
+                sampleMass,
 
-            totalRetained: total,
+            totalRetained:
+                total,
 
-            massDifference: difference,
+            massDifference:
+                difference,
 
-            massBalance: balance,
+            massBalance:
+                balance,
 
-            results: results
+            results:
+                results
 
         };
-
     }
 
 
@@ -420,29 +499,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
         sieveTableBody.innerHTML = "";
 
-        results.forEach(function (item) {
 
-            const row =
-                document.createElement("tr");
+        results.forEach(
+            function (item) {
 
-            row.innerHTML = `
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
 
-                <td>${item.sieve}</td>
 
-                <td>${item.mass.toFixed(2)}</td>
+                row.innerHTML = `
 
-                <td>${item.percentageRetained.toFixed(2)}%</td>
+                    <td>
+                        ${item.sieve}
+                    </td>
 
-                <td>${item.cumulativeRetained.toFixed(2)}%</td>
+                    <td>
+                        ${item.mass.toFixed(2)}
+                    </td>
 
-                <td>${item.percentagePassing.toFixed(2)}%</td>
+                    <td>
+                        ${item.percentageRetained.toFixed(2)}%
+                    </td>
 
-            `;
+                    <td>
+                        ${item.cumulativeRetained.toFixed(2)}%
+                    </td>
 
-            sieveTableBody.appendChild(row);
+                    <td>
+                        ${item.percentagePassing.toFixed(2)}%
+                    </td>
 
-        });
+                `;
 
+
+                sieveTableBody.appendChild(
+                    row
+                );
+
+            }
+        );
     }
 
 
@@ -453,80 +550,106 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateSieveChart(results) {
 
         const ctx =
-            document.getElementById("sieveChart");
+            document.getElementById(
+                "sieveChart"
+            );
+
 
         if (!ctx) {
             return;
         }
 
+
         if (sieveChart) {
+
             sieveChart.destroy();
+
         }
 
+
         const labels =
-            results.map(function (item) {
+            results.map(
+                function (item) {
 
-                return item.sieve;
+                    return item.sieve;
 
-            });
+                }
+            );
 
 
         const percentages =
-            results.map(function (item) {
+            results.map(
+                function (item) {
 
-                return item.percentageRetained;
+                    return item.percentageRetained;
 
-            });
+                }
+            );
 
 
         sieveChart =
-            new Chart(ctx, {
+            new Chart(
+                ctx,
+                {
 
-                type: "bar",
+                    type: "bar",
 
-                data: {
+                    data: {
 
-                    labels: labels,
+                        labels:
+                            labels,
 
-                    datasets: [{
+                        datasets: [
 
-                        label: "% Retained",
+                            {
 
-                        data: percentages
+                                label:
+                                    "% Retained",
 
-                    }]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            title: {
-
-                                display: true,
-
-                                text: "Percentage Retained (%)"
+                                data:
+                                    percentages
 
                             }
 
-                        },
+                        ]
 
-                        x: {
+                    },
 
-                            title: {
+                    options: {
 
-                                display: true,
+                        responsive: true,
 
-                                text: "Sieve"
+                        maintainAspectRatio:
+                            false,
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero:
+                                    true,
+
+                                title: {
+
+                                    display: true,
+
+                                    text:
+                                        "Percentage Retained (%)"
+
+                                }
+
+                            },
+
+                            x: {
+
+                                title: {
+
+                                    display: true,
+
+                                    text:
+                                        "Sieve"
+
+                                }
 
                             }
 
@@ -535,9 +658,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                 }
-
-            });
-
+            );
     }
 
 
@@ -560,24 +681,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
         simulationConclusion.innerHTML = `
 
-            <strong>Conclusion:</strong>
+            <strong>
+                Conclusion:
+            </strong>
 
             The simulation produced a relative centrifugal force of
-            <strong>${centrifugation.rcf.toFixed(2)}</strong>
+
+            <strong>
+                ${centrifugation.rcf.toFixed(2)}
+            </strong>
+
             with a separation index of
-            <strong>${centrifugation.separationIndex.toFixed(2)}%</strong>.
+
+            <strong>
+                ${centrifugation.separationIndex.toFixed(2)}%
+            </strong>.
 
             The sieve analysis produced a total retained mass of
-            <strong>${sieve.totalRetained.toFixed(2)} g</strong>
-            from a sample mass of
-            <strong>${sieve.sampleMass.toFixed(2)} g</strong>.
 
-            The calculated percentage retained, cumulative percentage
-            retained and percentage passing values are shown in the
-            results table.
+            <strong>
+                ${sieve.totalRetained.toFixed(2)} g
+            </strong>
+
+            from a sample mass of
+
+            <strong>
+                ${sieve.sampleMass.toFixed(2)} g
+            </strong>.
+
+            The calculated percentage retained,
+            cumulative percentage retained and
+            percentage passing values are shown
+            in the results table.
 
         `;
-
     }
 
 
@@ -597,20 +734,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const defaultMasses = [
+
             10,
+
             20,
+
             25,
+
             20,
+
             25
+
         ];
 
 
-        sieveMassInputs.forEach(function (input, index) {
+        sieveMassInputs.forEach(
+            function (input, index) {
 
-            input.value =
-                defaultMasses[index];
+                input.value =
+                    defaultMasses[index];
 
-        });
+            }
+        );
 
 
         rcfResult.textContent =
@@ -703,6 +848,7 @@ document.addEventListener("DOMContentLoaded", function () {
             date:
                 new Date().toLocaleString(),
 
+
             centrifugation: {
 
                 rpm:
@@ -721,6 +867,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     centrifugation.separationIndex
 
             },
+
 
             sieveAnalysis: {
 
@@ -749,8 +896,11 @@ document.addEventListener("DOMContentLoaded", function () {
          */
 
         localStorage.setItem(
+
             "practical2_simulation_results",
+
             JSON.stringify(results)
+
         );
 
 
@@ -758,41 +908,68 @@ document.addEventListener("DOMContentLoaded", function () {
          * Send results to PHP/MySQL
          */
 
-        const formData = new FormData();
+        const formData =
+            new FormData();
+
 
         formData.append(
+
             "input_data",
+
             JSON.stringify({
 
-                rpm: centrifugation.rpm,
+                rpm:
+                    centrifugation.rpm,
 
-                radius: centrifugation.radius,
+                radius:
+                    centrifugation.radius,
 
-                time: centrifugation.time,
+                time:
+                    centrifugation.time,
 
-                sampleMass: sieve.sampleMass,
+                sampleMass:
+                    sieve.sampleMass,
 
-                sieveMasses: sieve.results.map(function (item) {
+                sieveMasses:
 
-                    return {
+                    sieve.results.map(
+                        function (item) {
 
-                        sieve: item.sieve,
+                            return {
 
-                        mass: item.mass
+                                sieve:
+                                    item.sieve,
 
-                    };
+                                mass:
+                                    item.mass
 
-                })
+                            };
+
+                        }
+                    )
 
             })
+
         );
 
 
+        /*
+         * Store calculated results AND
+         * chart data.
+         *
+         * This chartData section is the
+         * important fix for Admin ->
+         * Simulation Results.
+         */
+
         formData.append(
+
             "result_data",
+
             JSON.stringify({
 
-                rcf: centrifugation.rcf,
+                rcf:
+                    centrifugation.rcf,
 
                 separationIndex:
                     centrifugation.separationIndex,
@@ -807,9 +984,84 @@ document.addEventListener("DOMContentLoaded", function () {
                     sieve.massBalance,
 
                 sieveResults:
-                    sieve.results
+                    sieve.results,
+
+
+                /*
+                 * =================================================
+                 * CHART DATA
+                 * =================================================
+                 */
+
+                chartData: {
+
+                    /*
+                     * ---------------------------------------------
+                     * Centrifugation Chart
+                     * ---------------------------------------------
+                     */
+
+                    centrifugation: {
+
+                        labels:
+
+                            centrifugeChart
+
+                                ? centrifugeChart.data.labels
+
+                                : [],
+
+
+                        values:
+
+                            centrifugeChart
+
+                                ? centrifugeChart
+                                    .data
+                                    .datasets[0]
+                                    .data
+
+                                : []
+
+                    },
+
+
+                    /*
+                     * ---------------------------------------------
+                     * Sieve Analysis Chart
+                     * ---------------------------------------------
+                     */
+
+                    sieve: {
+
+                        labels:
+
+                            sieve.results.map(
+                                function (item) {
+
+                                    return item.sieve;
+
+                                }
+                            ),
+
+
+                        values:
+
+                            sieve.results.map(
+                                function (item) {
+
+                                    return item
+                                        .percentageRetained;
+
+                                }
+                            )
+
+                    }
+
+                }
 
             })
+
         );
 
 
@@ -821,11 +1073,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const response =
                 await fetch(
+
                     "../practical/save_simulation2_result.php",
+
                     {
+
                         method: "POST",
+
                         body: formData
+
                     }
+
                 );
 
 
@@ -838,18 +1096,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 simulationStatus.textContent =
                     "Simulation results saved successfully to the database.";
 
+
                 simulationConclusion.classList.remove(
                     "alert-secondary"
                 );
+
 
                 simulationConclusion.classList.add(
                     "alert-success"
                 );
 
+
             } else {
 
                 simulationStatus.textContent =
+
                     data.message ||
+
                     "Could not save simulation results.";
 
             }
@@ -858,9 +1121,13 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
 
             console.error(
+
                 "Save error:",
+
                 error
+
             );
+
 
             simulationStatus.textContent =
                 "Unable to connect to the database.";
@@ -888,8 +1155,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (runSimulation) {
 
         runSimulation.addEventListener(
+
             "click",
+
             runFullSimulation
+
         );
 
     }
@@ -898,8 +1168,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (resetSimulation) {
 
         resetSimulation.addEventListener(
+
             "click",
+
             resetAll
+
         );
 
     }
@@ -908,8 +1181,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (saveResults) {
 
         saveResults.addEventListener(
+
             "click",
+
             saveSimulationResults
+
         );
 
     }
@@ -918,8 +1194,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (printResults) {
 
         printResults.addEventListener(
+
             "click",
+
             printSimulationResults
+
         );
 
     }
@@ -933,8 +1212,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (saveResultsBottom) {
 
         saveResultsBottom.addEventListener(
+
             "click",
+
             saveSimulationResults
+
         );
 
     }
@@ -943,8 +1225,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (printResultsBottom) {
 
         printResultsBottom.addEventListener(
+
             "click",
+
             printSimulationResults
+
         );
 
     }
