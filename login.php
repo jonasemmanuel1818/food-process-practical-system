@@ -1,68 +1,347 @@
 <?php
+
 session_start();
-include("config.php");
+
+require_once "config.php";
+require_once "rate_limit.php";
+
+
+/*
+|--------------------------------------------------------------------------
+| ERROR MESSAGE
+|--------------------------------------------------------------------------
+*/
 
 $error = "";
 
+
+/*
+|--------------------------------------------------------------------------
+| GET CLIENT IP
+|--------------------------------------------------------------------------
+*/
+
+$client_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN PROCESS
+|--------------------------------------------------------------------------
+*/
+
 if (isset($_POST['login'])) {
 
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = $_POST['password'];
-    $role = $_POST['role'];
+    $username = trim(
+        $_POST['username'] ?? ''
+    );
 
-    if (empty($username) || empty($password) || empty($role)) {
+    $password = $_POST['password'] ?? '';
+
+    $role = trim(
+        $_POST['role'] ?? ''
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BASIC VALIDATION
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        $username === '' ||
+        $password === '' ||
+        $role === ''
+    ) {
 
         $error = "Please fill in all fields.";
 
     } else {
 
-        $sql = "SELECT * FROM users
-                WHERE username = '$username'
-                AND role = '$role'
-                LIMIT 1";
 
-        $result = mysqli_query($conn, $sql);
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATE ROLE
+        |--------------------------------------------------------------------------
+        */
 
-        if ($result && mysqli_num_rows($result) === 1) {
+        $allowed_roles = [
+            'student',
+            'admin'
+        ];
 
-            $user = mysqli_fetch_assoc($result);
+        if (!in_array(
+            $role,
+            $allowed_roles,
+            true
+        )) {
 
-            if (password_verify($password, $user['password'])) {
-
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['full_name'] = $user['full_name'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-
-                if (
-                    $user['role'] === 'admin' ||
-                    $user['role'] === 'lecturer'
-                ) {
-
-                    header("Location: admin/dashboard.php");
-                    exit();
-
-                } else {
-
-                    header("Location: dashboard.php");
-                    exit();
-
-                }
-
-            } else {
-
-                $error = "Incorrect password.";
-
-            }
+            $error = "Invalid account type.";
 
         } else {
 
-            $error = "No account found with this username and selected role.";
 
+            /*
+            |--------------------------------------------------------------------------
+            | LOGIN RATE-LIMIT KEY
+            |--------------------------------------------------------------------------
+            */
+
+            $rate_key =
+                "login_" .
+                strtolower($username) .
+                "_" .
+                $client_ip;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CHECK FAILED LOGIN LIMIT
+            |--------------------------------------------------------------------------
+            |
+            | Maximum 5 FAILED attempts within 15 minutes.
+            |
+            | This check does NOT record an attempt.
+            |--------------------------------------------------------------------------
+            */
+
+            $rate_status = get_rate_limit_status(
+                $rate_key,
+                5,
+                900
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BLOCK IF LIMIT REACHED
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$rate_status['allowed']) {
+
+                $minutes = ceil(
+                    $rate_status['retry_after'] / 60
+                );
+
+                if ($minutes < 1) {
+                    $minutes = 1;
+                }
+
+                $error =
+                    "Too many failed login attempts. "
+                    . "Please try again in approximately "
+                    . $minutes
+                    . " minute(s).";
+
+            } else {
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | FIND USER
+                |--------------------------------------------------------------------------
+                */
+
+                $stmt = $conn->prepare("
+                    SELECT
+                        id,
+                        full_name,
+                        username,
+                        password,
+                        role
+                    FROM users
+                    WHERE username = ?
+                    AND role = ?
+                    LIMIT 1
+                ");
+
+
+                if (!$stmt) {
+
+                    $error =
+                        "A system error occurred. Please try again.";
+
+                } else {
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BIND USERNAME AND ROLE
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $stmt->bind_param(
+                        "ss",
+                        $username,
+                        $role
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | EXECUTE QUERY
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $stmt->execute();
+
+                    $result = $stmt->get_result();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | USER FOUND
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        $result &&
+                        $result->num_rows === 1
+                    ) {
+
+                        $user =
+                            $result->fetch_assoc();
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | VERIFY PASSWORD
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            password_verify(
+                                $password,
+                                $user['password']
+                            )
+                        ) {
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | SUCCESSFUL LOGIN
+                            |--------------------------------------------------------------------------
+                            |
+                            | Clear any previous failed attempts.
+                            |--------------------------------------------------------------------------
+                            */
+
+                            clear_rate_limit(
+                                $rate_key
+                            );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | REGENERATE SESSION ID
+                            |--------------------------------------------------------------------------
+                            */
+
+                            session_regenerate_id(true);
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | STORE SESSION INFORMATION
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $_SESSION['user_id'] =
+                                (int) $user['id'];
+
+                            $_SESSION['full_name'] =
+                                $user['full_name'];
+
+                            $_SESSION['username'] =
+                                $user['username'];
+
+                            $_SESSION['role'] =
+                                $user['role'];
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | REDIRECT
+                            |--------------------------------------------------------------------------
+                            */
+
+                            if (
+                                $user['role'] === 'admin'
+                            ) {
+
+                                header(
+                                    "Location: admin/dashboard.php"
+                                );
+
+                                exit();
+
+                            } else {
+
+                                header(
+                                    "Location: dashboard.php"
+                                );
+
+                                exit();
+                            }
+
+
+                        } else {
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | INCORRECT PASSWORD
+                            |--------------------------------------------------------------------------
+                            |
+                            | Record ONLY the failed attempt.
+                            |--------------------------------------------------------------------------
+                            */
+
+                            record_rate_limit_attempt(
+                                $rate_key,
+                                5,
+                                900
+                            );
+
+                            $error =
+                                "Incorrect password.";
+                        }
+
+
+                    } else {
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | USERNAME / ROLE NOT FOUND
+                        |--------------------------------------------------------------------------
+                        |
+                        | This also counts as a failed login attempt.
+                        |--------------------------------------------------------------------------
+                        */
+
+                        record_rate_limit_attempt(
+                            $rate_key,
+                            5,
+                            900
+                        );
+
+                        $error =
+                            "No account found with this username and selected role.";
+                    }
+
+
+                    $stmt->close();
+                }
+            }
         }
     }
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -77,14 +356,18 @@ if (isset($_POST['login'])) {
     >
 
     <title>
-        Login | Food Process Practical Learning System
+        Login | Food Process Practical Learning & Simulation System
     </title>
 
 
-    <!-- Bootstrap Icons -->
     <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
     >
 
 
@@ -95,116 +378,60 @@ if (isset($_POST['login'])) {
         }
 
 
-        html,
         body {
 
             margin: 0;
-            padding: 0;
 
-            width: 100%;
-            min-height: 100%;
+            min-height: 100vh;
 
             font-family:
+                "Segoe UI",
                 Arial,
-                Helvetica,
                 sans-serif;
 
-            background: #f5f8fa;
+            background: #f4f6f8;
 
-            color: #173f53;
+            color: #263238;
         }
 
-
-        /* =====================================================
-           MAIN LOGIN PAGE
-        ===================================================== */
 
         .login-page {
 
-            width: 100%;
             min-height: 100vh;
 
             display: flex;
 
-            overflow: hidden;
-
-            background: #ffffff;
+            align-items: stretch;
         }
 
 
-        /* =====================================================
-           LEFT SIDE
-        ===================================================== */
+        /*
+        ============================================================
+        LEFT PANEL
+        ============================================================
+        */
 
         .left-panel {
 
-            position: relative;
+            width: 50%;
 
-            width: 49%;
             min-height: 100vh;
 
-            background-image:
-                url("assets/images/lab-login.jpg");
-
-            background-size: cover;
-
-            background-position: center;
-
-            display: flex;
-
-            align-items: flex-start;
-
-            color: #ffffff;
+            position: relative;
 
             overflow: hidden;
-        }
-
-
-        /* =====================================================
-           BLUE IMAGE OVERLAY
-        ===================================================== */
-
-        .left-panel::before {
-
-            content: "";
-
-            position: absolute;
-
-            inset: 0;
 
             background:
-                rgba(15, 88, 112, 0.78);
+                linear-gradient(
+                    rgba(15, 88, 112, 0.78),
+                    rgba(15, 88, 112, 0.78)
+                ),
+                url("assets/images/lab-login.jpg")
+                center / cover no-repeat;
 
-            z-index: 1;
+            color: #ffffff;
         }
 
-
-        /* =====================================================
-           BOTTOM IMAGE DARKENING
-        ===================================================== */
-
-        .left-panel::after {
-
-            content: "";
-
-            position: absolute;
-
-            left: 0;
-            right: 0;
-            bottom: 0;
-
-            height: 30%;
-
-            background:
-                rgba(7, 56, 72, 0.20);
-
-            z-index: 1;
-        }
-
-
-        /* =====================================================
-           LEFT MAIN CONTENT
-        ===================================================== */
 
         .left-content {
 
@@ -212,34 +439,60 @@ if (isset($_POST['login'])) {
 
             z-index: 2;
 
-            width: 100%;
+            height: 100%;
 
-            max-width: 690px;
+            min-height: 100vh;
 
             padding:
-                70px 80px 0;
-
-            margin: 0;
+                65px
+                70px
+                180px;
         }
 
 
-        /* =====================================================
-           LEFT TITLE
-        ===================================================== */
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.4px;
+        }
+
+
+        .brand-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 8px;
+
+            background: rgba(255,255,255,0.16);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+        }
+
 
         .left-title {
 
-            margin: 0;
+            margin-top: 110px;
 
-            color: #ffffff;
+            max-width: 610px;
 
-            font-family:
-                Georgia,
-                "Times New Roman",
-                serif;
-
-            font-size:
-                clamp(40px, 3.7vw, 64px);
+            font-size: 52px;
 
             line-height: 1.08;
 
@@ -249,117 +502,57 @@ if (isset($_POST['login'])) {
         }
 
 
-        /* =====================================================
-           LINE UNDER TITLE
-        ===================================================== */
-
-        .left-line {
-
-            width: 48px;
-
-            height: 2px;
-
-            background: #ffffff;
-
-            margin-top: 30px;
-
-            margin-bottom: 25px;
-        }
-
-
-        /* =====================================================
-           LEFT DESCRIPTION
-        ===================================================== */
-
         .left-description {
 
-            max-width: 530px;
+            max-width: 580px;
 
-            margin: 0;
+            margin-top: 24px;
 
-            color: #ffffff;
+            font-size: 17px;
 
-            font-size: 18px;
+            line-height: 1.75;
 
-            line-height: 1.65;
-
-            font-weight: 400;
+            color: rgba(255,255,255,0.90);
         }
 
-
-        /* =====================================================
-           LEFT FOOTER
-        ===================================================== */
 
         .left-footer {
 
             position: absolute;
 
-            left: 80px;
+            left: 70px;
+
+            right: 70px;
 
             bottom: 130px;
-
-            z-index: 3;
-
-            color: #ffffff;
-
-            font-size: 14px;
-
-            letter-spacing: 0.2px;
-        }
-
-
-        /* =====================================================
-           FOOTER LINE
-        ===================================================== */
-
-        .footer-divider {
-
-            width: 42px;
-
-            height: 2px;
-
-            background: #ffffff;
-
-            margin-bottom: 20px;
-        }
-
-
-        /* =====================================================
-           FOOTER ITEMS
-        ===================================================== */
-
-        .footer-items {
 
             display: flex;
 
             align-items: center;
 
-            gap: 14px;
+            gap: 10px;
 
-            white-space: nowrap;
+            font-size: 13px;
+
+            color: rgba(255,255,255,0.78);
         }
 
 
-        .footer-separator {
-
-            opacity: 0.7;
-        }
-
-
-        /* =====================================================
-           RIGHT SIDE
-        ===================================================== */
+        /*
+        ============================================================
+        RIGHT PANEL
+        ============================================================
+        */
 
         .right-panel {
 
-            position: relative;
-
-            width: 51%;
+            width: 50%;
 
             min-height: 100vh;
 
-            background: #f8fafb;
+            background: #ffffff;
+
+            position: relative;
 
             display: flex;
 
@@ -367,183 +560,179 @@ if (isset($_POST['login'])) {
 
             justify-content: center;
 
-            padding:
-                60px 70px;
-
-            overflow: hidden;
+            padding: 50px;
         }
 
 
-        /* =====================================================
-           TOP RIGHT CIRCLE DECORATION
-        ===================================================== */
+        .right-panel::before {
 
-        .top-decoration {
+            content: "";
 
             position: absolute;
 
-            top: -250px;
+            width: 150px;
 
-            right: -180px;
+            height: 150px;
 
-            width: 480px;
+            right: 35px;
 
-            height: 480px;
+            bottom: 30px;
 
-            border:
-                26px solid #e6f0f4;
+            background-image:
+                radial-gradient(
+                    #dce7eb 1.2px,
+                    transparent 1.2px
+                );
 
-            border-radius: 50%;
+            background-size: 12px 12px;
+
+            opacity: 0.7;
 
             pointer-events: none;
         }
 
 
-        .top-decoration-inner {
-
-            position: absolute;
-
-            top: -205px;
-
-            right: -135px;
-
-            width: 390px;
-
-            height: 390px;
-
-            border:
-                1px solid #e0ebef;
-
-            border-radius: 50%;
-
-            pointer-events: none;
-        }
-
-
-        /* =====================================================
-           LEARNING MESSAGE
-        ===================================================== */
-
-        .top-message {
-
-            position: absolute;
-
-            top: 55px;
-
-            left: 70px;
-
-            width: 220px;
-
-            color: #347492;
-
-            font-size: 15px;
-
-            line-height: 1.45;
-
-            z-index: 2;
-        }
-
-
-        .top-message-line {
-
-            width: 48px;
-
-            height: 2px;
-
-            background: #1684b2;
-
-            margin-top: 17px;
-        }
-
-
-        /* =====================================================
-           LOGIN CONTAINER
-        ===================================================== */
-
-        .login-container {
-
-            position: relative;
-
-            z-index: 5;
+        .login-wrapper {
 
             width: 100%;
 
-            max-width: 570px;
+            max-width: 470px;
+
+            position: relative;
+
+            z-index: 2;
 
             margin-top: 75px;
         }
 
 
-        /* =====================================================
-           ERROR MESSAGE
-        ===================================================== */
+        .top-message {
 
-        .login-error {
+            position: absolute;
 
-            background: #fff2f2;
+            top: 48px;
 
-            border:
-                1px solid #e6caca;
+            left: 50px;
 
-            color: #8c3f3f;
+            right: 50px;
 
-            border-radius: 7px;
+            text-align: center;
 
-            padding:
-                12px 15px;
+            color: #17495a;
 
-            margin-bottom: 25px;
+            font-size: 15px;
 
-            font-size: 13px;
+            font-weight: 600;
         }
 
 
-        /* =====================================================
-           FIELD LABEL
-        ===================================================== */
+        .top-message span {
 
-        .field-label {
+            color: #64748b;
+
+            font-weight: 400;
+        }
+
+
+        .login-heading {
+
+            font-size: 34px;
+
+            font-weight: 700;
+
+            color: #17495a;
+
+            margin-bottom: 9px;
+        }
+
+
+        .login-subheading {
+
+            font-size: 15px;
+
+            color: #6b7280;
+
+            margin-bottom: 25px;
+        }
+
+
+        /*
+        ============================================================
+        ERROR MESSAGE
+        ============================================================
+        */
+
+        .error-message {
+
+            background: #fff4f4;
+
+            border: 1px solid #f1c4c4;
+
+            color: #a33a3a;
+
+            border-radius: 8px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 18px;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 9px;
+        }
+
+
+        .error-message i {
+
+            margin-top: 2px;
+        }
+
+
+        /*
+        ============================================================
+        ACCOUNT TYPE
+        ============================================================
+        */
+
+        .account-label {
 
             display: block;
 
-            margin-bottom: 11px;
+            color: #374151;
 
-            color: #173f53;
+            font-size: 14px;
 
-            font-size: 16px;
+            font-weight: 600;
 
-            font-weight: 700;
+            margin-bottom: 10px;
         }
 
 
-        /* =====================================================
-           ACCOUNT TYPE
-        ===================================================== */
+        .account-options {
 
-        .account-type {
+            display: flex;
+
+            gap: 10px;
 
             margin-bottom: 25px;
         }
 
 
-        .role-options {
+        .account-option {
 
-            display: grid;
-
-            grid-template-columns:
-                1fr 1fr;
-
-            gap: 20px;
-        }
-
-
-        .role-option-wrapper {
+            flex: 1;
 
             position: relative;
         }
 
 
-        .role-option-wrapper input {
+        .account-option input {
 
             position: absolute;
 
@@ -553,141 +742,63 @@ if (isset($_POST['login'])) {
         }
 
 
-        .role-option {
-
-            position: relative;
+        .account-card {
 
             height: 48px;
 
-            width: 100%;
+            border: 1px solid #d9dee3;
 
-            border:
-                1px solid #c9d8df;
-
-            border-radius: 6px;
-
-            background: #ffffff;
-
-            display: flex;
-
-            align-items: center;
-
-            padding:
-                0 16px;
-
-            cursor: pointer;
-
-            color: #35566a;
-
-            font-size: 15px;
-
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-
-        .role-option:hover {
-
-            border-color: #1f7190;
-
-            background: #fbfdfe;
-        }
-
-
-        .role-icon {
-
-            font-size: 20px;
-
-            color: #22627c;
-
-            margin-right: 13px;
-        }
-
-
-        .role-text {
-
-            flex: 1;
-        }
-
-
-        /* =====================================================
-           RADIO CIRCLE
-        ===================================================== */
-
-        .radio-circle {
-
-            width: 22px;
-
-            height: 22px;
-
-            border-radius: 50%;
-
-            border:
-                2px solid #bdd0da;
+            border-radius: 8px;
 
             display: flex;
 
             align-items: center;
 
             justify-content: center;
+
+            gap: 8px;
+
+            color: #52606d;
+
+            background: #ffffff;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            font-weight: 500;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                color 0.2s ease;
         }
 
 
-        .radio-circle::after {
+        .account-card i {
 
-            content: "";
-
-            width: 10px;
-
-            height: 10px;
-
-            border-radius: 50%;
-
-            background: transparent;
+            font-size: 20px;
         }
 
 
-        /* =====================================================
-           SELECTED ACCOUNT
-        ===================================================== */
+        .account-option input:checked + .account-card {
 
-        .role-option-wrapper
-        input:checked
-        + .role-option {
+            border-color: #1f5f75;
 
-            border-color: #1687ba;
+            background: #eef7fa;
 
-            background: #fafdff;
+            color: #17495a;
 
             box-shadow:
-                0 0 0 1px
-                rgba(22, 135, 186, 0.15);
+                0 0 0 2px rgba(31,95,117,0.08);
         }
 
 
-        .role-option-wrapper
-        input:checked
-        + .role-option
-        .radio-circle {
-
-            border-color: #176b89;
-        }
-
-
-        .role-option-wrapper
-        input:checked
-        + .role-option
-        .radio-circle::after {
-
-            background: #176b89;
-        }
-
-
-        /* =====================================================
-           FORM GROUP
-        ===================================================== */
+        /*
+        ============================================================
+        FORM
+        ============================================================
+        */
 
         .form-group {
 
@@ -695,9 +806,19 @@ if (isset($_POST['login'])) {
         }
 
 
-        /* =====================================================
-           INPUT WRAPPER
-        ===================================================== */
+        .form-label {
+
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #374151;
+
+            margin-bottom: 8px;
+        }
+
 
         .input-wrapper {
 
@@ -705,151 +826,134 @@ if (isset($_POST['login'])) {
         }
 
 
-        /* =====================================================
-           INPUT
-        ===================================================== */
+        .input-wrapper > i {
 
-        .form-control {
+            position: absolute;
 
-            width: 100%;
+            left: 15px;
 
-            height: 53px;
+            top: 50%;
 
-            padding:
-                0 18px;
+            transform: translateY(-50%);
 
-            border:
-                1px solid #c7d5dc;
+            color: #82909a;
 
-            border-radius: 6px;
+            font-size: 17px;
 
-            background: #ffffff;
-
-            color: #294e62;
-
-            font-size: 16px;
-
-            outline: none;
-
-            box-shadow: none;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
+            z-index: 2;
         }
 
 
-        .form-control::placeholder {
+        .form-control {
 
-            color: #678196;
+            height: 51px;
 
-            opacity: 1;
+            border: 1px solid #d9dee3;
+
+            border-radius: 8px;
+
+            padding-left: 44px;
+
+            padding-right: 44px;
+
+            font-size: 15px;
+
+            color: #263238;
+
+            box-shadow: none;
         }
 
 
         .form-control:focus {
 
-            border-color: #1687ba;
+            border-color: #1f5f75;
 
             box-shadow:
-                0 0 0 3px
-                rgba(22, 135, 186, 0.10);
+                0 0 0 3px rgba(31,95,117,0.10);
         }
 
-
-        /* =====================================================
-           PASSWORD INPUT
-        ===================================================== */
-
-        .password-input {
-
-            padding-right: 55px;
-        }
-
-
-        /* =====================================================
-           PASSWORD TOGGLE
-        ===================================================== */
 
         .password-toggle {
 
             position: absolute;
 
+            right: 14px;
+
             top: 50%;
 
-            right: 17px;
+            transform: translateY(-50%);
 
-            transform:
-                translateY(-50%);
-
-            border: none;
+            border: 0;
 
             background: transparent;
 
-            padding: 4px;
+            color: #82909a;
 
-            color: #3d6a81;
-
-            font-size: 20px;
+            padding: 3px;
 
             cursor: pointer;
+
+            font-size: 17px;
+
+            z-index: 3;
         }
 
 
         .password-toggle:hover {
 
-            color: #155c77;
+            color: #1f5f75;
         }
 
 
-        /* =====================================================
-           SIGN IN BUTTON
-        ===================================================== */
+        /*
+        ============================================================
+        LOGIN BUTTON
+        ============================================================
+        */
 
         .login-button {
 
             width: 100%;
 
-            height: 59px;
+            height: 54px;
 
-            border: none;
+            border: 0;
 
-            border-radius: 6px;
+            border-radius: 8px;
 
-            background: #155e75;
+            background: #1f5f75;
 
             color: #ffffff;
 
-            font-size: 20px;
+            font-size: 15px;
 
-            font-weight: 700;
-
-            cursor: pointer;
-
-            margin-top: 2px;
+            font-weight: 600;
 
             transition:
                 background 0.2s ease,
-                transform 0.1s ease;
+                transform 0.2s ease;
         }
 
 
         .login-button:hover {
 
-            background: #104c60;
+            background: #17495a;
+
+            color: #ffffff;
         }
 
 
         .login-button:active {
 
-            transform:
-                translateY(1px);
+            transform: translateY(1px);
         }
 
 
-        /* =====================================================
-           REGISTER SECTION
-        ===================================================== */
+        /*
+        ============================================================
+        REGISTER
+        ============================================================
+        */
 
         .register-section {
 
@@ -857,109 +961,41 @@ if (isset($_POST['login'])) {
 
             padding-top: 18px;
 
-            border-top:
-                1px solid #cad7dd;
+            border-top: 1px solid #e6eaed;
 
             text-align: center;
-        }
 
+            color: #6b7280;
 
-        .register-section p {
-
-            margin: 0;
-
-            color: #173f53;
-
-            font-size: 15px;
-
-            line-height: 1.5;
+            font-size: 14px;
         }
 
 
         .register-section a {
 
-            color: #155e75;
+            color: #1f5f75;
 
-            font-weight: 700;
+            font-weight: 600;
 
-            text-decoration: underline;
-
-            margin-left: 6px;
+            text-decoration: none;
         }
 
 
         .register-section a:hover {
 
-            color: #0d4c62;
+            text-decoration: underline;
         }
 
 
-        /* =====================================================
-           BOTTOM RIGHT DOT PATTERN
-        ===================================================== */
+        /*
+        ============================================================
+        RESPONSIVE
+        ============================================================
+        */
 
-        .dot-pattern {
-
-            position: absolute;
-
-            right: 18px;
-
-            bottom: 28px;
-
-            width: 190px;
-
-            height: 125px;
-
-            background-image:
-                radial-gradient(
-                    #c4dfeb 2.5px,
-                    transparent 2.5px
-                );
-
-            background-size:
-                24px 20px;
-
-            opacity: 0.9;
-
-            pointer-events: none;
-        }
-
-
-        /* =====================================================
-           TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
+        @media (max-width: 1000px) {
 
             .left-content {
-
-                padding-left: 55px;
-
-                padding-right: 45px;
-            }
-
-
-            .left-title {
-
-                font-size: 43px;
-            }
-
-
-            .left-description {
-
-                font-size: 16px;
-            }
-
-
-            .left-footer {
-
-                left: 55px;
-
-                bottom: 115px;
-            }
-
-
-            .right-panel {
 
                 padding-left: 45px;
 
@@ -967,99 +1003,79 @@ if (isset($_POST['login'])) {
             }
 
 
-            .top-message {
+            .left-title {
+
+                font-size: 44px;
+            }
+
+
+            .left-footer {
 
                 left: 45px;
+
+                right: 45px;
             }
 
 
-            .login-container {
+            .right-panel {
 
-                margin-top: 75px;
+                padding: 35px;
             }
 
+
+            .top-message {
+
+                left: 35px;
+
+                right: 35px;
+            }
         }
 
 
-        /* =====================================================
-           MOBILE VIEW
-        ===================================================== */
-
         @media (max-width: 800px) {
-
 
             .login-page {
 
                 display: block;
-
-                overflow-x: hidden;
-
-                overflow-y: visible;
             }
 
-
-            /* ---------------------------------------------
-               LEFT IMAGE SECTION
-            --------------------------------------------- */
 
             .left-panel {
 
                 width: 100%;
 
                 min-height: 510px;
-
-                display: block;
-
-                align-items: initial;
             }
 
 
             .left-content {
 
-                width: 100%;
-
-                max-width: none;
+                min-height: 510px;
 
                 padding:
-                    55px 35px 0;
-
-                margin: 0;
+                    55px
+                    35px
+                    0;
             }
 
 
             .left-title {
 
+                margin-top: 85px;
+
                 font-size: 40px;
 
-                line-height: 1.12;
-
-                letter-spacing: -0.7px;
-            }
-
-
-            .left-line {
-
-                width: 42px;
-
-                margin-top: 25px;
-
-                margin-bottom: 20px;
+                max-width: 650px;
             }
 
 
             .left-description {
-
-                max-width: 520px;
 
                 font-size: 16px;
 
                 line-height: 1.65;
             }
 
-
-            /* ---------------------------------------------
-               LEFT FOOTER
-            --------------------------------------------- */
 
             .left-footer {
 
@@ -1069,35 +1085,11 @@ if (isset($_POST['login'])) {
 
                 bottom: 48px;
 
-                font-size: 12px;
-            }
-
-
-            .footer-divider {
-
-                width: 38px;
-
-                margin-bottom: 15px;
-            }
-
-
-            .footer-items {
-
-                display: flex;
+                line-height: 1.5;
 
                 flex-wrap: wrap;
-
-                gap: 7px 9px;
-
-                white-space: normal;
-
-                line-height: 1.5;
             }
 
-
-            /* ---------------------------------------------
-               RIGHT LOGIN SECTION
-            --------------------------------------------- */
 
             .right-panel {
 
@@ -1105,249 +1097,33 @@ if (isset($_POST['login'])) {
 
                 min-height: 700px;
 
-                display: flex;
+                padding:
+                    75px
+                    35px
+                    60px;
 
                 align-items: flex-start;
-
-                justify-content: center;
-
-                padding:
-                    75px 35px 60px;
-
-                overflow: hidden;
             }
 
-
-            /* ---------------------------------------------
-               TOP DECORATION
-            --------------------------------------------- */
-
-            .top-decoration {
-
-                top: -210px;
-
-                right: -170px;
-
-                width: 390px;
-
-                height: 390px;
-
-                border-width: 22px;
-
-                opacity: 0.8;
-            }
-
-
-            .top-decoration-inner {
-
-                top: -175px;
-
-                right: -135px;
-
-                width: 325px;
-
-                height: 325px;
-
-                opacity: 0.8;
-            }
-
-
-            /* ---------------------------------------------
-               LEARNING MESSAGE
-            --------------------------------------------- */
 
             .top-message {
 
-                position: absolute;
-
-                top: 28px;
-
                 left: 35px;
 
-                right: auto;
+                right: 35px;
 
-                width: 210px;
-
-                font-size: 12px;
-
-                line-height: 1.5;
+                top: 28px;
             }
 
 
-            .top-message-line {
-
-                width: 42px;
-
-                margin-top: 11px;
-            }
-
-
-            /* ---------------------------------------------
-               LOGIN CONTAINER
-            --------------------------------------------- */
-
-            .login-container {
-
-                width: 100%;
-
-                max-width: 570px;
+            .login-wrapper {
 
                 margin-top: 72px;
             }
-
-
-            /* ---------------------------------------------
-               ACCOUNT TYPE
-            --------------------------------------------- */
-
-            .account-type {
-
-                margin-bottom: 25px;
-            }
-
-
-            .role-options {
-
-                grid-template-columns: 1fr;
-
-                gap: 12px;
-            }
-
-
-            .role-option {
-
-                height: 50px;
-
-                padding:
-                    0 15px;
-
-                font-size: 15px;
-            }
-
-
-            .role-icon {
-
-                font-size: 20px;
-
-                margin-right: 13px;
-            }
-
-
-            .radio-circle {
-
-                width: 20px;
-
-                height: 20px;
-            }
-
-
-            .radio-circle::after {
-
-                width: 9px;
-
-                height: 9px;
-            }
-
-
-            /* ---------------------------------------------
-               FORM GROUPS
-            --------------------------------------------- */
-
-            .form-group {
-
-                margin-bottom: 21px;
-            }
-
-
-            .field-label {
-
-                margin-bottom: 9px;
-
-                font-size: 14px;
-            }
-
-
-            /* ---------------------------------------------
-               INPUTS
-            --------------------------------------------- */
-
-            .form-control {
-
-                width: 100%;
-
-                height: 51px;
-
-                font-size: 15px;
-
-                padding-left: 15px;
-
-                padding-right: 15px;
-            }
-
-
-            .password-input {
-
-                padding-right: 52px;
-            }
-
-
-            /* ---------------------------------------------
-               SIGN IN
-            --------------------------------------------- */
-
-            .login-button {
-
-                height: 54px;
-
-                font-size: 18px;
-
-                margin-top: 2px;
-            }
-
-
-            /* ---------------------------------------------
-               REGISTER
-            --------------------------------------------- */
-
-            .register-section {
-
-                margin-top: 23px;
-
-                padding-top: 18px;
-            }
-
-
-            .register-section p {
-
-                font-size: 13px;
-
-                line-height: 1.5;
-            }
-
-
-            /* ---------------------------------------------
-               DOT PATTERN
-            --------------------------------------------- */
-
-            .dot-pattern {
-
-                display: none;
-            }
-
         }
 
 
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
         @media (max-width: 520px) {
-
-
-            /* ---------------------------------------------
-               LEFT SIDE
-            --------------------------------------------- */
 
             .left-panel {
 
@@ -1357,44 +1133,30 @@ if (isset($_POST['login'])) {
 
             .left-content {
 
+                min-height: 520px;
+
                 padding:
-                    45px 25px 0;
+                    45px
+                    25px
+                    0;
             }
 
 
             .left-title {
 
+                margin-top: 70px;
+
                 font-size: 33px;
-
-                line-height: 1.12;
-
-                letter-spacing: -0.5px;
-            }
-
-
-            .left-line {
-
-                width: 38px;
-
-                margin-top: 22px;
-
-                margin-bottom: 18px;
             }
 
 
             .left-description {
 
-                font-size: 14px;
+                margin-top: 18px;
 
-                line-height: 1.65;
-
-                max-width: 100%;
+                font-size: 15px;
             }
 
-
-            /* ---------------------------------------------
-               LEFT FOOTER
-            --------------------------------------------- */
 
             .left-footer {
 
@@ -1404,187 +1166,73 @@ if (isset($_POST['login'])) {
 
                 bottom: 35px;
 
-                font-size: 10px;
+                font-size: 12px;
             }
 
-
-            .footer-divider {
-
-                width: 35px;
-
-                height: 1px;
-
-                margin-bottom: 12px;
-            }
-
-
-            .footer-items {
-
-                gap: 5px 7px;
-
-                line-height: 1.4;
-            }
-
-
-            /* ---------------------------------------------
-               RIGHT SIDE
-            --------------------------------------------- */
 
             .right-panel {
 
-                min-height: 680px;
-
                 padding:
-                    65px 25px 50px;
+                    65px
+                    25px
+                    50px;
             }
 
-
-            /* ---------------------------------------------
-               DECORATION
-            --------------------------------------------- */
-
-            .top-decoration {
-
-                top: -180px;
-
-                right: -155px;
-
-                width: 330px;
-
-                height: 330px;
-
-                border-width: 18px;
-            }
-
-
-            .top-decoration-inner {
-
-                top: -150px;
-
-                right: -120px;
-
-                width: 275px;
-
-                height: 275px;
-            }
-
-
-            /* ---------------------------------------------
-               LEARNING MESSAGE
-            --------------------------------------------- */
 
             .top-message {
 
-                top: 24px;
-
                 left: 25px;
 
-                width: 190px;
+                right: 25px;
 
-                font-size: 11px;
-            }
-
-
-            .top-message-line {
-
-                width: 38px;
-
-                margin-top: 9px;
-            }
-
-
-            /* ---------------------------------------------
-               LOGIN FORM
-            --------------------------------------------- */
-
-            .login-container {
-
-                margin-top: 65px;
-            }
-
-
-            .account-type {
-
-                margin-bottom: 23px;
-            }
-
-
-            .role-options {
-
-                gap: 10px;
-            }
-
-
-            .role-option {
-
-                height: 48px;
-
-                padding:
-                    0 13px;
+                top: 25px;
 
                 font-size: 14px;
             }
 
 
-            .role-icon {
+            .login-wrapper {
 
-                font-size: 19px;
-
-                margin-right: 11px;
+                margin-top: 65px;
             }
 
 
-            .radio-circle {
+            .login-heading {
 
-                width: 19px;
-
-                height: 19px;
+                font-size: 29px;
             }
 
 
-            .form-group {
+            .account-options {
 
-                margin-bottom: 19px;
+                flex-direction: column;
+
+                gap: 8px;
             }
 
 
-            .field-label {
+            .account-card {
 
-                font-size: 13px;
-
-                margin-bottom: 8px;
+                height: 48px;
             }
 
 
             .form-control {
 
                 height: 49px;
-
-                font-size: 14px;
             }
 
 
             .login-button {
 
                 height: 52px;
-
-                font-size: 17px;
             }
 
 
             .register-section {
 
-                margin-top: 21px;
-
-                padding-top: 16px;
+                font-size: 13px;
             }
-
-
-            .register-section p {
-
-                font-size: 12px;
-            }
-
         }
 
     </style>
@@ -1598,262 +1246,169 @@ if (isset($_POST['login'])) {
 <div class="login-page">
 
 
-    <!-- =================================================
-         LEFT IMAGE / BRANDING SIDE
-    ================================================== -->
+    <!-- =========================================================
+         LEFT PANEL
+    ========================================================== -->
 
     <section class="left-panel">
-
 
         <div class="left-content">
 
 
-            <h1 class="left-title">
+            <div class="brand">
 
-                Food Process
-                <br>
+                <div class="brand-icon">
 
-                Practical Learning
-                <br>
+                    <i class="bi bi-beaker"></i>
 
-                and Simulation System
+                </div>
 
-            </h1>
-
-
-            <div class="left-line"></div>
-
-
-            <p class="left-description">
-
-                Bridging practical knowledge and
-                simulation for a safer, healthier
-                food future.
-
-            </p>
-
-
-        </div>
-
-
-
-        <!-- =================================================
-             LEFT FOOTER
-        ================================================== -->
-
-        <div class="left-footer">
-
-
-            <div class="footer-divider"></div>
-
-
-            <div class="footer-items">
-
-                <span>
-                    Science
-                </span>
-
-
-                <span class="footer-separator">
-                    |
-                </span>
-
-
-                <span>
-                    Practice
-                </span>
-
-
-                <span class="footer-separator">
-                    |
-                </span>
-
-
-                <span>
-                    Food Safety
-                </span>
-
-
-                <span class="footer-separator">
-                    |
-                </span>
-
-
-                <span>
-                    Better Tomorrow
-                </span>
+                Food Process Practical Learning & Simulation System
 
             </div>
 
 
-        </div>
+            <h1 class="left-title">
 
+                Learn practical food processing through experience.
+
+            </h1>
+
+
+            <p class="left-description">
+
+                Explore laboratory practicals, perform simulations,
+                record observations and understand food processing
+                operations through an interactive learning environment.
+
+            </p>
+
+
+            <div class="left-footer">
+
+                <i class="bi bi-shield-check"></i>
+
+                Academic learning environment for practical food
+                processing education.
+
+            </div>
+
+        </div>
 
     </section>
 
 
 
-    <!-- =================================================
-         RIGHT LOGIN SIDE
-    ================================================== -->
+    <!-- =========================================================
+         RIGHT PANEL
+    ========================================================== -->
 
     <section class="right-panel">
 
-
-        <!-- TOP CIRCLE DECORATION -->
-
-        <div class="top-decoration"></div>
-
-        <div class="top-decoration-inner"></div>
-
-
-
-        <!-- =================================================
-             LEARNING MESSAGE
-        ================================================== -->
 
         <div class="top-message">
 
             Learning today
 
-            <br>
-
-            for a healthier tomorrow.
-
-
-            <div class="top-message-line"></div>
+            <span>/ for a healthier tomorrow.</span>
 
         </div>
 
 
-
-        <!-- =================================================
-             LOGIN FORM
-        ================================================== -->
-
-        <div class="login-container">
+        <div class="login-wrapper">
 
 
-            <!-- ERROR MESSAGE -->
+            <h2 class="login-heading">
 
-            <?php if (!empty($error)): ?>
+                Sign in
 
-                <div class="login-error">
+            </h2>
 
-                    <?= htmlspecialchars($error) ?>
+
+            <p class="login-subheading">
+
+                Access your practical learning workspace.
+
+            </p>
+
+
+            <?php if ($error !== ""): ?>
+
+                <div class="error-message">
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                    <span>
+                        <?= htmlspecialchars($error) ?>
+                    </span>
 
                 </div>
 
             <?php endif; ?>
 
 
-
-            <form method="POST">
-
-
-                <!-- =================================================
-                     ACCOUNT TYPE
-                ================================================== -->
-
-                <div class="account-type">
+            <form
+                method="POST"
+                action=""
+                autocomplete="off"
+            >
 
 
-                    <label class="field-label">
+                <!-- ACCOUNT TYPE -->
 
-                        Account Type
+                <label class="account-label">
 
-                    </label>
+                    Account type
 
-
-                    <div class="role-options">
-
+                </label>
 
 
-                        <!-- STUDENT -->
-
-                        <div class="role-option-wrapper">
+                <div class="account-options">
 
 
-                            <input
-                                type="radio"
-                                name="role"
-                                id="student"
-                                value="student"
-                                checked
-                            >
+                    <div class="account-option">
+
+                        <input
+                            type="radio"
+                            name="role"
+                            id="studentRole"
+                            value="student"
+                            checked
+                        >
+
+                        <label
+                            for="studentRole"
+                            class="account-card"
+                        >
+
+                            <i class="bi bi-person"></i>
+
+                            Student
+
+                        </label>
+
+                    </div>
 
 
-                            <label
-                                for="student"
-                                class="role-option"
-                            >
+                    <div class="account-option">
 
+                        <input
+                            type="radio"
+                            name="role"
+                            id="adminRole"
+                            value="admin"
+                        >
 
-                                <i
-                                    class="bi bi-person-fill role-icon"
-                                ></i>
+                        <label
+                            for="adminRole"
+                            class="account-card"
+                        >
 
+                            <i class="bi bi-shield-lock"></i>
 
-                                <span class="role-text">
+                            Admin
 
-                                    Student
-
-                                </span>
-
-
-                                <span
-                                    class="radio-circle"
-                                ></span>
-
-
-                            </label>
-
-
-                        </div>
-
-
-
-                        <!-- ADMINISTRATOR -->
-
-                        <div class="role-option-wrapper">
-
-
-                            <input
-                                type="radio"
-                                name="role"
-                                id="admin"
-                                value="admin"
-                            >
-
-
-                            <label
-                                for="admin"
-                                class="role-option"
-                            >
-
-
-                                <i
-                                    class="bi bi-shield-fill role-icon"
-                                ></i>
-
-
-                                <span class="role-text">
-
-                                    Administrator
-
-                                </span>
-
-
-                                <span
-                                    class="radio-circle"
-                                ></span>
-
-
-                            </label>
-
-
-                        </div>
-
+                        </label>
 
                     </div>
 
@@ -1862,16 +1417,13 @@ if (isset($_POST['login'])) {
 
 
 
-                <!-- =================================================
-                     USERNAME
-                ================================================== -->
+                <!-- USERNAME -->
 
                 <div class="form-group">
 
-
                     <label
                         for="username"
-                        class="field-label"
+                        class="form-label"
                     >
 
                         Username
@@ -1881,6 +1433,7 @@ if (isset($_POST['login'])) {
 
                     <div class="input-wrapper">
 
+                        <i class="bi bi-person"></i>
 
                         <input
                             type="text"
@@ -1888,28 +1441,24 @@ if (isset($_POST['login'])) {
                             id="username"
                             class="form-control"
                             placeholder="Enter your username"
-                            autocomplete="username"
+                            value=""
                             required
+                            autocomplete="off"
                         >
 
-
                     </div>
-
 
                 </div>
 
 
 
-                <!-- =================================================
-                     PASSWORD
-                ================================================== -->
+                <!-- PASSWORD -->
 
                 <div class="form-group">
 
-
                     <label
                         for="password"
-                        class="field-label"
+                        class="form-label"
                     >
 
                         Password
@@ -1919,51 +1468,46 @@ if (isset($_POST['login'])) {
 
                     <div class="input-wrapper">
 
+                        <i class="bi bi-lock"></i>
 
                         <input
                             type="password"
                             name="password"
                             id="password"
-                            class="form-control password-input"
+                            class="form-control"
                             placeholder="Enter your password"
-                            autocomplete="current-password"
+                            value=""
                             required
+                            autocomplete="new-password"
                         >
 
 
                         <button
                             type="button"
                             class="password-toggle"
-                            id="passwordToggle"
+                            id="togglePassword"
                             aria-label="Show password"
                         >
 
-
-                            <i
-                                class="bi bi-eye"
-                                id="passwordIcon"
-                            ></i>
-
+                            <i class="bi bi-eye"></i>
 
                         </button>
 
-
                     </div>
-
 
                 </div>
 
 
 
-                <!-- =================================================
-                     SIGN IN
-                ================================================== -->
+                <!-- LOGIN BUTTON -->
 
                 <button
                     type="submit"
                     name="login"
                     class="login-button"
                 >
+
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
 
                     Sign In
 
@@ -1974,124 +1518,95 @@ if (isset($_POST['login'])) {
 
 
 
-            <!-- =================================================
-                 REGISTER
-            ================================================== -->
+            <!-- REGISTER -->
 
             <div class="register-section">
 
+                Don't have a student account?
 
-                <p>
-
-                    Don't have a student account?
-
-
-                    <a href="register.php">
-
-                        Register
-
-                    </a>
-
-                </p>
-
+                <a href="register.php">
+                    Register here
+                </a>
 
             </div>
 
 
         </div>
 
-
-
-        <!-- =================================================
-             DOT PATTERN
-        ================================================== -->
-
-        <div class="dot-pattern"></div>
-
-
     </section>
-
 
 </div>
 
 
 
-<!-- =====================================================
-     PASSWORD SHOW / HIDE
-====================================================== -->
-
 <script>
 
+    /*
+    ============================================================
+    PASSWORD VISIBILITY
+    ============================================================
+    */
 
     const passwordInput =
         document.getElementById("password");
 
-
-    const passwordToggle =
-        document.getElementById("passwordToggle");
-
-
-    const passwordIcon =
-        document.getElementById("passwordIcon");
+    const togglePassword =
+        document.getElementById("togglePassword");
 
 
+    if (
+        passwordInput &&
+        togglePassword
+    ) {
 
-    passwordToggle.addEventListener(
-        "click",
-        function () {
+        togglePassword.addEventListener(
+            "click",
+            function () {
 
-
-            if (
-                passwordInput.type === "password"
-            ) {
-
-
-                passwordInput.type = "text";
-
-
-                passwordIcon.classList.remove(
-                    "bi-eye"
-                );
+                const icon =
+                    this.querySelector("i");
 
 
-                passwordIcon.classList.add(
-                    "bi-eye-slash"
-                );
+                if (
+                    passwordInput.type === "password"
+                ) {
 
+                    passwordInput.type = "text";
 
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
+                    icon.classList.remove(
+                        "bi-eye"
+                    );
 
+                    icon.classList.add(
+                        "bi-eye-slash"
+                    );
 
-            } else {
+                    this.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
 
+                } else {
 
-                passwordInput.type =
-                    "password";
+                    passwordInput.type = "password";
 
+                    icon.classList.remove(
+                        "bi-eye-slash"
+                    );
 
-                passwordIcon.classList.remove(
-                    "bi-eye-slash"
-                );
+                    icon.classList.add(
+                        "bi-eye"
+                    );
 
-
-                passwordIcon.classList.add(
-                    "bi-eye"
-                );
-
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-
+                    this.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+                }
 
             }
-
-        }
-    );
+        );
+    }
 
 </script>
 

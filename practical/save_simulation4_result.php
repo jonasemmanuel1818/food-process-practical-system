@@ -1,6 +1,7 @@
 <?php
 
 require_once "../config.php";
+require_once "../rate_limit.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -27,6 +28,31 @@ $user_id = (int) $_SESSION['user_id'];
 
 
 /* =========================================================
+   RATE LIMIT — PRACTICAL 4 SIMULATION
+   Maximum 5 saves per minute per logged-in user
+========================================================= */
+
+$rate_limit = check_rate_limit(
+    "simulation_p4_user_" . $user_id,
+    5,
+    60
+);
+
+if (!$rate_limit['allowed']) {
+
+    http_response_code(429);
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Too many simulation saves. Please wait a moment and try again.",
+        "retry_after" => $rate_limit['retry_after']
+    ]);
+
+    exit();
+}
+
+
+/* =========================================================
    GET JSON DATA
 ========================================================= */
 
@@ -43,7 +69,10 @@ if (!$raw_data) {
 }
 
 
-$data = json_decode($raw_data, true);
+$data = json_decode(
+    $raw_data,
+    true
+);
 
 
 if (!is_array($data)) {
@@ -224,13 +253,17 @@ if ($stmt->execute()) {
 
     echo json_encode([
         "success" => false,
-        "message" => "Could not save simulation result.",
-        "error" => $stmt->error
+        "message" => "Could not save simulation result."
     ]);
 
 }
 
 
+/* =========================================================
+   CLOSE
+========================================================= */
+
 $stmt->close();
+$conn->close();
 
 ?>

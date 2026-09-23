@@ -1,6 +1,7 @@
 <?php
 
 require_once "../config.php";
+require_once "../rate_limit.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -8,28 +9,82 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header("Content-Type: application/json");
 
+
+/* =========================================================
+   CHECK LOGIN
+========================================================= */
+
 if (!isset($_SESSION['user_id'])) {
+
     echo json_encode([
         "success" => false,
         "message" => "User is not logged in."
     ]);
+
     exit();
 }
 
 $user_id = (int) $_SESSION['user_id'];
 
+
+/* =========================================================
+   RATE LIMIT — PRACTICAL 2 SIMULATION
+   Maximum 5 saves per minute per logged-in user
+========================================================= */
+
+$rate_limit = check_rate_limit(
+    "simulation_p2_user_" . $user_id,
+    5,
+    60
+);
+
+if (!$rate_limit['allowed']) {
+
+    http_response_code(429);
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Too many simulation saves. Please wait a moment and try again.",
+        "retry_after" => $rate_limit['retry_after']
+    ]);
+
+    exit();
+}
+
+
+/* =========================================================
+   GET SIMULATION DATA
+========================================================= */
+
 $input_data = $_POST['input_data'] ?? '';
 $result_data = $_POST['result_data'] ?? '';
 
+
+/* =========================================================
+   VALIDATE DATA
+========================================================= */
+
 if (empty($input_data) || empty($result_data)) {
+
     echo json_encode([
         "success" => false,
         "message" => "Simulation data is missing."
     ]);
+
     exit();
 }
 
+
+/* =========================================================
+   SIMULATION TYPE
+========================================================= */
+
 $simulation_type = "Centrifugation and Sieve Analysis";
+
+
+/* =========================================================
+   SAVE RESULT
+========================================================= */
 
 $stmt = $conn->prepare("
     INSERT INTO simulation_results
@@ -43,13 +98,25 @@ $stmt = $conn->prepare("
     VALUES (?, 2, ?, ?, ?)
 ");
 
+
+/* =========================================================
+   CHECK STATEMENT
+========================================================= */
+
 if (!$stmt) {
+
     echo json_encode([
         "success" => false,
         "message" => "Could not prepare database statement."
     ]);
+
     exit();
 }
+
+
+/* =========================================================
+   BIND DATA
+========================================================= */
 
 $stmt->bind_param(
     "isss",
@@ -58,6 +125,11 @@ $stmt->bind_param(
     $input_data,
     $result_data
 );
+
+
+/* =========================================================
+   EXECUTE
+========================================================= */
 
 if ($stmt->execute()) {
 
@@ -75,6 +147,12 @@ if ($stmt->execute()) {
     ]);
 }
 
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
 $stmt->close();
 $conn->close();
+
 ?>
