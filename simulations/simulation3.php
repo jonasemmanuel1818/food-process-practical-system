@@ -12,7 +12,13 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-$stmt = $conn->prepare("SELECT full_name FROM users WHERE id = ?");
+$stmt = $conn->prepare("
+    SELECT full_name, username
+    FROM users
+    WHERE id = ?
+    LIMIT 1
+");
+
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 
@@ -20,8 +26,13 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 $full_name = $user['full_name'] ?? 'Student';
+$username = $user['username'] ?? '';
 
 $stmt->close();
+
+$initial = strtoupper(
+    substr(trim($full_name), 0, 1)
+);
 ?>
 
 <!DOCTYPE html>
@@ -29,1631 +40,2459 @@ $stmt->close();
 
 <head>
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Practical 3 | Thermal Processing Simulation</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
-
-    <style>
-
-        :root {
-            --lab-blue: #1f5f75;
-            --lab-blue-dark: #17495a;
-            --lab-blue-light: #eaf3f6;
-            --page-bg: #f4f6f8;
-            --border: #d9dee3;
-            --text: #263238;
-            --muted: #6c757d;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--page-bg);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        /* =========================
-           TOP HEADER
-        ========================= */
-
-        .system-header {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            height: 76px;
-            display: flex;
-            align-items: center;
-        }
-
-        .system-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-            background: var(--lab-blue);
-            color: #ffffff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .brand-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0;
-            color: var(--lab-blue-dark);
-        }
-
-        .brand-subtitle {
-            font-size: 12px;
-            color: var(--muted);
-            margin: 2px 0 0;
-        }
-
-        .student-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .student-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--lab-blue-light);
-            color: var(--lab-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        .student-name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* =========================
-           PAGE HEADER
-        ========================= */
-
-        .page-heading {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            padding: 25px 0;
-        }
-
-        .breadcrumb-text {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-
-        .page-title {
-            font-size: 27px;
-            font-weight: 700;
-            color: var(--lab-blue-dark);
-            margin-bottom: 5px;
-        }
-
-        .page-description {
-            color: var(--muted);
-            margin: 0;
-        }
-
-        /* =========================
-           CARDS
-        ========================= */
-
-        .lab-card {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .lab-card-header {
-            padding: 15px 18px;
-            border-bottom: 1px solid var(--border);
-            background: #fafbfc;
-            font-weight: 700;
-            color: var(--lab-blue-dark);
-        }
-
-        .lab-card-body {
-            padding: 20px;
-        }
-
-        /* =========================
-           INFORMATION BOX
-        ========================= */
-
-        .info-box {
-            background: var(--lab-blue-light);
-            border-left: 4px solid var(--lab-blue);
-            padding: 16px;
-            border-radius: 5px;
-        }
-
-        .info-box p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* =========================
-           PARAMETERS
-        ========================= */
-
-        .parameter-box {
-            height: 100%;
-            border: 1px solid var(--border);
-            background: #ffffff;
-            border-radius: 7px;
-            padding: 15px;
-        }
-
-        .parameter-box label {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .parameter-help {
-            display: block;
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .form-control {
-            border-color: #cfd5da;
-            border-radius: 5px;
-        }
-
-        .form-control:focus {
-            border-color: var(--lab-blue);
-            box-shadow: 0 0 0 0.15rem rgba(31, 95, 117, 0.12);
-        }
-
-        /* =========================
-           CONTROL PANEL
-        ========================= */
-
-        .control-panel {
-            border-top: 1px solid var(--border);
-            margin-top: 20px;
-            padding-top: 18px;
-        }
-
-        .control-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--lab-blue-dark);
-            margin-bottom: 12px;
-        }
-
-        .simulation-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .simulation-controls .btn {
-            min-width: 105px;
-        }
-
-        .btn-lab {
-            background: var(--lab-blue);
-            border-color: var(--lab-blue);
-            color: #ffffff;
-        }
-
-        .btn-lab:hover {
-            background: var(--lab-blue-dark);
-            border-color: var(--lab-blue-dark);
-            color: #ffffff;
-        }
-
-        /* =========================
-           STATUS
-        ========================= */
-
-        .status-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .status-label {
-            font-weight: 700;
-            color: var(--lab-blue-dark);
-        }
-
-        .progress {
-            height: 20px;
-            border-radius: 4px;
-            background: #e9ecef;
-        }
-
-        .progress-bar {
-            background: var(--lab-blue);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        /* =========================
-           RESULTS
-        ========================= */
-
-        .result-box {
-            height: 100%;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            padding: 18px;
-            background: #ffffff;
-            text-align: center;
-        }
-
-        .result-icon {
-            font-size: 25px;
-            color: var(--lab-blue);
-            margin-bottom: 8px;
-        }
-
-        .result-label {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .result-value {
-            color: var(--lab-blue-dark);
-            font-size: 23px;
-            font-weight: 700;
-            margin-top: 5px;
-        }
-
-        /* =========================
-           ANALYSIS
-        ========================= */
-
-        .analysis-box {
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            padding: 18px;
-            height: 100%;
-        }
-
-        .analysis-title {
-            color: var(--lab-blue-dark);
-            font-weight: 700;
-            margin-bottom: 18px;
-        }
-
-        .analysis-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        /* =========================
-           CHARTS
-        ========================= */
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 350px;
-        }
-
-        /* =========================
-           TABLE
-        ========================= */
-
-        .table-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .table thead th {
-            background: var(--lab-blue);
-            color: #ffffff;
-            border-color: var(--lab-blue);
-            white-space: nowrap;
-        }
-
-        /* =========================
-           FORMULAS
-        ========================= */
-
-        .formula-box {
-            background: #fafbfc;
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--lab-blue);
-            padding: 13px 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .formula-box strong {
-            color: var(--lab-blue-dark);
-        }
-
-        /* =========================
-           FOOTER
-        ========================= */
-
-        .system-footer {
-            background: #ffffff;
-            border-top: 1px solid var(--border);
-            margin-top: 30px;
-            padding: 20px 0;
-            color: var(--muted);
-            text-align: center;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 768px) {
-
-            .system-header {
-                height: auto;
-                padding: 12px 0;
-            }
-
-            .student-area {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .page-title {
-                font-size: 23px;
-            }
-
-            .lab-card-body {
-                padding: 15px;
-            }
-
-            .chart-container {
-                height: 280px;
-            }
-
-            .simulation-controls .btn {
-                flex: 1 1 140px;
-            }
-
-        }
-
-        /* =========================
-           PRINT
-        ========================= */
-
-        @media print {
-
-            .no-print {
-                display: none !important;
-            }
-
-            body {
-                background: #ffffff !important;
-            }
-
-            .lab-card {
-                border: 1px solid #cccccc !important;
-                break-inside: avoid;
-            }
-
-            .system-header,
-            .page-heading {
-                border-bottom: 1px solid #cccccc;
-            }
-
-        }
-
-    </style>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Practical 3 | Thermal Processing Simulation
+</title>
+
+
+<!-- Bootstrap -->
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
+
+
+<!-- Bootstrap Icons -->
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    rel="stylesheet"
+>
+
+
+<style>
+
+:root {
+
+    --lab-blue: #1f5f75;
+    --lab-dark: #17495a;
+    --lab-light: #eaf3f6;
+
+    --page-bg: #f4f6f8;
+    --border: #d9dee3;
+
+    --text: #263238;
+    --muted: #6c757d;
+
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    background: var(--page-bg);
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.system-header {
+
+    background: #ffffff;
+
+    border-bottom:
+        1px solid var(--border);
+
+    min-height: 74px;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.brand-area {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.brand-icon {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: var(--lab-blue);
+
+    color: #ffffff;
+
+    border-radius: 8px;
+
+    font-size: 21px;
+
+}
+
+
+.brand-title {
+
+    margin: 0;
+
+    color: var(--lab-dark);
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+}
+
+
+.brand-subtitle {
+
+    margin: 2px 0 0;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+}
+
+
+.student-area {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+.student-avatar {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--lab-light);
+
+    color: var(--lab-blue);
+
+    font-weight: 700;
+
+}
+
+
+.student-name {
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.student-role {
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   PAGE HEADING
+========================================================= */
+
+.page-heading {
+
+    background: #ffffff;
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding: 25px 0;
+
+}
+
+
+.breadcrumb-text {
+
+    margin-bottom: 6px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+}
+
+
+.page-title {
+
+    margin: 0 0 5px;
+
+    color: var(--lab-dark);
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+}
+
+
+.page-description {
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.lab-card {
+
+    margin-bottom: 20px;
+
+    background: #ffffff;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+}
+
+
+.lab-card-header {
+
+    padding: 15px 18px;
+
+    background: #fafbfc;
+
+    border-bottom:
+        1px solid var(--border);
+
+    color: var(--lab-dark);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.lab-card-body {
+
+    padding: 20px;
+
+}
+
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.info-box {
+
+    padding: 16px;
+
+    background: var(--lab-light);
+
+    border-left:
+        4px solid var(--lab-blue);
+
+    border-radius: 5px;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+
+.info-box p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   PARAMETERS
+========================================================= */
+
+.parameter-box {
+
+    height: 100%;
+
+    padding: 15px;
+
+    background: #ffffff;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
+}
+
+
+.parameter-box label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--lab-dark);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.parameter-help {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+}
+
+
+.form-control {
+
+    border-color: #cfd5da;
+
+    border-radius: 5px;
+
+}
+
+
+.form-control:focus {
+
+    border-color:
+        var(--lab-blue);
+
+    box-shadow:
+        0 0 0 .15rem
+        rgba(31,95,117,.12);
+
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.control-panel {
+
+    margin-top: 20px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+.control-title {
+
+    margin-bottom: 12px;
+
+    color: var(--lab-dark);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.simulation-controls {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+}
+
+
+.simulation-controls .btn {
+
+    min-width: 105px;
+
+}
+
+
+.btn-lab {
+
+    background: var(--lab-blue);
+
+    border-color: var(--lab-blue);
+
+    color: #ffffff;
+
+}
+
+
+.btn-lab:hover {
+
+    background: var(--lab-dark);
+
+    border-color: var(--lab-dark);
+
+    color: #ffffff;
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress {
+
+    height: 20px;
+
+    background: #e9ecef;
+
+    border-radius: 4px;
+
+}
+
+
+.progress-bar {
+
+    background: var(--lab-blue);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   RESULT CARDS
+========================================================= */
+
+.result-box {
+
+    height: 100%;
+
+    padding: 17px;
+
+    background: #ffffff;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
+    text-align: center;
+
+}
+
+
+.result-icon {
+
+    margin-bottom: 7px;
+
+    color: var(--lab-blue);
+
+    font-size: 23px;
+
+}
+
+
+.result-label {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+}
+
+
+.result-value {
+
+    margin-top: 5px;
+
+    color: var(--lab-dark);
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   ANALYSIS
+========================================================= */
+
+.analysis-box {
+
+    height: 100%;
+
+    padding: 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
+}
+
+
+.analysis-title {
+
+    margin-bottom: 18px;
+
+    color: var(--lab-dark);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+
+.analysis-value {
+
+    margin-top: 3px;
+
+    color: var(--text);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+.chart-container {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 350px;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-container {
+
+    max-height: 420px;
+
+    overflow-y: auto;
+
+}
+
+
+.table thead th {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+
+    background:
+        var(--lab-blue);
+
+    color: #ffffff;
+
+    border-color:
+        var(--lab-blue);
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   FORMULA
+========================================================= */
+
+.formula-box {
+
+    padding: 13px 15px;
+
+    margin-bottom: 10px;
+
+    background: #fafbfc;
+
+    border:
+        1px solid var(--border);
+
+    border-left:
+        4px solid var(--lab-blue);
+
+    border-radius: 5px;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+.formula-box strong {
+
+    color: var(--lab-dark);
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.system-footer {
+
+    margin-top: 30px;
+
+    padding: 20px 0;
+
+    background: #ffffff;
+
+    border-top:
+        1px solid var(--border);
+
+    color: var(--muted);
+
+    text-align: center;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .system-header {
+
+        padding: 12px 0;
+
+    }
+
+
+    .student-area {
+
+        width: 100%;
+
+        justify-content: flex-end;
+
+    }
+
+
+    .page-title {
+
+        font-size: 23px;
+
+    }
+
+
+    .simulation-controls .btn {
+
+        flex:
+            1 1 140px;
+
+    }
+
+
+    .chart-container {
+
+        height: 280px;
+
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .brand-title {
+
+        font-size: 14px;
+
+    }
+
+
+    .brand-subtitle {
+
+        font-size: 10px;
+
+    }
+
+
+    .student-name,
+    .student-role {
+
+        display: none;
+
+    }
+
+
+    .page-heading {
+
+        padding: 20px 0;
+
+    }
+
+
+    .page-title {
+
+        font-size: 21px;
+
+    }
+
+
+    .lab-card-body {
+
+        padding: 15px;
+
+    }
+
+
+    .chart-container {
+
+        height: 240px;
+
+    }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    .no-print {
+
+        display: none !important;
+
+    }
+
+
+    body {
+
+        background: #ffffff !important;
+
+    }
+
+
+    .lab-card {
+
+        break-inside: avoid;
+
+        box-shadow: none !important;
+
+    }
+
+}
+
+</style>
 
 </head>
 
+
 <body>
 
-<!-- SYSTEM HEADER -->
+
+<!-- =========================================================
+     SYSTEM HEADER
+========================================================= -->
 
 <header class="system-header">
 
-    <div class="container">
+<div class="container">
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-            <div class="system-brand">
 
-                <div class="brand-icon">
-                    <i class="bi bi-flask"></i>
-                </div>
+<div class="brand-area">
 
-                <div>
-                    <p class="brand-title">
-                        Food Process Practical Learning System
-                    </p>
+<div class="brand-icon">
 
-                    <p class="brand-subtitle">
-                        Laboratory Practical Management
-                    </p>
-                </div>
+    <i class="bi bi-flask"></i>
 
-            </div>
+</div>
 
-            <div class="student-area">
 
-                <div class="student-avatar">
-                    <i class="bi bi-person"></i>
-                </div>
+<div>
 
-                <div>
-                    <div class="student-name">
-                        <?= htmlspecialchars($full_name) ?>
-                    </div>
+<p class="brand-title">
 
-                    <small class="text-muted">
-                        Student
-                    </small>
-                </div>
+    Food Process Practical Learning System
 
-            </div>
+</p>
 
-        </div>
 
-    </div>
+<p class="brand-subtitle">
+
+    Laboratory Practical Management
+
+</p>
+
+</div>
+
+</div>
+
+
+<div class="student-area">
+
+<div class="student-avatar">
+
+    <?= htmlspecialchars($initial) ?>
+
+</div>
+
+
+<div>
+
+<div class="student-name">
+
+    <?= htmlspecialchars($full_name) ?>
+
+</div>
+
+
+<div class="student-role">
+
+    Student
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
 
 </header>
 
 
-<!-- PAGE HEADING -->
+<!-- =========================================================
+     PAGE HEADING
+========================================================= -->
 
 <section class="page-heading">
 
-    <div class="container">
+<div class="container">
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-            <div>
 
-                <div class="breadcrumb-text">
-                    Practical 3 / Simulation
-                </div>
+<div>
 
-                <h1 class="page-title">
-                    Thermal Processing Simulation
-                </h1>
+<div class="breadcrumb-text">
 
-                <p class="page-description">
-                    Heat Penetration and Thermal Response Analysis
-                </p>
+    Practical 3 / Simulation
 
-            </div>
+</div>
 
-            <div class="no-print">
 
-                <a
-                    href="../practical/practical3.php"
-                    class="btn btn-outline-secondary"
-                >
-                    <i class="bi bi-arrow-left"></i>
-                    Back to Practical 3
-                </a>
+<h1 class="page-title">
 
-                <a
-                    href="../dashboard.php"
-                    class="btn btn-lab"
-                >
-                    <i class="bi bi-speedometer2"></i>
-                    Dashboard
-                </a>
+    Thermal Processing Simulation
 
-            </div>
+</h1>
 
-        </div>
 
-    </div>
+<p class="page-description">
+
+    Heat Penetration and Thermal Response Analysis
+
+</p>
+
+</div>
+
+
+<div class="no-print">
+
+<a
+    href="../practical/practical3.php"
+    class="btn btn-outline-secondary"
+>
+
+    <i class="bi bi-arrow-left"></i>
+
+    Back to Practical 3
+
+</a>
+
+
+<a
+    href="../dashboard.php"
+    class="btn btn-lab"
+>
+
+    <i class="bi bi-speedometer2"></i>
+
+    Dashboard
+
+</a>
+
+</div>
+
+
+</div>
+
+</div>
 
 </section>
 
 
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
 <main class="container py-4">
 
 
-    <!-- INTRODUCTION -->
+<!-- =========================================================
+     ABOUT
+========================================================= -->
 
-    <div class="lab-card">
+<div class="lab-card">
 
-        <div class="lab-card-header">
+<div class="lab-card-header">
 
-            <i class="bi bi-info-circle me-2"></i>
-            About the Simulation
+    <i class="bi bi-info-circle me-2"></i>
 
-        </div>
+    About the Simulation
 
-        <div class="lab-card-body">
+</div>
 
-            <div class="info-box">
 
-                <p>
-                    This simulation demonstrates temperature changes during
-                    heating, processing and cooling of a food product in a
-                    retort.
-                </p>
+<div class="lab-card-body">
 
-                <p>
-                    The simulation calculates the maximum product temperature,
-                    heating rate, cooling rate, thermal lag and regression
-                    parameters.
-                </p>
+<div class="info-box">
 
-            </div>
+<p>
 
-        </div>
+    This simulation demonstrates the thermal response of a
+    food product during heating, processing and cooling
+    inside a retort.
 
-    </div>
+</p>
 
 
-    <!-- PARAMETERS -->
+<p>
 
-    <div class="lab-card">
+    It generates temperature data and performs heat
+    penetration and regression analysis.
 
-        <div class="lab-card-header">
+</p>
 
-            <i class="bi bi-sliders me-2"></i>
-            Simulation Parameters
+</div>
 
-        </div>
+</div>
 
-        <div class="lab-card-body">
+</div>
 
-            <form id="simulationForm">
 
-                <div class="row g-3">
+<!-- =========================================================
+     PARAMETERS
+========================================================= -->
 
-                    <div class="col-lg-4 col-md-6">
+<div class="lab-card">
 
-                        <div class="parameter-box">
+<div class="lab-card-header">
 
-                            <label for="initialTemp">
-                                Initial Product Temperature (°C)
-                            </label>
+    <i class="bi bi-sliders me-2"></i>
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="initialTemp"
-                                value="25"
-                                step="0.1"
-                                required
-                            >
+    Simulation Parameters
 
-                            <span class="parameter-help">
-                                Starting temperature of the product.
-                            </span>
+</div>
 
-                        </div>
 
-                    </div>
+<div class="lab-card-body">
 
+<form id="simulationForm">
 
-                    <div class="col-lg-4 col-md-6">
+<div class="row g-3">
 
-                        <div class="parameter-box">
 
-                            <label for="retortTemp">
-                                Retort Temperature (°C)
-                            </label>
+<!-- INITIAL TEMPERATURE -->
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="retortTemp"
-                                value="121"
-                                step="0.1"
-                                required
-                            >
+<div class="col-lg-4 col-md-6">
 
-                            <span class="parameter-help">
-                                Target processing temperature.
-                            </span>
+<div class="parameter-box">
 
-                        </div>
+<label for="initialTemp">
 
-                    </div>
+    Initial Product Temperature (°C)
 
+</label>
 
-                    <div class="col-lg-4 col-md-6">
 
-                        <div class="parameter-box">
+<input
+    type="number"
+    class="form-control"
+    id="initialTemp"
+    value="25"
+    min="0"
+    step="0.1"
+    required
+>
 
-                            <label for="heatingTime">
-                                Heating Time (min)
-                            </label>
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="heatingTime"
-                                value="10"
-                                min="1"
-                                step="1"
-                                required
-                            >
+<span class="parameter-help">
 
-                            <span class="parameter-help">
-                                Duration of the heating stage.
-                            </span>
+    Starting product temperature.
 
-                        </div>
+</span>
 
-                    </div>
+</div>
 
+</div>
 
-                    <div class="col-lg-4 col-md-6">
 
-                        <div class="parameter-box">
+<!-- RETORT -->
 
-                            <label for="processingTime">
-                                Processing Time (min)
-                            </label>
+<div class="col-lg-4 col-md-6">
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="processingTime"
-                                value="15"
-                                min="1"
-                                step="1"
-                                required
-                            >
+<div class="parameter-box">
 
-                            <span class="parameter-help">
-                                Time maintained during processing.
-                            </span>
+<label for="retortTemp">
 
-                        </div>
+    Retort Temperature (°C)
 
-                    </div>
+</label>
 
 
-                    <div class="col-lg-4 col-md-6">
+<input
+    type="number"
+    class="form-control"
+    id="retortTemp"
+    value="121"
+    min="1"
+    step="0.1"
+    required
+>
 
-                        <div class="parameter-box">
 
-                            <label for="coolingTime">
-                                Cooling Time (min)
-                            </label>
+<span class="parameter-help">
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="coolingTime"
-                                value="12"
-                                min="1"
-                                step="1"
-                                required
-                            >
+    Processing temperature.
 
-                            <span class="parameter-help">
-                                Duration of the cooling stage.
-                            </span>
+</span>
 
-                        </div>
+</div>
 
-                    </div>
+</div>
 
-                </div>
 
+<!-- HEATING -->
 
-                <!-- CONTROLS -->
+<div class="col-lg-4 col-md-6">
 
-                <div class="control-panel no-print">
+<div class="parameter-box">
 
-                    <div class="control-title">
+<label for="heatingTime">
 
-                        <i class="bi bi-sliders2-vertical me-1"></i>
-                        Simulation Controls
+    Heating Time (min)
 
-                    </div>
+</label>
 
-                    <div class="simulation-controls">
 
-                        <button
-                            type="button"
-                            class="btn btn-lab"
-                            id="startSimulationButton"
-                        >
-                            <i class="bi bi-play-fill"></i>
-                            Start
-                        </button>
+<input
+    type="number"
+    class="form-control"
+    id="heatingTime"
+    value="10"
+    min="1"
+    step="1"
+    required
+>
 
 
-                        <button
-                            type="button"
-                            class="btn btn-warning"
-                            id="pauseSimulationButton"
-                            disabled
-                        >
-                            <i class="bi bi-pause-fill"></i>
-                            Pause
-                        </button>
+<span class="parameter-help">
 
+    Duration of heating stage.
 
-                        <button
-                            type="button"
-                            class="btn btn-success"
-                            id="resumeSimulationButton"
-                            disabled
-                        >
-                            <i class="bi bi-play-circle"></i>
-                            Resume
-                        </button>
+</span>
 
+</div>
 
-                        <button
-                            type="button"
-                            class="btn btn-danger"
-                            id="stopSimulationButton"
-                            disabled
-                        >
-                            <i class="bi bi-stop-fill"></i>
-                            Stop
-                        </button>
+</div>
 
 
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            id="resetButton"
-                        >
-                            <i class="bi bi-arrow-counterclockwise"></i>
-                            Reset
-                        </button>
+<!-- PROCESSING -->
 
+<div class="col-lg-4 col-md-6">
 
-                        <button
-                            type="button"
-                            class="btn btn-dark"
-                            id="generateReportButton"
-                            disabled
-                        >
-                            <i class="bi bi-file-earmark-text"></i>
-                            Generate Report
-                        </button>
+<div class="parameter-box">
 
+<label for="processingTime">
 
-                        <button
-                            type="button"
-                            class="btn btn-info text-white"
-                            id="saveResultsButton"
-                            disabled
-                        >
-                            <i class="bi bi-database"></i>
-                            Save Results
-                        </button>
+    Processing Time (min)
 
+</label>
 
-                        <a
-                            href="simulation3_history.php"
-                            class="btn btn-outline-primary"
-                        >
-                            <i class="bi bi-clock-history"></i>
-                            Results History
-                        </a>
 
-                    </div>
+<input
+    type="number"
+    class="form-control"
+    id="processingTime"
+    value="15"
+    min="1"
+    step="1"
+    required
+>
 
-                </div>
 
-            </form>
+<span class="parameter-help">
 
-        </div>
+    Duration at processing temperature.
 
-    </div>
+</span>
 
+</div>
 
-    <!-- STATUS -->
+</div>
 
-    <div class="lab-card">
 
-        <div class="lab-card-header">
+<!-- COOLING -->
 
-            <i class="bi bi-activity me-2"></i>
-            Simulation Status
+<div class="col-lg-4 col-md-6">
 
-        </div>
+<div class="parameter-box">
 
-        <div class="lab-card-body">
+<label for="coolingTime">
 
-            <div class="status-row">
+    Cooling Time (min)
 
-                <span class="status-label">
-                    Current Status
-                </span>
+</label>
 
-                <span
-                    id="simulationStatus"
-                    class="badge bg-secondary"
-                >
-                    Ready
-                </span>
 
-            </div>
+<input
+    type="number"
+    class="form-control"
+    id="coolingTime"
+    value="12"
+    min="1"
+    step="1"
+    required
+>
 
 
-            <div class="mb-3">
+<span class="parameter-help">
 
-                <div class="d-flex justify-content-between mb-1">
+    Duration of cooling stage.
 
-                    <span class="small fw-semibold">
-                        Heating
-                    </span>
+</span>
 
-                    <span
-                        id="heatingPercent"
-                        class="small"
-                    >
-                        0%
-                    </span>
+</div>
 
-                </div>
+</div>
 
-                <div class="progress">
 
-                    <div
-                        id="heatingProgress"
-                        class="progress-bar"
-                        role="progressbar"
-                        style="width: 0%"
-                    >
-                        0%
-                    </div>
+</div>
 
-                </div>
 
-            </div>
+<!-- =====================================================
+     CONTROLS
+====================================================== -->
 
+<div class="control-panel no-print">
 
-            <div class="mb-3">
+<div class="control-title">
 
-                <div class="d-flex justify-content-between mb-1">
+    <i class="bi bi-sliders2-vertical me-1"></i>
 
-                    <span class="small fw-semibold">
-                        Processing
-                    </span>
+    Simulation Controls
 
-                    <span
-                        id="processingPercent"
-                        class="small"
-                    >
-                        0%
-                    </span>
+</div>
 
-                </div>
 
-                <div class="progress">
+<div class="simulation-controls">
 
-                    <div
-                        id="processingProgress"
-                        class="progress-bar"
-                        role="progressbar"
-                        style="width: 0%"
-                    >
-                        0%
-                    </div>
 
-                </div>
+<button
+    type="button"
+    class="btn btn-lab"
+    id="startSimulationButton"
+>
 
-            </div>
+    <i class="bi bi-play-fill"></i>
 
+    Start
 
-            <div>
+</button>
 
-                <div class="d-flex justify-content-between mb-1">
 
-                    <span class="small fw-semibold">
-                        Cooling
-                    </span>
+<button
+    type="button"
+    class="btn btn-warning"
+    id="pauseSimulationButton"
+    disabled
+>
 
-                    <span
-                        id="coolingPercent"
-                        class="small"
-                    >
-                        0%
-                    </span>
+    <i class="bi bi-pause-fill"></i>
 
-                </div>
+    Pause
 
-                <div class="progress">
+</button>
 
-                    <div
-                        id="coolingProgress"
-                        class="progress-bar"
-                        role="progressbar"
-                        style="width: 0%"
-                    >
-                        0%
-                    </div>
 
-                </div>
+<button
+    type="button"
+    class="btn btn-success"
+    id="resumeSimulationButton"
+    disabled
+>
 
-            </div>
+    <i class="bi bi-play-circle"></i>
 
-        </div>
+    Resume
 
-    </div>
+</button>
 
 
-    <!-- RESULTS -->
+<button
+    type="button"
+    class="btn btn-danger"
+    id="stopSimulationButton"
+    disabled
+>
 
-    <div class="lab-card">
+    <i class="bi bi-stop-fill"></i>
 
-        <div class="lab-card-header">
+    Stop
 
-            <i class="bi bi-bar-chart-line me-2"></i>
-            Simulation Results
+</button>
 
-        </div>
 
-        <div class="lab-card-body">
+<button
+    type="button"
+    class="btn btn-secondary"
+    id="resetButton"
+>
 
-            <div class="row g-3">
+    <i class="bi bi-arrow-counterclockwise"></i>
 
-                <div class="col-lg-4 col-md-6">
+    Reset
 
-                    <div class="result-box">
+</button>
 
-                        <div class="result-icon">
-                            <i class="bi bi-fire"></i>
-                        </div>
 
-                        <div class="result-label">
-                            Heating Time
-                        </div>
+<button
+    type="button"
+    class="btn btn-dark"
+    id="generateReportButton"
+    disabled
+>
 
-                        <div
-                            id="resultHeatingTime"
-                            class="result-value"
-                        >
-                            —
-                        </div>
+    <i class="bi bi-file-earmark-text"></i>
 
-                    </div>
+    Generate Report
 
-                </div>
+</button>
 
 
-                <div class="col-lg-4 col-md-6">
+<button
+    type="button"
+    class="btn btn-info text-white"
+    id="saveResultsButton"
+    disabled
+>
 
-                    <div class="result-box">
+    <i class="bi bi-database"></i>
 
-                        <div class="result-icon">
-                            <i class="bi bi-thermometer-half"></i>
-                        </div>
+    Save Results
 
-                        <div class="result-label">
-                            Processing Time
-                        </div>
+</button>
 
-                        <div
-                            id="resultProcessingTime"
-                            class="result-value"
-                        >
-                            —
-                        </div>
 
-                    </div>
+<a
+    href="simulation3_history.php"
+    class="btn btn-outline-primary"
+>
 
-                </div>
+    <i class="bi bi-clock-history"></i>
 
+    Results History
 
-                <div class="col-lg-4 col-md-6">
+</a>
 
-                    <div class="result-box">
 
-                        <div class="result-icon">
-                            <i class="bi bi-snow"></i>
-                        </div>
+</div>
 
-                        <div class="result-label">
-                            Cooling Time
-                        </div>
+</div>
 
-                        <div
-                            id="resultCoolingTime"
-                            class="result-value"
-                        >
-                            —
-                        </div>
 
-                    </div>
+</form>
 
-                </div>
+</div>
 
+</div>
 
-                <div class="col-lg-3 col-md-6">
 
-                    <div class="result-box">
+<!-- =========================================================
+     STATUS
+========================================================= -->
 
-                        <div class="result-label">
-                            Maximum Product Temperature
-                        </div>
+<div class="lab-card">
 
-                        <div
-                            id="maxTemperature"
-                            class="result-value"
-                        >
-                            —
-                        </div>
+<div class="lab-card-header">
 
-                    </div>
+    <i class="bi bi-activity me-2"></i>
 
-                </div>
+    Simulation Status
 
+</div>
 
-                <div class="col-lg-3 col-md-6">
 
-                    <div class="result-box">
+<div class="lab-card-body">
 
-                        <div class="result-label">
-                            Heating Rate (f)
-                        </div>
 
-                        <div
-                            id="heatingRate"
-                            class="result-value"
-                        >
-                            —
-                        </div>
+<div class="d-flex justify-content-between mb-3">
 
-                    </div>
+<span class="fw-semibold">
 
-                </div>
+    Current Status
 
+</span>
 
-                <div class="col-lg-3 col-md-6">
 
-                    <div class="result-box">
+<span
+    id="simulationStatus"
+    class="badge bg-secondary"
+>
 
-                        <div class="result-label">
-                            Cooling Rate (fc)
-                        </div>
+    Ready
 
-                        <div
-                            id="coolingRate"
-                            class="result-value"
-                        >
-                            —
-                        </div>
+</span>
 
-                    </div>
+</div>
 
-                </div>
 
+<!-- HEATING -->
 
-                <div class="col-lg-3 col-md-6">
+<div class="mb-3">
 
-                    <div class="result-box">
+<div class="d-flex justify-content-between mb-1">
 
-                        <div class="result-label">
-                            Thermal Lag (j)
-                        </div>
+<span class="small fw-semibold">
 
-                        <div
-                            id="thermalLag"
-                            class="result-value"
-                        >
-                            —
-                        </div>
+    Heating
 
-                    </div>
+</span>
 
-                </div>
 
+<span
+    id="heatingPercent"
+    class="small"
+>
 
-                <div class="col-12">
+    0%
 
-                    <div class="result-box">
+</span>
 
-                        <div class="result-label">
-                            Regression Slope
-                        </div>
+</div>
 
-                        <div
-                            id="regressionSlope"
-                            class="result-value"
-                        >
-                            —
-                        </div>
 
-                    </div>
+<div class="progress">
 
-                </div>
+<div
+    id="heatingProgress"
+    class="progress-bar"
+    style="width:0%"
+>
 
-            </div>
+    0%
 
-        </div>
+</div>
 
-    </div>
+</div>
 
+</div>
 
-    <!-- TEMPERATURE PROFILE -->
 
-    <div class="lab-card">
+<!-- PROCESSING -->
 
-        <div class="lab-card-header">
+<div class="mb-3">
 
-            <i class="bi bi-graph-up me-2"></i>
-            Temperature Profile
+<div class="d-flex justify-content-between mb-1">
 
-        </div>
+<span class="small fw-semibold">
 
-        <div class="lab-card-body">
+    Processing
 
-            <div class="chart-container">
+</span>
 
-                <canvas id="temperatureChart"></canvas>
 
-            </div>
+<span
+    id="processingPercent"
+    class="small"
+>
 
-        </div>
+    0%
 
-    </div>
+</span>
 
+</div>
 
-    <!-- THERMAL ANALYSIS -->
 
-    <div class="lab-card">
+<div class="progress">
 
-        <div class="lab-card-header">
+<div
+    id="processingProgress"
+    class="progress-bar"
+    style="width:0%"
+>
 
-            <i class="bi bi-calculator me-2"></i>
-            Thermal Analysis
+    0%
 
-        </div>
+</div>
 
-        <div class="lab-card-body">
+</div>
 
-            <div class="row g-3">
+</div>
 
-                <div class="col-lg-6">
 
-                    <div class="analysis-box">
+<!-- COOLING -->
 
-                        <h5 class="analysis-title">
-                            <i class="bi bi-fire me-2"></i>
-                            Heating Analysis
-                        </h5>
+<div>
 
-                        <div class="row g-3">
+<div class="d-flex justify-content-between mb-1">
 
-                            <div class="col-4">
-                                <small class="text-muted">f</small>
-                                <div
-                                    id="analysisHeatingF"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+<span class="small fw-semibold">
 
-                            <div class="col-4">
-                                <small class="text-muted">j</small>
-                                <div
-                                    id="analysisHeatingJ"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+    Cooling
 
-                            <div class="col-4">
-                                <small class="text-muted">Slope</small>
-                                <div
-                                    id="heatingRegressionSlope"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+</span>
 
-                            <div class="col-6">
-                                <small class="text-muted">Intercept</small>
-                                <div
-                                    id="heatingRegressionIntercept"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
 
-                            <div class="col-6">
-                                <small class="text-muted">R²</small>
-                                <div
-                                    id="heatingRegressionR2"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+<span
+    id="coolingPercent"
+    class="small"
+>
 
-                        </div>
+    0%
 
-                    </div>
+</span>
 
-                </div>
+</div>
 
 
-                <div class="col-lg-6">
+<div class="progress">
 
-                    <div class="analysis-box">
+<div
+    id="coolingProgress"
+    class="progress-bar"
+    style="width:0%"
+>
 
-                        <h5 class="analysis-title">
-                            <i class="bi bi-snow me-2"></i>
-                            Cooling Analysis
-                        </h5>
+    0%
 
-                        <div class="row g-3">
+</div>
 
-                            <div class="col-4">
-                                <small class="text-muted">fc</small>
-                                <div
-                                    id="analysisCoolingF"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+</div>
 
-                            <div class="col-4">
-                                <small class="text-muted">jc</small>
-                                <div
-                                    id="analysisCoolingJ"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+</div>
 
-                            <div class="col-4">
-                                <small class="text-muted">Slope</small>
-                                <div
-                                    id="coolingRegressionSlope"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
 
-                            <div class="col-6">
-                                <small class="text-muted">Intercept</small>
-                                <div
-                                    id="coolingRegressionIntercept"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+</div>
 
-                            <div class="col-6">
-                                <small class="text-muted">R²</small>
-                                <div
-                                    id="coolingRegressionR2"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
-                            </div>
+</div>
 
-                        </div>
 
-                    </div>
+<!-- =========================================================
+     RESULTS
+========================================================= -->
 
-                </div>
+<div class="lab-card">
 
+<div class="lab-card-header">
 
-                <div class="col-12">
+    <i class="bi bi-bar-chart-line me-2"></i>
 
-                    <div class="analysis-box">
+    Simulation Results
 
-                        <h5 class="analysis-title">
-                            Maximum Product Temperature
-                        </h5>
+</div>
 
-                        <div class="row g-3">
 
-                            <div class="col-md-6">
+<div class="lab-card-body">
 
-                                <small class="text-muted">
-                                    Maximum PT
-                                </small>
+<div class="row g-3">
 
-                                <div
-                                    id="analysisMaxPT"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
 
-                            </div>
+<!-- HEATING TIME -->
 
-                            <div class="col-md-6">
+<div class="col-lg-4 col-md-6">
 
-                                <small class="text-muted">
-                                    Thermal Lag
-                                </small>
+<div class="result-box">
 
-                                <div
-                                    id="thermalLagAnalysis"
-                                    class="analysis-value"
-                                >
-                                    —
-                                </div>
+<div class="result-icon">
 
-                            </div>
+    <i class="bi bi-fire"></i>
 
-                        </div>
+</div>
 
-                    </div>
 
-                </div>
+<div class="result-label">
 
-            </div>
+    Heating Time
 
-        </div>
+</div>
 
-    </div>
 
+<div
+    id="resultHeatingTime"
+    class="result-value"
+>
 
-    <!-- REGRESSION CHARTS -->
+    —
 
-    <div class="row g-4">
+</div>
 
-        <div class="col-lg-6">
+</div>
 
-            <div class="lab-card">
+</div>
 
-                <div class="lab-card-header">
 
-                    <i class="bi bi-graph-up me-2"></i>
-                    Heating Regression
+<!-- PROCESSING -->
 
-                </div>
+<div class="col-lg-4 col-md-6">
 
-                <div class="lab-card-body">
+<div class="result-box">
 
-                    <div class="chart-container">
+<div class="result-icon">
 
-                        <canvas id="heatingRegressionChart"></canvas>
+    <i class="bi bi-thermometer-half"></i>
 
-                    </div>
+</div>
 
-                </div>
 
-            </div>
+<div class="result-label">
 
-        </div>
+    Processing Time
 
+</div>
 
-        <div class="col-lg-6">
 
-            <div class="lab-card">
+<div
+    id="resultProcessingTime"
+    class="result-value"
+>
 
-                <div class="lab-card-header">
+    —
 
-                    <i class="bi bi-graph-down me-2"></i>
-                    Cooling Regression
+</div>
 
-                </div>
+</div>
 
-                <div class="lab-card-body">
+</div>
 
-                    <div class="chart-container">
 
-                        <canvas id="coolingRegressionChart"></canvas>
+<!-- COOLING -->
 
-                    </div>
+<div class="col-lg-4 col-md-6">
 
-                </div>
+<div class="result-box">
 
-            </div>
+<div class="result-icon">
 
-        </div>
+    <i class="bi bi-snow"></i>
 
-    </div>
+</div>
 
 
-    <!-- TEMPERATURE DATA -->
+<div class="result-label">
 
-    <div class="lab-card">
+    Cooling Time
 
-        <div class="lab-card-header">
+</div>
 
-            <i class="bi bi-table me-2"></i>
-            Temperature Data
 
-        </div>
+<div
+    id="resultCoolingTime"
+    class="result-value"
+>
 
-        <div class="lab-card-body">
+    —
 
-            <div class="table-container">
+</div>
 
-                <table class="table table-bordered table-hover align-middle mb-0">
+</div>
 
-                    <thead>
+</div>
 
-                        <tr>
 
-                            <th>Time (min)</th>
-                            <th>Retort Temperature (°C)</th>
-                            <th>Product Temperature (°C)</th>
-                            <th>Stage</th>
+<!-- MAX PT -->
 
-                        </tr>
+<div class="col-lg-3 col-md-6">
 
-                    </thead>
+<div class="result-box">
 
-                    <tbody id="temperatureTableBody">
+<div class="result-label">
 
-                        <tr>
+    Maximum Product Temperature
 
-                            <td
-                                colspan="4"
-                                class="text-center text-muted py-4"
-                            >
-                                Run the simulation to generate data.
-                            </td>
+</div>
 
-                        </tr>
 
-                    </tbody>
+<div
+    id="maxTemperature"
+    class="result-value"
+>
 
-                </table>
+    —
 
-            </div>
+</div>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
 
-    <!-- CALCULATIONS -->
+<!-- HEATING RATE -->
 
-    <div class="lab-card">
+<div class="col-lg-3 col-md-6">
 
-        <div class="lab-card-header">
+<div class="result-box">
 
-            <i class="bi bi-journal-text me-2"></i>
-            Calculations Used
+<div class="result-label">
 
-        </div>
+    Heating Rate (f)
 
-        <div class="lab-card-body">
+</div>
 
-            <div class="formula-box">
 
-                <strong>Heating Rate:</strong><br>
+<div
+    id="heatingRate"
+    class="result-value"
+>
 
-                Heating Rate =
-                (Final Temperature − Initial Temperature)
-                ÷ Heating Time
+    —
 
-            </div>
+</div>
 
+</div>
 
-            <div class="formula-box">
+</div>
 
-                <strong>Temperature Difference:</strong><br>
 
-                Temperature Difference =
-                Retort Temperature − Product Temperature
+<!-- COOLING RATE -->
 
-            </div>
+<div class="col-lg-3 col-md-6">
 
+<div class="result-box">
 
-            <div class="formula-box">
+<div class="result-label">
 
-                <strong>Thermal Lag:</strong><br>
+    Cooling Rate (fc)
 
-                Thermal lag describes the difference in response
-                between the retort temperature and product temperature.
+</div>
 
-            </div>
 
+<div
+    id="coolingRate"
+    class="result-value"
+>
 
-            <p class="text-muted mb-0">
+    —
 
-                The simulation values are generated from the mathematical
-                model implemented for Practical 3.
+</div>
 
-            </p>
+</div>
 
-        </div>
+</div>
 
-    </div>
 
+<!-- THERMAL LAG -->
 
-    <!-- NAVIGATION -->
+<div class="col-lg-3 col-md-6">
 
-    <div class="d-flex flex-wrap gap-2 mb-4 no-print">
+<div class="result-box">
 
-        <a
-            href="../practical/practical3.php"
-            class="btn btn-outline-secondary"
-        >
-            <i class="bi bi-arrow-left"></i>
-            Practical 3
-        </a>
+<div class="result-label">
 
-        <a
-            href="simulation3_history.php"
-            class="btn btn-outline-primary"
-        >
-            <i class="bi bi-clock-history"></i>
-            Results History
-        </a>
+    Thermal Lag (j)
 
-        <a
-            href="../dashboard.php"
-            class="btn btn-lab"
-        >
-            <i class="bi bi-speedometer2"></i>
-            Dashboard
-        </a>
+</div>
 
-    </div>
+
+<div
+    id="thermalLag"
+    class="result-value"
+>
+
+    —
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- REGRESSION -->
+
+<div class="col-12">
+
+<div class="result-box">
+
+<div class="result-label">
+
+    Regression Slope
+
+</div>
+
+
+<div
+    id="regressionSlope"
+    class="result-value"
+>
+
+    —
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     TEMPERATURE PROFILE
+========================================================= -->
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-graph-up me-2"></i>
+
+    Temperature Profile
+
+</div>
+
+
+<div class="lab-card-body">
+
+<div class="chart-container">
+
+    <canvas
+        id="temperatureChart"
+    ></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     THERMAL ANALYSIS
+========================================================= -->
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-calculator me-2"></i>
+
+    Thermal Analysis
+
+</div>
+
+
+<div class="lab-card-body">
+
+<div class="row g-3">
+
+
+<!-- HEATING ANALYSIS -->
+
+<div class="col-lg-6">
+
+<div class="analysis-box">
+
+<h5 class="analysis-title">
+
+    <i class="bi bi-fire me-2"></i>
+
+    Heating Analysis
+
+</h5>
+
+
+<div class="row g-3">
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    f
+</small>
+
+<div
+    id="analysisHeatingF"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    j
+</small>
+
+<div
+    id="analysisHeatingJ"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    Slope
+</small>
+
+<div
+    id="heatingRegressionSlope"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-6">
+
+<small class="text-muted">
+    Intercept
+</small>
+
+<div
+    id="heatingRegressionIntercept"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-6">
+
+<small class="text-muted">
+    R²
+</small>
+
+<div
+    id="heatingRegressionR2"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- COOLING ANALYSIS -->
+
+<div class="col-lg-6">
+
+<div class="analysis-box">
+
+<h5 class="analysis-title">
+
+    <i class="bi bi-snow me-2"></i>
+
+    Cooling Analysis
+
+</h5>
+
+
+<div class="row g-3">
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    fc
+</small>
+
+<div
+    id="analysisCoolingF"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    jc
+</small>
+
+<div
+    id="analysisCoolingJ"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-4">
+
+<small class="text-muted">
+    Slope
+</small>
+
+<div
+    id="coolingRegressionSlope"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-6">
+
+<small class="text-muted">
+    Intercept
+</small>
+
+<div
+    id="coolingRegressionIntercept"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="col-6">
+
+<small class="text-muted">
+    R²
+</small>
+
+<div
+    id="coolingRegressionR2"
+    class="analysis-value"
+>
+    —
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MAXIMUM PT -->
+
+<div class="col-12">
+
+<div class="analysis-box">
+
+<h5 class="analysis-title">
+
+    Maximum Product Temperature
+
+</h5>
+
+
+<div class="row g-3">
+
+
+<div class="col-md-6">
+
+<small class="text-muted">
+
+    Maximum PT
+
+</small>
+
+
+<div
+    id="analysisMaxPT"
+    class="analysis-value"
+>
+
+    —
+
+</div>
+
+</div>
+
+
+<div class="col-md-6">
+
+<small class="text-muted">
+
+    Thermal Lag
+
+</small>
+
+
+<div
+    id="thermalLagAnalysis"
+    class="analysis-value"
+>
+
+    —
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     REGRESSION CHARTS
+========================================================= -->
+
+<div class="row g-4">
+
+
+<!-- HEATING -->
+
+<div class="col-lg-6">
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-graph-up me-2"></i>
+
+    Heating Regression
+
+</div>
+
+
+<div class="lab-card-body">
+
+<div class="chart-container">
+
+    <canvas
+        id="heatingRegressionChart"
+    ></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- COOLING -->
+
+<div class="col-lg-6">
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-graph-down me-2"></i>
+
+    Cooling Regression
+
+</div>
+
+
+<div class="lab-card-body">
+
+<div class="chart-container">
+
+    <canvas
+        id="coolingRegressionChart"
+    ></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- =========================================================
+     TEMPERATURE DATA
+========================================================= -->
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-table me-2"></i>
+
+    Temperature Data
+
+</div>
+
+
+<div class="lab-card-body">
+
+<div class="table-container">
+
+<table
+    class="table table-bordered table-hover align-middle mb-0"
+>
+
+<thead>
+
+<tr>
+
+<th>
+    Time (min)
+</th>
+
+<th>
+    Retort Temperature (°C)
+</th>
+
+<th>
+    Product Temperature (°C)
+</th>
+
+<th>
+    Stage
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="temperatureTableBody">
+
+<tr>
+
+<td
+    colspan="4"
+    class="text-center text-muted py-4"
+>
+
+    Run the simulation to generate data.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     CALCULATIONS
+========================================================= -->
+
+<div class="lab-card">
+
+<div class="lab-card-header">
+
+    <i class="bi bi-journal-text me-2"></i>
+
+    Calculations Used
+
+</div>
+
+
+<div class="lab-card-body">
+
+
+<div class="formula-box">
+
+<strong>
+    Heating Rate:
+</strong>
+
+<br>
+
+Heating Rate =
+(Final Temperature − Initial Temperature)
+÷ Heating Time
+
+</div>
+
+
+<div class="formula-box">
+
+<strong>
+    Temperature Difference:
+</strong>
+
+<br>
+
+Temperature Difference =
+Retort Temperature − Product Temperature
+
+</div>
+
+
+<div class="formula-box">
+
+<strong>
+    Thermal Lag:
+</strong>
+
+<br>
+
+Thermal lag describes the response difference
+between retort temperature and product temperature.
+
+</div>
+
+
+<div class="formula-box">
+
+<strong>
+    Regression:
+</strong>
+
+<br>
+
+Linear regression is used to determine the
+relationship between the selected temperature
+data and time.
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<div class="d-flex flex-wrap gap-2 mb-4 no-print">
+
+
+<a
+    href="../practical/practical3.php"
+    class="btn btn-outline-secondary"
+>
+
+    <i class="bi bi-arrow-left"></i>
+
+    Practical 3
+
+</a>
+
+
+<a
+    href="simulation3_history.php"
+    class="btn btn-outline-primary"
+>
+
+    <i class="bi bi-clock-history"></i>
+
+    Results History
+
+</a>
+
+
+<a
+    href="../dashboard.php"
+    class="btn btn-lab"
+>
+
+    <i class="bi bi-speedometer2"></i>
+
+    Dashboard
+
+</a>
+
+
+</div>
+
 
 </main>
 
 
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
 <footer class="system-footer">
 
-    <div class="container">
+<div class="container">
 
-        <div class="fw-semibold">
-            Food Process Practical Learning & Simulation System
-        </div>
+<div class="fw-semibold">
 
-        <small>
-            Practical 3 — Thermal Processing Simulation
-        </small>
+    Food Process Practical Learning & Simulation System
 
-    </div>
+</div>
+
+<small>
+
+    Practical 3 — Thermal Processing Simulation
+
+</small>
+
+</div>
 
 </footer>
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Bootstrap -->
 
-<script src="../assets/js/practical3_simulation.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+<!-- Chart.js -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+></script>
+
+
+<!-- Practical 3 Simulation -->
+
+<script
+    src="../assets/js/practical3_simulation.js"
+></script>
+
 
 </body>
 
