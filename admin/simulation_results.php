@@ -42,7 +42,7 @@ $filter = isset($_GET['practical'])
     ? (int) $_GET['practical']
     : 0;
 
-if (!in_array($filter, [0, 2, 3, 4], true)) {
+if (!in_array($filter, [0, 2, 3, 4, 5], true)) {
     $filter = 0;
 }
 
@@ -54,13 +54,15 @@ if (!in_array($filter, [0, 2, 3, 4], true)) {
 $practical_names = [
     2 => "Physical Separation",
     3 => "Thermal Processing",
-    4 => "Drying"
+    4 => "Drying",
+    5 => "Filtration and Separation"
 ];
 
 $practical_icons = [
     2 => "bi-filter-circle",
     3 => "bi-thermometer-half",
-    4 => "bi-droplet-half"
+    4 => "bi-droplet-half",
+    5 => "bi-filter-circle"
 ];
 
 
@@ -72,6 +74,7 @@ $total_simulations = 0;
 $p2_count = 0;
 $p3_count = 0;
 $p4_count = 0;
+$p5_count = 0;
 
 $stats_query = mysqli_query(
     $conn,
@@ -80,9 +83,10 @@ $stats_query = mysqli_query(
         COUNT(*) AS total,
         SUM(practical_number = 2) AS p2,
         SUM(practical_number = 3) AS p3,
-        SUM(practical_number = 4) AS p4
+        SUM(practical_number = 4) AS p4,
+        SUM(practical_number = 5) AS p5
     FROM simulation_results
-    WHERE practical_number IN (2,3,4)
+    WHERE practical_number IN (2,3,4,5)
     "
 );
 
@@ -94,6 +98,7 @@ if ($stats_query) {
     $p2_count = (int) ($stats['p2'] ?? 0);
     $p3_count = (int) ($stats['p3'] ?? 0);
     $p4_count = (int) ($stats['p4'] ?? 0);
+    $p5_count = (int) ($stats['p5'] ?? 0);
 }
 
 
@@ -119,7 +124,7 @@ if ($filter === 0) {
         FROM simulation_results sr
         INNER JOIN users u
             ON sr.user_id = u.id
-        WHERE sr.practical_number IN (2,3,4)
+        WHERE sr.practical_number IN (2,3,4,5)
         ORDER BY sr.created_at DESC
     ");
 
@@ -1838,6 +1843,31 @@ a {
 </div>
 
 
+<div class="stat-card">
+
+    <div class="stat-card-top">
+
+        <div>
+
+            <div class="stat-label">
+                Practical 5
+            </div>
+
+            <div class="stat-number">
+                <?= number_format($p5_count) ?>
+            </div>
+
+        </div>
+
+        <div class="stat-icon">
+            <i class="bi bi-filter-circle"></i>
+        </div>
+
+    </div>
+
+</div>
+
+
 </div>
 
 
@@ -1900,6 +1930,13 @@ a {
                     <?= $filter === 4 ? 'selected' : '' ?>
                 >
                     Practical 4 — Drying
+                </option>
+
+                <option
+                    value="5"
+                    <?= $filter === 5 ? 'selected' : '' ?>
+                >
+                    Practical 5 — Filtration and Separation
                 </option>
 
             </select>
@@ -4574,6 +4611,173 @@ function drawPractical3RegressionCharts(id, results, inputs) {
    DRAW CHARTS
 ========================================================= */
 
+
+function drawPractical5(
+    id,
+    results
+) {
+    /*
+     * Practical 5 may contain a time-series dataset inside
+     * result_data. The saved calculated values remain visible
+     * even when no graph series was stored.
+     */
+    function findArrayRecursive(obj, keys) {
+        if (!obj || typeof obj !== "object") return null;
+
+        for (const key of keys) {
+            if (Array.isArray(obj[key])) return obj[key];
+        }
+
+        for (const key of Object.keys(obj)) {
+            const value = obj[key];
+
+            if (value && typeof value === "object") {
+                const found = findArrayRecursive(value, keys);
+
+                if (found) return found;
+            }
+        }
+
+        return null;
+    }
+
+    const labels = findArrayRecursive(
+        results,
+        [
+            "times",
+            "time",
+            "labels",
+            "timePoints",
+            "simulationTime"
+        ]
+    );
+
+    const values = findArrayRecursive(
+        results,
+        [
+            "filtrateVolume",
+            "filtrate",
+            "liquidLevel",
+            "volume",
+            "values",
+            "remainingMass"
+        ]
+    );
+
+    if (
+        !Array.isArray(labels) ||
+        !Array.isArray(values)
+    ) {
+        showMessage(
+            id,
+            "The saved Practical 5 result contains calculated values, but no filtration graph data was stored."
+        );
+
+        return false;
+    }
+
+    const prepared = prepareChartData(
+        labels,
+        values
+    );
+
+    if (
+        prepared.labels.length === 0 ||
+        prepared.values.length === 0
+    ) {
+        showMessage(
+            id,
+            "The saved Practical 5 result contains calculated values, but no usable filtration graph data was found."
+        );
+
+        return false;
+    }
+
+    const canvas = document.getElementById(
+        "chart_" + id
+    );
+
+    if (!canvas) {
+        return false;
+    }
+
+    showBlock(
+        "singleChartBlock_" + id
+    );
+
+    hideMessage(id);
+
+    const title = document.getElementById(
+        "singleChartTitle_" + id
+    );
+
+    if (title) {
+        title.innerHTML = `
+            <i class="bi bi-filter-circle me-2"></i>
+            Filtration Simulation — Filtration Progress
+        `;
+    }
+
+    const chart = new Chart(
+        canvas.getContext("2d"),
+        {
+            type: "line",
+
+            data: {
+                labels: prepared.labels,
+
+                datasets: [
+                    {
+                        label: "Filtration Measurement",
+                        data: prepared.values,
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.25,
+                        fill: false
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    mode: "index",
+                    intersect: false
+                },
+
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Simulation Time"
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        title: {
+                            display: true,
+                            text: "Measurement"
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    if (!modalCharts[id]) {
+        modalCharts[id] = [];
+    }
+
+    modalCharts[id].push(chart);
+
+    return true;
+}
+
+
 function drawSimulationCharts(
     modal,
     results,
@@ -4677,6 +4881,18 @@ function drawSimulationCharts(
     if (practical === 4) {
 
         drawPractical4(
+            id,
+            results
+        );
+
+        return;
+
+    }
+
+
+    if (practical === 5) {
+
+        drawPractical5(
             id,
             results
         );

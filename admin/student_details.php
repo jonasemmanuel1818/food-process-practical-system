@@ -240,7 +240,9 @@ $practical_names = [
 
     3 => "Thermal Processing",
 
-    4 => "Drying"
+    4 => "Drying",
+
+    5 => "Filtration and Separation"
 
 ];
 
@@ -257,7 +259,9 @@ $practical_icons = [
 
     3 => "bi-thermometer-half",
 
-    4 => "bi-wind"
+    4 => "bi-wind",
+
+    5 => "bi-filter-circle"
 
 ];
 
@@ -269,7 +273,7 @@ $practical_icons = [
 $total_completed_practicals = 0;
 $total_in_progress = 0;
 
-for ($p = 1; $p <= 4; $p++) {
+for ($p = 1; $p <= 5; $p++) {
 
     $status = $progress[$p]['status'] ?? 'not_started';
 
@@ -306,7 +310,7 @@ $total_simulations = count($simulations);
 ========================================================= */
 
 $overall_progress = round(
-    ($total_completed_practicals / 4) * 100
+    ($total_completed_practicals / 5) * 100
 );
 
 ?>
@@ -834,7 +838,7 @@ a {
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(5, 1fr);
 
     gap: 14px;
 
@@ -2305,7 +2309,7 @@ a {
                 <div class="practical-grid">
 
 
-                    <?php for ($p = 1; $p <= 4; $p++): ?>
+                    <?php for ($p = 1; $p <= 5; $p++): ?>
 
 
                         <?php

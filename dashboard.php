@@ -56,6 +56,14 @@ $practicals = [
         "activities" => 12,
         "link" => "practical/practical4.php",
         "icon" => "bi-wind"
+    ],
+
+    5 => [
+        "title" => "Filtration and Separation",
+        "description" => "Study filtration and separation techniques through practical activities and interactive simulation.",
+        "activities" => 8,
+        "link" => "practical/practical5.php",
+        "icon" => "bi-filter-circle"
     ]
 
 ];
@@ -71,7 +79,7 @@ $practical_progress = [];
 $submission_status = [];
 
 
-for ($i = 1; $i <= 4; $i++) {
+for ($i = 1; $i <= 5; $i++) {
 
     /* Default status */
     $status = "not_started";
@@ -177,7 +185,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 
     /* =====================================================
-       PRACTICALS 2, 3 AND 4
+       PRACTICALS 2, 3, 4 AND 5
        ===================================================== */
 
     $total_activities = $practicals[$i]["activities"];
@@ -244,7 +252,7 @@ for ($i = 1; $i <= 4; $i++) {
    DASHBOARD STATISTICS
    ========================================================= */
 
-$total_practicals = 4;
+$total_practicals = 5;
 
 $completed_count = 0;
 
@@ -253,7 +261,7 @@ $in_progress_count = 0;
 $not_started_count = 0;
 
 
-for ($i = 1; $i <= 4; $i++) {
+for ($i = 1; $i <= 5; $i++) {
 
     if ($practical_status[$i] === "completed") {
         $completed_count++;
@@ -276,7 +284,7 @@ for ($i = 1; $i <= 4; $i++) {
 $total_progress = 0;
 
 
-for ($i = 1; $i <= 4; $i++) {
+for ($i = 1; $i <= 5; $i++) {
 
     $total_progress += $practical_progress[$i];
 }
@@ -2225,7 +2233,7 @@ a {
             <div class="row g-3">
 
 
-                <?php for ($i = 1; $i <= 4; $i++): ?>
+                <?php for ($i = 1; $i <= 5; $i++): ?>
 
 
                     <?php
@@ -3070,6 +3078,12 @@ a {
 
                         Drying:
                         Spray Drying and Freeze Drying
+
+                    </li>
+
+                    <li>
+
+                        Filtration and Separation
 
                     </li>
 

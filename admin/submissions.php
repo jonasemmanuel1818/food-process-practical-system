@@ -44,7 +44,7 @@ $practical = isset($_GET['practical'])
    GET SUBMISSIONS
 ========================= */
 
-if ($practical >= 1 && $practical <= 4) {
+if ($practical >= 1 && $practical <= 5) {
 
     $stmt = $conn->prepare("
         SELECT
@@ -101,7 +101,8 @@ $practical_counts = [
     1 => 0,
     2 => 0,
     3 => 0,
-    4 => 0
+    4 => 0,
+    5 => 0
 ];
 
 /*
@@ -1100,7 +1101,7 @@ body {
             </div>
 
 
-            <!-- P3/P4 -->
+            <!-- P3/P4/P5 -->
 
             <div class="summary-card">
 
@@ -1113,11 +1114,11 @@ body {
                     <div>
 
                         <div class="summary-label">
-                            P3 + P4
+                            P3 + P4 + P5
                         </div>
 
                         <div class="summary-number">
-                            <?= $practical_counts[3] + $practical_counts[4] ?>
+                            <?= $practical_counts[3] + $practical_counts[4] + $practical_counts[5] ?>
                         </div>
 
                     </div>
@@ -1178,7 +1179,7 @@ body {
                     </a>
 
 
-                    <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
 
                         <a
                             href="submissions.php?practical=<?= $i ?>"
@@ -1369,7 +1370,7 @@ body {
 
                                     <span>
 
-                                        <?php if ($practical >= 1 && $practical <= 4): ?>
+                                        <?php if ($practical >= 1 && $practical <= 5): ?>
 
                                             No submissions have been recorded
                                             for Practical <?= $practical ?> yet.

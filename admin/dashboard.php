@@ -291,7 +291,8 @@ $practical_counts = [
     1 => 0,
     2 => 0,
     3 => 0,
-    4 => 0
+    4 => 0,
+    5 => 0
 ];
 
 $result = mysqli_query(
@@ -2134,14 +2135,16 @@ $admin_initial = strtoupper(
 
                             3 => "Thermal Processing",
 
-                            4 => "Drying"
+                            4 => "Drying",
+
+                            5 => "Filtration and Separation"
 
                         ];
 
                         ?>
 
 
-                        <?php for ($i = 1; $i <= 4; $i++): ?>
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
 
 
                             <?php

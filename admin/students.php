@@ -956,6 +956,8 @@ body {
 
                             <th>P4</th>
 
+                            <th>P5</th>
+
                             <th>Joined</th>
 
                             <th>Action</th>
@@ -1046,7 +1048,7 @@ body {
 
                                 <!-- PRACTICALS -->
 
-                                <?php for ($p = 1; $p <= 4; $p++): ?>
+                                <?php for ($p = 1; $p <= 5; $p++): ?>
 
                                     <td>
 

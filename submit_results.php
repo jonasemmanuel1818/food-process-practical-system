@@ -77,6 +77,12 @@ $practicals = [
         "short" => "Drying",
         "icon" => "bi-wind",
         "description" => "Spray drying and freeze drying."
+    ],
+    5 => [
+        "name" => "Filtration and Separation",
+        "short" => "Filtration",
+        "icon" => "bi-filter-circle",
+        "description" => "Filtration and separation using an interactive virtual laboratory."
     ]
 ];
 
@@ -96,7 +102,8 @@ $required_activities = [
     1 => 0,
     2 => 5,
     3 => 9,
-    4 => 12
+    4 => 12,
+    5 => 8
 ];
 
 /*
@@ -291,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /*
         |--------------------------------------------------------------------------
-        | Block Practical 2-4 if activities are incomplete
+        | Block Practical 2-5 if activities are incomplete
         |--------------------------------------------------------------------------
         */
 
@@ -333,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 /*
                 |--------------------------------------------------------------------------
-                | Practical 2-4
+                | Practical 2-5
                 |--------------------------------------------------------------------------
                 */
 
