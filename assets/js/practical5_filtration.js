@@ -1,10 +1,13 @@
+/* =========================================================
+   PRACTICAL 5 — FILTRATION AND SEPARATION
+   Interactive Virtual Laboratory
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const sampleBeaker =
-        document.getElementById("sampleBeaker");
-
-    const filterArea =
-        document.getElementById("filterArea");
+    const sampleBeaker = document.getElementById("sampleBeaker");
+    const filterArea = document.getElementById("filterArea");
+    const filterPaper = document.querySelector(".filter-paper");
 
     const installFilterBtn =
         document.getElementById("installFilterBtn");
@@ -45,13 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const chartCard =
         document.getElementById("chartCard");
 
-    const saveBtn =
-        document.getElementById("saveBtn");
-
-    const savedMessage =
-        document.getElementById("savedMessage");
-
-
     const filtrateMassResult =
         document.getElementById("filtrateMassResult");
 
@@ -64,506 +60,234 @@ document.addEventListener("DOMContentLoaded", function () {
     const timeResult =
         document.getElementById("timeResult");
 
+    const saveBtn =
+        document.getElementById("saveBtn");
+
+    const savedMessage =
+        document.getElementById("savedMessage");
+
+    const chartCanvas =
+        document.getElementById("filtrationChart");
+
+
+    /* =====================================================
+       SIMULATION VARIABLES
+    ===================================================== */
 
     let samplePlaced = false;
+
     let filterInstalled = false;
+
     let simulationRunning = false;
+
     let simulationCompleted = false;
 
     let filtrationChart = null;
 
+    let filtrationTimer = null;
 
-    /*
-    ============================================================
-    DRAG SAMPLE
-    ============================================================
-    */
+    let simulationData = null;
 
-    sampleBeaker.addEventListener(
-        "dragstart",
-        function (event) {
 
-            if (
-                simulationRunning ||
-                simulationCompleted
-            ) {
-                event.preventDefault();
-                return;
+    /* =====================================================
+       STATUS MESSAGE
+    ===================================================== */
+
+    function setStatus(message, type = "normal") {
+
+        if (statusBox) {
+
+            statusBox.textContent = message;
+
+            statusBox.classList.remove(
+                "success",
+                "warning"
+            );
+
+            if (type === "success") {
+                statusBox.classList.add("success");
             }
 
-            sampleBeaker.classList.add(
-                "dragging"
-            );
-
-            event.dataTransfer.setData(
-                "text/plain",
-                "sample"
-            );
-        }
-    );
-
-
-    sampleBeaker.addEventListener(
-        "dragend",
-        function () {
-
-            sampleBeaker.classList.remove(
-                "dragging"
-            );
-        }
-    );
-
-
-    /*
-    ============================================================
-    DROP SAMPLE
-    ============================================================
-    */
-
-    filterArea.addEventListener(
-        "dragover",
-        function (event) {
-
-            event.preventDefault();
-
-            if (
-                !simulationRunning &&
-                !simulationCompleted
-            ) {
-
-                filterArea.classList.add(
-                    "ready"
-                );
+            if (type === "warning") {
+                statusBox.classList.add("warning");
             }
         }
-    );
 
 
-    filterArea.addEventListener(
-        "dragleave",
-        function () {
+        if (experimentStatus) {
 
-            filterArea.classList.remove(
-                "ready"
-            );
-        }
-    );
+            if (type === "success") {
 
+                experimentStatus.textContent =
+                    "Completed";
 
-    filterArea.addEventListener(
-        "drop",
-        function (event) {
+            } else if (type === "warning") {
 
-            event.preventDefault();
+                experimentStatus.textContent =
+                    "Attention";
 
-            filterArea.classList.remove(
-                "ready"
-            );
+            } else if (simulationRunning) {
 
-            const draggedItem =
-                event.dataTransfer.getData(
-                    "text/plain"
-                );
-
-            if (
-                draggedItem !== "sample" ||
-                simulationRunning ||
-                simulationCompleted
-            ) {
-                return;
-            }
-
-            samplePlaced = true;
-
-            sampleBeaker.style.opacity = "0.35";
-
-            statusBox.className =
-                "status-box success";
-
-            statusBox.innerHTML =
-                '<i class="bi bi-check-circle me-1"></i>' +
-                'Sample placed on the filtration funnel. ' +
-                'Install the filter paper before starting.';
-
-            experimentStatus.textContent =
-                "Sample Ready";
-
-            if (filterInstalled) {
-                startBtn.disabled = false;
-            }
-        }
-    );
-
-
-    /*
-    ============================================================
-    INSTALL FILTER
-    ============================================================
-    */
-
-    installFilterBtn.addEventListener(
-        "click",
-        function () {
-
-            if (
-                simulationRunning ||
-                simulationCompleted
-            ) {
-                return;
-            }
-
-            filterInstalled = true;
-
-            filterArea.classList.add(
-                "ready"
-            );
-
-            statusBox.className =
-                "status-box success";
-
-            if (samplePlaced) {
-
-                statusBox.innerHTML =
-                    '<i class="bi bi-check-circle me-1"></i>' +
-                    'Filter paper installed and sample positioned. ' +
-                    'You can now start filtration.';
-
-                startBtn.disabled = false;
+                experimentStatus.textContent =
+                    "Running";
 
             } else {
 
-                statusBox.innerHTML =
-                    '<i class="bi bi-check-circle me-1"></i>' +
-                    'Filter paper installed. ' +
-                    'Drag the sample beaker onto the funnel.';
+                experimentStatus.textContent =
+                    "Ready";
             }
-
-            experimentStatus.textContent =
-                "Setup Ready";
-
-            installFilterBtn.disabled = true;
         }
-    );
-
-
-    /*
-    ============================================================
-    START FILTRATION
-    ============================================================
-    */
-
-    startBtn.addEventListener(
-        "click",
-        function () {
-
-            if (
-                !samplePlaced ||
-                !filterInstalled ||
-                simulationRunning
-            ) {
-                return;
-            }
-
-            const initialMass =
-                parseFloat(
-                    initialMassInput.value
-                );
-
-            const retainedMass =
-                parseFloat(
-                    retainedMassInput.value
-                );
-
-            const filtrationTime =
-                parseInt(
-                    filtrationTimeInput.value,
-                    10
-                );
-
-
-            /*
-            ----------------------------------------------------
-            VALIDATION
-            ----------------------------------------------------
-            */
-
-            if (
-                !Number.isFinite(initialMass) ||
-                initialMass <= 0
-            ) {
-
-                showStatus(
-                    "Enter a valid initial mass.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            if (
-                !Number.isFinite(retainedMass) ||
-                retainedMass < 0 ||
-                retainedMass > initialMass
-            ) {
-
-                showStatus(
-                    "Retained mass must be between 0 and the initial mass.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            if (
-                !Number.isFinite(filtrationTime) ||
-                filtrationTime < 3 ||
-                filtrationTime > 60
-            ) {
-
-                showStatus(
-                    "Filtration time must be between 3 and 60 seconds.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            /*
-            ----------------------------------------------------
-            START
-            ----------------------------------------------------
-            */
-
-            simulationRunning = true;
-
-            startBtn.disabled = true;
-
-            installFilterBtn.disabled = true;
-
-            experimentStatus.textContent =
-                "Filtrating";
-
-            showStatus(
-                "Filtration is in progress. Observe the separation process.",
-                ""
-            );
-
-
-            filtrateDrop.classList.add(
-                "animate"
-            );
-
-
-            /*
-            ----------------------------------------------------
-            CALCULATIONS
-            ----------------------------------------------------
-            */
-
-            const filtrateMass =
-                initialMass - retainedMass;
-
-            const retentionPercentage =
-                (
-                    retainedMass /
-                    initialMass
-                ) * 100;
-
-
-            /*
-            ----------------------------------------------------
-            ANIMATE LIQUID
-            ----------------------------------------------------
-            */
-
-            receiverLiquid.style.height =
-                "0%";
-
-
-            let elapsed = 0;
-
-            const intervalTime = 1000;
-
-
-            const filtrationInterval =
-                setInterval(
-                    function () {
-
-                        elapsed++;
-
-
-                        const progress =
-                            Math.min(
-                                100,
-                                (
-                                    elapsed /
-                                    filtrationTime
-                                ) * 100
-                            );
-
-
-                        receiverLiquid.style.height =
-                            (progress * 0.65) + "%";
-
-
-                        if (
-                            elapsed >= filtrationTime
-                        ) {
-
-                            clearInterval(
-                                filtrationInterval
-                            );
-
-                            finishSimulation(
-                                initialMass,
-                                retainedMass,
-                                filtrateMass,
-                                retentionPercentage,
-                                filtrationTime
-                            );
-                        }
-
-                    },
-                    intervalTime
-                );
-        }
-    );
-
-
-    /*
-    ============================================================
-    FINISH SIMULATION
-    ============================================================
-    */
-
-    function finishSimulation(
-        initialMass,
-        retainedMass,
-        filtrateMass,
-        retentionPercentage,
-        filtrationTime
-    ) {
-
-        simulationRunning = false;
-
-        simulationCompleted = true;
-
-
-        filtrateDrop.classList.remove(
-            "animate"
-        );
-
-
-        retainedSolids.style.opacity =
-            "1";
-
-
-        receiverLiquid.style.height =
-            "65%";
-
-
-        experimentStatus.textContent =
-            "Completed";
-
-
-        statusBox.className =
-            "status-box success";
-
-
-        statusBox.innerHTML =
-            '<i class="bi bi-check-circle me-1"></i>' +
-            'Filtration completed successfully. ' +
-            'Review the calculated results below.';
-
-
-        filtrateMassResult.textContent =
-            filtrateMass.toFixed(2);
-
-
-        retainedMassResult.textContent =
-            retainedMass.toFixed(2);
-
-
-        efficiencyResult.textContent =
-            retentionPercentage.toFixed(2) + "%";
-
-
-        timeResult.textContent =
-            filtrationTime + " s";
-
-
-        resultCard.style.display =
-            "block";
-
-
-        chartCard.style.display =
-            "block";
-
-
-        createChart(
-            filtrationTime,
-            retainedMass,
-            initialMass
-        );
     }
 
 
-    /*
-    ============================================================
-    CHART
-    ============================================================
-    */
+    /* =====================================================
+       GET EXPERIMENT PARAMETERS
+    ===================================================== */
 
-    function createChart(
-        filtrationTime,
-        retainedMass,
-        initialMass
-    ) {
+    function getParameters() {
 
-        const labels = [];
+        const initialMass =
+            parseFloat(initialMassInput.value);
 
-        const retainedValues = [];
+        const retainedMass =
+            parseFloat(retainedMassInput.value);
 
-        const steps =
-            Math.max(
-                2,
-                Math.min(
-                    filtrationTime,
-                    10
-                )
+        const filtrationTime =
+            parseInt(
+                filtrationTimeInput.value,
+                10
             );
 
 
-        for (
-            let i = 0;
-            i <= steps;
-            i++
+        if (
+            !Number.isFinite(initialMass) ||
+            initialMass <= 0
         ) {
 
-            const percentage =
-                i / steps;
-
-            labels.push(
-                Math.round(
-                    percentage *
-                    filtrationTime
-                )
-            );
-
-            retainedValues.push(
-                retainedMass *
-                percentage
+            throw new Error(
+                "Initial sample mass must be greater than 0 g."
             );
         }
 
 
-        const canvas =
-            document.getElementById(
-                "filtrationChart"
+        if (
+            !Number.isFinite(retainedMass) ||
+            retainedMass < 0
+        ) {
+
+            throw new Error(
+                "Retained solid mass cannot be negative."
             );
+        }
+
+
+        if (retainedMass > initialMass) {
+
+            throw new Error(
+                "Retained solid mass cannot be greater than the initial sample mass."
+            );
+        }
+
+
+        if (
+            !Number.isFinite(filtrationTime) ||
+            filtrationTime < 3 ||
+            filtrationTime > 60
+        ) {
+
+            throw new Error(
+                "Filtration time must be between 3 and 60 seconds."
+            );
+        }
+
+
+        return {
+            initialMass,
+            retainedMass,
+            filtrationTime
+        };
+    }
+
+
+    /* =====================================================
+       CREATE GRAPH DATA
+    ===================================================== */
+
+    function buildGraphData(
+        initialMass,
+        retainedMass,
+        filtrationTime
+    ) {
+
+        const filtrateMass =
+            initialMass - retainedMass;
+
+        const labels = [];
+
+        const filtrateValues = [];
+
+        const retainedValues = [];
+
+
+        for (
+            let second = 0;
+            second <= filtrationTime;
+            second++
+        ) {
+
+            const progress =
+                second / filtrationTime;
+
+
+            labels.push(second);
+
+
+            filtrateValues.push(
+                Number(
+                    (
+                        filtrateMass *
+                        progress
+                    ).toFixed(3)
+                )
+            );
+
+
+            retainedValues.push(
+                Number(
+                    (
+                        retainedMass *
+                        progress
+                    ).toFixed(3)
+                )
+            );
+        }
+
+
+        return {
+
+            labels,
+
+            filtrateMass:
+                filtrateValues,
+
+            retainedMass:
+                retainedValues
+        };
+    }
+
+
+    /* =====================================================
+       DRAW FILTRATION GRAPH
+    ===================================================== */
+
+    function drawChart(graphData) {
+
+        if (
+            !chartCanvas ||
+            typeof Chart === "undefined"
+        ) {
+            return;
+        }
 
 
         if (filtrationChart) {
@@ -572,258 +296,1075 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        filtrationChart =
-            new Chart(
-                canvas,
-                {
-                    type: "line",
+        filtrationChart = new Chart(
+            chartCanvas,
+            {
 
-                    data: {
+                type: "line",
 
-                        labels: labels,
+                data: {
 
-                        datasets: [
-                            {
-                                label:
-                                    "Accumulated Retained Solids (g)",
+                    labels:
+                        graphData.labels,
 
-                                data:
-                                    retainedValues,
+                    datasets: [
 
-                                tension: 0.25,
+                        {
 
-                                borderWidth: 2,
+                            label:
+                                "Filtrate Mass (g)",
 
-                                pointRadius: 4
-                            }
-                        ]
+                            data:
+                                graphData.filtrateMass,
+
+                            borderWidth: 2,
+
+                            tension: 0.25,
+
+                            fill: false
+                        },
+
+
+                        {
+
+                            label:
+                                "Retained Solid Mass (g)",
+
+                            data:
+                                graphData.retainedMass,
+
+                            borderWidth: 2,
+
+                            tension: 0.25,
+
+                            fill: false
+                        }
+
+                    ]
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    interaction: {
+
+                        intersect: false,
+
+                        mode: "index"
                     },
 
-                    options: {
 
-                        responsive: true,
+                    scales: {
 
-                        maintainAspectRatio: false,
+                        x: {
 
-                        plugins: {
+                            title: {
 
-                            legend: {
-                                display: true
+                                display: true,
+
+                                text:
+                                    "Filtration Time (seconds)"
                             }
                         },
 
-                        scales: {
 
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: "Time (seconds)"
-                                }
-                            },
+                        y: {
 
-                            y: {
-                                beginAtZero: true,
+                            beginAtZero: true,
 
-                                title: {
-                                    display: true,
-                                    text: "Retained Solids (g)"
-                                }
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "Mass (g)"
+                            }
+                        }
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label:
+                                    function (context) {
+
+                                        return (
+                                            " " +
+                                            context.dataset.label +
+                                            ": " +
+                                            Number(
+                                                context.parsed.y
+                                            ).toFixed(2) +
+                                            " g"
+                                        );
+                                    }
                             }
                         }
                     }
                 }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       PLACE SAMPLE
+    ===================================================== */
+
+    function placeSample() {
+
+        if (samplePlaced) {
+            return;
+        }
+
+
+        samplePlaced = true;
+
+
+        if (sampleBeaker) {
+
+            sampleBeaker.classList.add(
+                "dragging"
+            );
+
+
+            setTimeout(
+                function () {
+
+                    sampleBeaker.style.transform =
+                        "translate(230px, 0) scale(1.03)";
+
+                    sampleBeaker.style.cursor =
+                        "default";
+
+                },
+                50
+            );
+        }
+
+
+        setTimeout(
+            function () {
+
+                if (sampleBeaker) {
+
+                    sampleBeaker.style.transform =
+                        "translate(230px, 125px) scale(1.03)";
+                }
+
+
+                if (filterArea) {
+
+                    filterArea.classList.add(
+                        "ready"
+                    );
+                }
+
+
+                setStatus(
+
+                    "Sample positioned. Install the filter paper before starting filtration.",
+
+                    "success"
+                );
+
+
+                if (sampleBeaker) {
+
+                    sampleBeaker.classList.remove(
+                        "dragging"
+                    );
+                }
+
+            },
+            450
+        );
+    }
+
+
+    /* =====================================================
+       DRAG START
+    ===================================================== */
+
+    function handleDragStart(event) {
+
+        if (
+            simulationRunning ||
+            simulationCompleted
+        ) {
+
+            event.preventDefault();
+
+            return;
+        }
+
+
+        event.dataTransfer.setData(
+            "text/plain",
+            "sample-beaker"
+        );
+
+
+        if (sampleBeaker) {
+
+            sampleBeaker.classList.add(
+                "dragging"
+            );
+        }
+    }
+
+
+    /* =====================================================
+       DRAG END
+    ===================================================== */
+
+    function handleDragEnd() {
+
+        if (sampleBeaker) {
+
+            sampleBeaker.classList.remove(
+                "dragging"
+            );
+        }
+    }
+
+
+    /* =====================================================
+       DROP SAMPLE
+    ===================================================== */
+
+    function handleDrop(event) {
+
+        event.preventDefault();
+
+
+        if (
+            simulationRunning ||
+            simulationCompleted
+        ) {
+            return;
+        }
+
+
+        const data =
+            event.dataTransfer.getData(
+                "text/plain"
+            );
+
+
+        if (
+            data === "sample-beaker"
+        ) {
+
+            placeSample();
+        }
+    }
+
+
+    /* =====================================================
+       INSTALL FILTER PAPER
+    ===================================================== */
+
+    function installFilter() {
+
+        if (!samplePlaced) {
+
+            setStatus(
+
+                "Place the sample beaker on the filtration funnel first.",
+
+                "warning"
+            );
+
+            return;
+        }
+
+
+        filterInstalled = true;
+
+
+        if (filterPaper) {
+
+            filterPaper.style.background =
+                "#ffffff";
+
+            filterPaper.style.borderColor =
+                "#9daab1";
+
+            filterPaper.style.boxShadow =
+                "0 0 0 3px rgba(31,95,117,.12)";
+        }
+
+
+        if (filterArea) {
+
+            filterArea.classList.add(
+                "ready"
+            );
+        }
+
+
+        startBtn.disabled = false;
+
+
+        setStatus(
+
+            "Filter paper installed. The filtration process is ready to start.",
+
+            "success"
+        );
+
+
+        installFilterBtn.disabled = true;
+    }
+
+
+    /* =====================================================
+       START FILTRATION
+    ===================================================== */
+
+    function startFiltration() {
+
+        if (simulationRunning) {
+            return;
+        }
+
+
+        if (!samplePlaced) {
+
+            setStatus(
+
+                "Place the sample beaker on the filtration funnel first.",
+
+                "warning"
+            );
+
+            return;
+        }
+
+
+        if (!filterInstalled) {
+
+            setStatus(
+
+                "Install the filter paper before starting filtration.",
+
+                "warning"
+            );
+
+            return;
+        }
+
+
+        let parameters;
+
+
+        try {
+
+            parameters =
+                getParameters();
+
+        } catch (error) {
+
+            setStatus(
+                error.message,
+                "warning"
+            );
+
+            return;
+        }
+
+
+        simulationRunning = true;
+
+        simulationCompleted = false;
+
+
+        startBtn.disabled = true;
+
+        resetBtn.disabled = true;
+
+        saveBtn.disabled = true;
+
+
+        resultCard.style.display =
+            "none";
+
+        chartCard.style.display =
+            "none";
+
+        savedMessage.style.display =
+            "none";
+
+
+        if (retainedSolids) {
+
+            retainedSolids.style.opacity =
+                "1";
+        }
+
+
+        if (filtrateDrop) {
+
+            filtrateDrop.classList.add(
+                "animate"
+            );
+        }
+
+
+        receiverLiquid.style.height =
+            "0";
+
+
+        setStatus(
+
+            "Filtration is in progress. Observe the filtrate entering the receiving beaker."
+        );
+
+
+        const totalSeconds =
+            parameters.filtrationTime;
+
+        const intervalMs = 1000;
+
+        let elapsed = 0;
+
+
+        filtrationTimer =
+            setInterval(
+                function () {
+
+                    elapsed++;
+
+
+                    const progress =
+                        Math.min(
+                            elapsed /
+                                totalSeconds,
+                            1
+                        );
+
+
+                    const liquidHeight =
+                        Math.max(
+                            3,
+                            progress * 85
+                        );
+
+
+                    receiverLiquid.style.height =
+                        liquidHeight + "px";
+
+
+                    if (
+                        elapsed >=
+                        totalSeconds
+                    ) {
+
+                        clearInterval(
+                            filtrationTimer
+                        );
+
+                        filtrationTimer =
+                            null;
+
+
+                        finishFiltration(
+                            parameters
+                        );
+                    }
+
+                },
+                intervalMs
             );
     }
 
 
-    /*
-    ============================================================
-    SAVE RESULT
-    ============================================================
-    */
+    /* =====================================================
+       FINISH FILTRATION
+    ===================================================== */
 
-    saveBtn.addEventListener(
-        "click",
-        async function () {
-
-            if (!simulationCompleted) {
-
-                showStatus(
-                    "Complete the simulation before saving.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            saveBtn.disabled = true;
-
-
-            const initialMass =
-                parseFloat(
-                    initialMassInput.value
-                );
-
-            const retainedMass =
-                parseFloat(
-                    retainedMassInput.value
-                );
-
-            const filtrationTime =
-                parseInt(
-                    filtrationTimeInput.value,
-                    10
-                );
-
-            const filtrateMass =
-                initialMass -
-                retainedMass;
-
-            const retentionPercentage =
-                (
-                    retainedMass /
-                    initialMass
-                ) * 100;
-
-
-            const payload = {
-
-                simulation_type:
-                    "Filtration and Separation",
-
-                input_data: {
-
-                    initial_mass:
-                        initialMass,
-
-                    retained_mass:
-                        retainedMass,
-
-                    filtration_time:
-                        filtrationTime
-                },
-
-                result_data: {
-
-                    filtrate_mass:
-                        filtrateMass,
-
-                    retained_mass:
-                        retainedMass,
-
-                    retention_percentage:
-                        retentionPercentage,
-
-                    filtration_time:
-                        filtrationTime
-                }
-            };
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "../practical/save_simulation5_result.php",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body:
-                                JSON.stringify(
-                                    payload
-                                )
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (data.success) {
-
-                    savedMessage.style.display =
-                        "block";
-
-                    saveBtn.innerHTML =
-                        '<i class="bi bi-check-circle me-1"></i>' +
-                        'Saved Successfully';
-
-                    saveBtn.disabled = true;
-
-                } else {
-
-                    saveBtn.disabled = false;
-
-                    showStatus(
-                        data.message ||
-                        "Could not save simulation result.",
-                        "warning"
-                    );
-                }
-
-            } catch (error) {
-
-                saveBtn.disabled = false;
-
-                showStatus(
-                    "Could not connect to the server.",
-                    "warning"
-                );
-
-                console.error(
-                    error
-                );
-            }
-        }
-    );
-
-
-    /*
-    ============================================================
-    RESET
-    ============================================================
-    */
-
-    resetBtn.addEventListener(
-        "click",
-        function () {
-
-            location.reload();
-
-        }
-    );
-
-
-    /*
-    ============================================================
-    STATUS HELPER
-    ============================================================
-    */
-
-    function showStatus(
-        message,
-        type
+    function finishFiltration(
+        parameters
     ) {
 
-        statusBox.className =
-            "status-box";
+        const filtrateMass =
+            parameters.initialMass -
+            parameters.retainedMass;
 
-        if (type) {
 
-            statusBox.classList.add(
-                type
+        const retentionPercentage =
+            (
+                parameters.retainedMass /
+                parameters.initialMass
+            ) * 100;
+
+
+        const separationPercentage =
+            (
+                filtrateMass /
+                parameters.initialMass
+            ) * 100;
+
+
+        const graphData =
+            buildGraphData(
+
+                parameters.initialMass,
+
+                parameters.retainedMass,
+
+                parameters.filtrationTime
+            );
+
+
+        /*
+         * IMPORTANT:
+         * Graph data is included inside
+         * result_data so PHP stores it
+         * in the database.
+         */
+
+        simulationData = {
+
+            input_data: {
+
+                initialMass:
+                    parameters.initialMass,
+
+                retainedMass:
+                    parameters.retainedMass,
+
+                filtrationTime:
+                    parameters.filtrationTime
+            },
+
+
+            result_data: {
+
+                filtration: {
+
+                    initialMass:
+                        parameters.initialMass,
+
+                    retainedMass:
+                        Number(
+                            parameters.retainedMass
+                        .toFixed(3)
+                        ),
+
+                    filtrateMass:
+                        Number(
+                            filtrateMass
+                        .toFixed(3)
+                        ),
+
+                    retentionPercentage:
+                        Number(
+                            retentionPercentage
+                        .toFixed(3)
+                        ),
+
+                    separationPercentage:
+                        Number(
+                            separationPercentage
+                        .toFixed(3)
+                        ),
+
+                    filtrationTime:
+                        parameters.filtrationTime
+                },
+
+
+                /* =====================================
+                   GRAPH DATA
+                ===================================== */
+
+                graphData: {
+
+                    labels:
+                        graphData.labels,
+
+                    filtrateMass:
+                        graphData.filtrateMass,
+
+                    retainedMass:
+                        graphData.retainedMass
+                },
+
+
+                /*
+                 * Compatibility structure for
+                 * administration/reporting pages.
+                 */
+
+                filtrationGraph: {
+
+                    labels:
+                        graphData.labels,
+
+                    filtrateMass:
+                        graphData.filtrateMass,
+
+                    retainedMass:
+                        graphData.retainedMass
+                },
+
+
+                times:
+                    graphData.labels,
+
+                filtrate:
+                    graphData.filtrateMass,
+
+                retained:
+                    graphData.retainedMass
+            }
+        };
+
+
+        simulationRunning = false;
+
+        simulationCompleted = true;
+
+
+        if (filtrateDrop) {
+
+            filtrateDrop.classList.remove(
+                "animate"
+            );
+
+            filtrateDrop.style.opacity =
+                "0";
+        }
+
+
+        receiverLiquid.style.height =
+            "85px";
+
+
+        filtrateMassResult.textContent =
+            filtrateMass.toFixed(2);
+
+
+        retainedMassResult.textContent =
+            parameters.retainedMass.toFixed(2);
+
+
+        efficiencyResult.textContent =
+            retentionPercentage.toFixed(2) +
+            "%";
+
+
+        timeResult.textContent =
+            parameters.filtrationTime +
+            " s";
+
+
+        resultCard.style.display =
+            "block";
+
+        chartCard.style.display =
+            "block";
+
+
+        drawChart(
+            graphData
+        );
+
+
+        saveBtn.disabled = false;
+
+        resetBtn.disabled = false;
+
+
+        setStatus(
+
+            "Filtration completed. Review the calculated values and graph, then save the result.",
+
+            "success"
+        );
+
+
+        resultCard.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "nearest"
+        });
+    }
+
+
+    /* =====================================================
+       SAVE SIMULATION RESULT
+    ===================================================== */
+
+    async function saveSimulationResult() {
+
+        if (
+            !simulationData ||
+            !simulationCompleted
+        ) {
+
+            setStatus(
+
+                "Run the filtration simulation before saving the result.",
+
+                "warning"
+            );
+
+            return;
+        }
+
+
+        saveBtn.disabled = true;
+
+        savedMessage.style.display =
+            "none";
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+
+            "input_data",
+
+            JSON.stringify(
+                simulationData.input_data
+            )
+        );
+
+
+        formData.append(
+
+            "result_data",
+
+            JSON.stringify(
+                simulationData.result_data
+            )
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    "../practical/save_simulation5_result.php",
+
+                    {
+
+                        method: "POST",
+
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+
+                    data.message ||
+                    "Could not save the simulation result."
+                );
+            }
+
+
+            savedMessage.style.display =
+                "block";
+
+
+            setStatus(
+
+                "Simulation result and filtration graph data were saved successfully.",
+
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+
+                "Practical 5 save error:",
+
+                error
+            );
+
+
+            setStatus(
+
+                error.message ||
+                "Unable to save the simulation result.",
+
+                "warning"
+            );
+
+
+            saveBtn.disabled = false;
+        }
+    }
+
+
+    /* =====================================================
+       RESET SIMULATION
+    ===================================================== */
+
+    function resetSimulation() {
+
+        if (filtrationTimer) {
+
+            clearInterval(
+                filtrationTimer
+            );
+
+            filtrationTimer =
+                null;
+        }
+
+
+        samplePlaced = false;
+
+        filterInstalled = false;
+
+        simulationRunning = false;
+
+        simulationCompleted = false;
+
+        simulationData = null;
+
+
+        if (filtrationChart) {
+
+            filtrationChart.destroy();
+
+            filtrationChart = null;
+        }
+
+
+        if (sampleBeaker) {
+
+            sampleBeaker.style.transform =
+                "";
+
+            sampleBeaker.style.cursor =
+                "grab";
+
+            sampleBeaker.classList.remove(
+                "dragging"
             );
         }
 
-        statusBox.innerHTML =
-            message;
+
+        if (filterArea) {
+
+            filterArea.classList.remove(
+                "ready"
+            );
+        }
+
+
+        if (filterPaper) {
+
+            filterPaper.style.background =
+                "#f2ead7";
+
+            filterPaper.style.borderColor =
+                "#c9baa0";
+
+            filterPaper.style.boxShadow =
+                "";
+        }
+
+
+        if (retainedSolids) {
+
+            retainedSolids.style.opacity =
+                "0";
+        }
+
+
+        if (receiverLiquid) {
+
+            receiverLiquid.style.height =
+                "0";
+        }
+
+
+        if (filtrateDrop) {
+
+            filtrateDrop.classList.remove(
+                "animate"
+            );
+
+            filtrateDrop.style.opacity =
+                "0";
+        }
+
+
+        resultCard.style.display =
+            "none";
+
+        chartCard.style.display =
+            "none";
+
+        savedMessage.style.display =
+            "none";
+
+
+        installFilterBtn.disabled =
+            false;
+
+        startBtn.disabled =
+            true;
+
+        saveBtn.disabled =
+            true;
+
+        resetBtn.disabled =
+            false;
+
+
+        setStatus(
+
+            "Drag the sample beaker onto the filtration funnel to begin setting up the experiment."
+        );
+    }
+
+
+    /* =====================================================
+       SAMPLE BEAKER EVENTS
+    ===================================================== */
+
+    if (sampleBeaker) {
+
+        sampleBeaker.addEventListener(
+
+            "dragstart",
+
+            handleDragStart
+        );
+
+
+        sampleBeaker.addEventListener(
+
+            "dragend",
+
+            handleDragEnd
+        );
+
+
+        sampleBeaker.addEventListener(
+
+            "click",
+
+            function () {
+
+                if (!samplePlaced) {
+
+                    placeSample();
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       FILTER AREA EVENTS
+    ===================================================== */
+
+    if (filterArea) {
+
+        filterArea.addEventListener(
+
+            "dragover",
+
+            function (event) {
+
+                event.preventDefault();
+            }
+        );
+
+
+        filterArea.addEventListener(
+
+            "drop",
+
+            handleDrop
+        );
+    }
+
+
+    /* =====================================================
+       BUTTON EVENTS
+    ===================================================== */
+
+    if (installFilterBtn) {
+
+        installFilterBtn.addEventListener(
+
+            "click",
+
+            installFilter
+        );
+    }
+
+
+    if (startBtn) {
+
+        startBtn.addEventListener(
+
+            "click",
+
+            startFiltration
+        );
+    }
+
+
+    if (resetBtn) {
+
+        resetBtn.addEventListener(
+
+            "click",
+
+            resetSimulation
+        );
+    }
+
+
+    if (saveBtn) {
+
+        saveBtn.addEventListener(
+
+            "click",
+
+            saveSimulationResult
+        );
     }
 
 });
