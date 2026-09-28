@@ -1355,16 +1355,35 @@ $full_name = $_SESSION['full_name'] ?? "Student";
          BACK
     ====================================================== -->
 
-    <a
-        href="../dashboard.php"
-        class="back-link"
-    >
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
 
-        <i class="bi bi-arrow-left"></i>
+        <a
+            href="../dashboard.php"
+            class="back-link mb-0"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Dashboard
+        </a>
 
-        Back to Dashboard
+        <div class="d-flex flex-wrap gap-2">
+            <a
+                href="simulation5_history.php"
+                class="btn btn-outline-lab text-decoration-none"
+            >
+                <i class="bi bi-clock-history me-1"></i>
+                Simulation History
+            </a>
 
-    </a>
+            <a
+                href="simulation5_compare.php"
+                class="btn btn-lab text-decoration-none"
+            >
+                <i class="bi bi-bar-chart-line me-1"></i>
+                Compare Results
+            </a>
+        </div>
+
+    </div>
 
 
 
