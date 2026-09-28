@@ -68,6 +68,11 @@ try {
     // =========================================================
     // 3. PRACTICAL PROGRESS
     // =========================================================
+    // Supports Practical 1–5.
+    //
+    // Each student can have one progress record for
+    // each practical.
+    // =========================================================
 
     $sql = "CREATE TABLE IF NOT EXISTS practical_progress (
 
@@ -105,6 +110,15 @@ try {
     // =========================================================
     // 4. PRACTICAL ACTIVITY PROGRESS
     // =========================================================
+    //
+    // Practical 1 = Orientation/content
+    // Practical 2 = 5 activities
+    // Practical 3 = 9 activities
+    // Practical 4 = 12 activities
+    // Practical 5 = 8 activities
+    //
+    // The table supports all practical numbers.
+    // =========================================================
 
     $sql = "CREATE TABLE IF NOT EXISTS practical_activity_progress (
 
@@ -135,6 +149,12 @@ try {
 
     // =========================================================
     // 5. PRACTICAL SUBMISSIONS
+    // =========================================================
+    //
+    // Stores results, observations and conclusions.
+    //
+    // One submission per student per practical.
+    // Supports Practical 1–5.
     // =========================================================
 
     $sql = "CREATE TABLE IF NOT EXISTS practical_submissions (
@@ -171,6 +191,11 @@ try {
     // =========================================================
     // 6. SIMULATION RESULTS
     // =========================================================
+    //
+    // Stores simulation inputs and calculated results.
+    //
+    // Supports simulations for Practical 2, 3, 4 and 5.
+    // =========================================================
 
     $sql = "CREATE TABLE IF NOT EXISTS simulation_results (
 
@@ -202,6 +227,10 @@ try {
 
     // =========================================================
     // 7. PRACTICAL MEASUREMENTS
+    // =========================================================
+    //
+    // Stores individual measurements used by practicals.
+    // Supports Practical 1–5.
     // =========================================================
 
     $sql = "CREATE TABLE IF NOT EXISTS practical_measurements (
@@ -242,14 +271,23 @@ try {
     $contacts = [
 
         "University Security Office",
+
         "Police (Emergency)",
+
         "Police Charge Office / Enquiries",
+
         "Fire Department",
+
         "Ambulance",
+
         "Student Health Services",
+
         "Hospital",
+
         "Useful Numbers",
+
         "Departmental Risk Committee",
+
         "Trained First Aid Staff"
 
     ];
@@ -292,6 +330,21 @@ try {
     // =========================================================
     // 9. CREATE PRACTICAL PROGRESS FOR EXISTING STUDENTS
     // =========================================================
+    //
+    // IMPORTANT:
+    // Practical 5 has now been added.
+    //
+    // Every existing student will receive a progress record
+    // for Practical 5 if one does not already exist.
+    //
+    // Practicals:
+    //
+    // 1 = Laboratory Orientation
+    // 2 = Physical Separation
+    // 3 = Thermal Processing
+    // 4 = Drying
+    // 5 = Filtration and Separation
+    // =========================================================
 
     $students = mysqli_query(
         $conn,
@@ -305,7 +358,12 @@ try {
 
         $user_id = (int) $student['id'];
 
-        for ($practical = 1; $practical <= 4; $practical++) {
+
+        // -----------------------------------------------------
+        // CREATE PROGRESS FOR PRACTICALS 1–5
+        // -----------------------------------------------------
+
+        for ($practical = 1; $practical <= 5; $practical++) {
 
             $check = $conn->prepare(
                 "SELECT id
@@ -356,14 +414,23 @@ try {
     echo "<!DOCTYPE html>";
 
     echo "<html>";
+
     echo "<head>";
+
+    echo "<meta charset='UTF-8'>";
+
+    echo "<meta name='viewport'
+        content='width=device-width, initial-scale=1.0'>";
+
     echo "<title>Database Update</title>";
 
     echo "<style>
+
         body {
             font-family: Arial, sans-serif;
             background: #f4f6f8;
             padding: 40px;
+            color: #263238;
         }
 
         .box {
@@ -373,10 +440,16 @@ try {
             padding: 30px;
             border-radius: 10px;
             border: 1px solid #d9dee3;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
 
         h2 {
             color: #1f5f75;
+        }
+
+        h3 {
+            color: #17495a;
+            margin-top: 25px;
         }
 
         li {
@@ -387,6 +460,28 @@ try {
             color: #198754;
             font-weight: bold;
         }
+
+        .practical {
+            background: #f4f6f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background: #1f5f75;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            background: #17495a;
+        }
+
     </style>";
 
     echo "</head>";
@@ -395,32 +490,107 @@ try {
 
     echo "<div class='box'>";
 
-    echo "<h2>Database Update Completed Successfully</h2>";
+    echo "<h2>
+            Database Update Completed Successfully
+          </h2>";
 
     echo "<p class='success'>
             The Food Process System database is ready.
           </p>";
 
-    echo "<p>The following tables are available:</p>";
+    echo "<p>
+            The database structure has been checked and
+            Practical 5 is now included in the practical
+            progress initialization.
+          </p>";
+
+
+    echo "<h3>Available Tables</h3>";
 
     echo "<ul>";
 
     echo "<li>users</li>";
+
     echo "<li>experiments</li>";
+
     echo "<li>practical_programme</li>";
+
     echo "<li>emergency_contacts</li>";
+
     echo "<li>practical_progress</li>";
+
     echo "<li>practical_activity_progress</li>";
+
     echo "<li>practical_submissions</li>";
+
     echo "<li>simulation_results</li>";
+
     echo "<li>practical_measurements</li>";
 
     echo "</ul>";
 
+
+    echo "<h3>Practicals Supported</h3>";
+
+    echo "<div class='practical'>";
+
+    echo "<strong>Practical 1:</strong>
+          Laboratory Orientation<br>";
+
+    echo "<strong>Practical 2:</strong>
+          Physical Separation<br>";
+
+    echo "<strong>Practical 3:</strong>
+          Thermal Processing<br>";
+
+    echo "<strong>Practical 4:</strong>
+          Drying<br>";
+
+    echo "<strong>Practical 5:</strong>
+          Filtration and Separation";
+
+    echo "</div>";
+
+
+    echo "<h3>Practical 5</h3>";
+
     echo "<p>
-        Practical 1, 2, 3 and 4 progress tracking,
-        activities, submissions and simulations are ready.
-    </p>";
+            Practical 5 supports:
+          </p>";
+
+    echo "<ul>";
+
+    echo "<li>8 practical activities</li>";
+
+    echo "<li>Filtration simulation</li>";
+
+    echo "<li>Simulation result storage</li>";
+
+    echo "<li>Simulation history</li>";
+
+    echo "<li>Simulation comparison</li>";
+
+    echo "<li>Practical submission</li>";
+
+    echo "<li>Student progress tracking</li>";
+
+    echo "</ul>";
+
+
+    echo "<p>
+            Existing student progress records were preserved.
+            Missing Practical 5 progress records were created
+            automatically.
+          </p>";
+
+
+    echo "<a
+            class='button'
+            href='dashboard.php'
+          >
+            Return to Dashboard
+          </a>";
+
 
     echo "</div>";
 
@@ -431,11 +601,49 @@ try {
 
 } catch (Exception $e) {
 
-    echo "<h2>Database Update Failed</h2>";
+    echo "<!DOCTYPE html>";
 
-    echo "<p>Error: " .
-        htmlspecialchars($e->getMessage()) .
-        "</p>";
+    echo "<html>";
+
+    echo "<head>";
+
+    echo "<meta charset='UTF-8'>";
+
+    echo "<title>Database Update Failed</title>";
+
+    echo "</head>";
+
+    echo "<body style='
+        font-family:Arial;
+        background:#f4f6f8;
+        padding:40px;
+    '>";
+
+    echo "<div style='
+        max-width:700px;
+        margin:auto;
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        border:1px solid #d9dee3;
+    '>";
+
+    echo "<h2 style='color:#dc3545;'>
+            Database Update Failed
+          </h2>";
+
+    echo "<p>
+            Error:
+            " .
+            htmlspecialchars($e->getMessage()) .
+            "
+          </p>";
+
+    echo "</div>";
+
+    echo "</body>";
+
+    echo "</html>";
 }
 
 ?>
