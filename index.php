@@ -1,13 +1,26 @@
 <?php
+
 session_start();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#1f5f75">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Food Process System">
+
+    <link rel="manifest" href="manifest.json">
 
     <title>Food Process Practical Learning & Simulation System</title>
 
@@ -239,6 +252,44 @@ session_start();
             color: #666;
         }
 
+        /* PWA */
+
+        .pwa-section {
+            background: #e8f2f5;
+            padding: 35px 20px;
+            border-bottom: 1px solid #d9dee3;
+        }
+
+        .pwa-box {
+            background: white;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .pwa-icon {
+            width: 50px;
+            height: 50px;
+            background: #1f5f75;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        .pwa-box h4 {
+            color: #17495a;
+            font-weight: bold;
+        }
+
+        .pwa-box p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
         /* CTA */
 
         .cta {
@@ -296,7 +347,6 @@ session_start();
 
 <body>
 
-
 <!-- NAVBAR -->
 
 <nav class="navbar navbar-expand-lg">
@@ -313,6 +363,9 @@ session_start();
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarMenu"
+            aria-controls="navbarMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
         >
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -371,7 +424,8 @@ session_start();
                 <p>
                     An interactive learning platform designed to support
                     food processing practicals through guided activities,
-                    experiment recording, and practical simulations.
+                    experiment recording, virtual laboratory exercises,
+                    and practical simulations.
                 </p>
 
                 <div class="hero-buttons">
@@ -416,7 +470,7 @@ session_start();
 
             <!-- PRACTICAL 1 -->
 
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
 
                 <div class="practical-card">
 
@@ -444,7 +498,7 @@ session_start();
 
             <!-- PRACTICAL 2 -->
 
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
 
                 <div class="practical-card">
 
@@ -472,7 +526,7 @@ session_start();
 
             <!-- PRACTICAL 3 -->
 
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
 
                 <div class="practical-card">
 
@@ -500,7 +554,7 @@ session_start();
 
             <!-- PRACTICAL 4 -->
 
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
 
                 <div class="practical-card">
 
@@ -519,6 +573,34 @@ session_start();
                     <small class="text-muted">
                         Introduction to food drying processes
                         including spray and freeze drying.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRACTICAL 5 -->
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="practical-card">
+
+                    <div class="practical-icon">
+                        <i class="bi bi-filter-circle"></i>
+                    </div>
+
+                    <h5>
+                        Practical 5
+                    </h5>
+
+                    <p>
+                        Filtration and Separation
+                    </p>
+
+                    <small class="text-muted">
+                        Interactive filtration laboratory,
+                        separation calculations, results and graphs.
                     </small>
 
                 </div>
@@ -583,6 +665,11 @@ session_start();
 
                         <li>
                             <i class="bi bi-check-circle-fill"></i>
+                            Filtration and separation simulation
+                        </li>
+
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
                             Automatic calculations
                         </li>
 
@@ -601,6 +688,36 @@ session_start();
                 </div>
 
             </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PWA INFORMATION -->
+
+<section class="pwa-section">
+
+    <div class="container">
+
+        <div class="pwa-box">
+
+            <div class="pwa-icon">
+                <i class="bi bi-phone"></i>
+            </div>
+
+            <h4>
+                Installable Learning Application
+            </h4>
+
+            <p>
+                The Food Process System can be installed on supported
+                computers and mobile devices as a Progressive Web App.
+                This provides an application-like experience while
+                continuing to use the existing web-based system.
+            </p>
 
         </div>
 
@@ -717,6 +834,29 @@ session_start();
 </section>
 
 
+<!-- CTA -->
+
+<section class="cta">
+
+    <div class="container">
+
+        <h2>
+            Ready to Start Learning?
+        </h2>
+
+        <p>
+            Access practical activities, simulations and experiment results
+            through the Food Process Learning System.
+        </p>
+
+        <a href="login.php" class="btn-primary-custom">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Login to System
+        </a>
+
+    </div>
+
+</section>
 
 
 <!-- FOOTER -->
@@ -738,9 +878,46 @@ session_start();
 </footer>
 
 
+<!-- Bootstrap JS -->
+
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
 
+
+<!-- PWA SERVICE WORKER -->
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function () {
+
+        navigator.serviceWorker
+            .register("service-worker.js")
+            .then(function (registration) {
+
+                console.log(
+                    "Food Process System service worker registered:",
+                    registration.scope
+                );
+
+            })
+            .catch(function (error) {
+
+                console.error(
+                    "Service worker registration failed:",
+                    error
+                );
+
+            });
+
+    });
+
+}
+
+</script>
+
 </body>
+
 </html>

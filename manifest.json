@@ -1,0 +1,26 @@
+{
+    "name": "Food Process Learning & Simulation System",
+    "short_name": "Food Process System",
+    "description": "Food processing practical learning, virtual laboratory and simulation system.",
+    "start_url": "/food_process_system/index.php",
+    "scope": "/food_process_system/",
+    "display": "standalone",
+    "background_color": "#f4f6f8",
+    "theme_color": "#1f5f75",
+    "orientation": "portrait-primary",
+
+    "icons": [
+        {
+            "src": "/food_process_system/assets/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/food_process_system/assets/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
