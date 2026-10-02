@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <meta name="theme-color" content="#1f5f75">
+    <meta
+        name="theme-color"
+        content="#1f5f75"
+    >
 
-    <title>Offline - Food Process System</title>
+    <title>
+        Offline - Food Process System
+    </title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -23,109 +28,198 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            font-family: Arial, sans-serif;
+
             background: #f4f6f8;
-            color: #333;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #24343b;
+            padding: 20px;
         }
 
         .offline-card {
             width: 100%;
             max-width: 520px;
-            background: white;
+
+            background: #ffffff;
+
             border: 1px solid #d9dee3;
-            border-radius: 12px;
-            padding: 40px 30px;
+            border-radius: 14px;
+
+            padding: 42px 32px;
+
             text-align: center;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
         .icon {
-            width: 75px;
-            height: 75px;
-            margin: 0 auto 25px;
-            border-radius: 12px;
-            background: #e8f2f5;
-            color: #1f5f75;
+            width: 78px;
+            height: 78px;
+
+            margin: 0 auto 22px;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-        }
 
-        h1 {
-            margin: 0 0 15px;
-            color: #17495a;
-            font-size: 28px;
-        }
+            border-radius: 50%;
 
-        p {
-            color: #666;
-            line-height: 1.7;
-            margin-bottom: 25px;
+            background: #e8f1f4;
+            color: #1f5f75;
+
+            font-size: 38px;
         }
 
         .status {
             display: inline-block;
-            padding: 8px 15px;
+
+            padding: 6px 14px;
+
+            margin-bottom: 15px;
+
             border-radius: 20px;
-            background: #f8e8e8;
-            color: #9b3333;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 25px;
+
+            background: #f1f3f5;
+            color: #5f6b72;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            letter-spacing: 0.5px;
         }
 
-        .retry-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #1f5f75;
-            color: white;
-            text-decoration: none;
-            border-radius: 7px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
+        h1 {
+            margin: 0 0 12px;
+
+            color: #17495a;
+
+            font-size: 28px;
+            line-height: 1.3;
+        }
+
+        .description {
+            margin: 0 auto 25px;
+
+            max-width: 430px;
+
+            color: #66757c;
+
             font-size: 15px;
+            line-height: 1.7;
         }
 
-        .retry-button:hover {
-            background: #17495a;
-        }
-
-        .info {
+        .learning-box {
             margin-top: 25px;
-            padding: 15px;
-            background: #f8fafb;
+            margin-bottom: 20px;
+
+            padding: 18px;
+
             border: 1px solid #d9dee3;
-            border-radius: 8px;
+            border-radius: 10px;
+
+            background: #f8fafb;
+
             text-align: left;
         }
 
-        .info strong {
+        .learning-box h3 {
+            margin: 0 0 8px;
+
             color: #17495a;
+
+            font-size: 17px;
+        }
+
+        .learning-box p {
+            margin: 0;
+
+            color: #66757c;
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+
+            width: 100%;
+
+            padding: 13px 20px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #1f5f75;
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 15px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #17495a;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            margin-top: 10px;
+
+            background: #ffffff;
+            color: #1f5f75;
+
+            border: 1px solid #1f5f75;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f6f8;
+            color: #17495a;
+        }
+
+        .note {
+            margin-top: 22px;
+
+            color: #7a878d;
+
+            font-size: 12px;
+            line-height: 1.6;
         }
 
         .footer {
             margin-top: 25px;
-            font-size: 13px;
-            color: #888;
+
+            color: #9aa5aa;
+
+            font-size: 12px;
         }
 
         @media (max-width: 576px) {
 
             .offline-card {
-                padding: 30px 20px;
+                padding: 32px 22px;
             }
 
             h1 {
                 font-size: 24px;
             }
 
+            .description {
+                font-size: 14px;
+            }
         }
-
     </style>
-
 </head>
 
 <body>
@@ -133,7 +227,7 @@
     <div class="offline-card">
 
         <div class="icon">
-            ⚗
+            ⚠
         </div>
 
         <div class="status">
@@ -144,38 +238,58 @@
             You're Currently Offline
         </h1>
 
-        <p>
-            The Food Process Learning & Simulation System
+        <p class="description">
+            The Food Process Practical Learning System
             cannot connect to the server right now.
         </p>
 
-        <button
-            class="retry-button"
-            onclick="window.location.reload()"
-        >
-            Try Again
-        </button>
+        <div class="learning-box">
 
-        <div class="info">
+            <h3>
+                Offline Practical Learning
+            </h3>
 
-            <strong>What you can do:</strong>
-
-            <p style="margin: 8px 0 0;">
-                Some learning resources that have already been
-                cached on your device may still be available.
-                Database operations such as saving results,
-                submitting practicals, and viewing history
-                require a connection to the system server.
+            <p>
+                You can still access cached practical
+                learning materials, including Practical 1
+                through Practical 5.
             </p>
 
         </div>
 
+        <!-- OFFLINE PRACTICAL LEARNING BUTTON -->
+
+        <a
+            href="offline-learning.html"
+            class="btn"
+        >
+            Open Offline Practical Learning
+        </a>
+
+        <!-- TRY AGAIN BUTTON -->
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="window.location.reload();"
+        >
+            Try Again
+        </button>
+
+        <p class="note">
+            Learning content that has already been cached
+            can be accessed offline. Database operations
+            such as saving progress, submitting practical
+            results, viewing history and administrator
+            functions require a server connection.
+        </p>
+
         <div class="footer">
-            Food Process Practical Learning & Simulation System
+            Food Process Practical Learning &amp;
+            Simulation System
         </div>
 
     </div>
 
 </body>
-
 </html>

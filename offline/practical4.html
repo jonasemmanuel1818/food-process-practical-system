@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f5f75">
+
+    <title>Practical 4 - Drying</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #243746;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.65;
+        }
+
+        .header {
+            background: #1f5f75;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 11px;
+            margin-bottom: 10px;
+            background: #e8f1f4;
+            color: #1f5f75;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeaf0;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 20px 50px;
+        }
+
+        .offline-notice {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-left: 4px solid #1f5f75;
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 25px;
+        }
+
+        .offline-notice strong {
+            color: #17495a;
+        }
+
+        .offline-notice p {
+            margin: 5px 0 0;
+            color: #68767d;
+            font-size: 13px;
+        }
+
+        .section {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin: 0 0 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e5e7;
+            color: #17495a;
+            font-size: 21px;
+        }
+
+        .section h3 {
+            margin: 22px 0 10px;
+            color: #1f5f75;
+            font-size: 17px;
+        }
+
+        .section h4 {
+            margin: 20px 0 9px;
+            color: #17495a;
+            font-size: 15px;
+        }
+
+        .section p {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .section ul,
+        .section ol {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .info-box {
+            padding: 16px 18px;
+            background: #eef5f7;
+            border: 1px solid #d3e2e7;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .info-box strong {
+            color: #17495a;
+        }
+
+        .info-box p {
+            margin: 6px 0 0;
+        }
+
+        .warning-box {
+            padding: 16px 18px;
+            background: #f8f5ea;
+            border: 1px solid #e4dcc2;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box strong {
+            color: #6b5a20;
+        }
+
+        .step {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #f8fafb;
+            border: 1px solid #e1e5e7;
+            border-radius: 7px;
+        }
+
+        .step strong {
+            color: #17495a;
+        }
+
+        .step span {
+            color: #68767d;
+            font-size: 13px;
+        }
+
+        .formula {
+            padding: 17px;
+            margin: 15px 0;
+            background: #f8fafb;
+            border: 1px solid #dfe5e8;
+            border-radius: 8px;
+            color: #17495a;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 11px 12px;
+            border: 1px solid #d9dee3;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #eef3f5;
+            color: #17495a;
+        }
+
+        td {
+            color: #5f6d74;
+            background: #ffffff;
+        }
+
+        .activity {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 15px;
+            margin-bottom: 9px;
+            background: #f8fafb;
+            border: 1px solid #e0e5e7;
+            border-radius: 7px;
+        }
+
+        .activity-number {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f1f4;
+            color: #1f5f75;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .activity-content strong {
+            display: block;
+            color: #17495a;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .activity-content span {
+            color: #68767d;
+            font-size: 13px;
+        }
+
+        .simulation-box {
+            padding: 20px;
+            background: #f8fafb;
+            border: 1px solid #d9dee3;
+            border-radius: 9px;
+        }
+
+        .simulation-box h3 {
+            margin-top: 0;
+        }
+
+        .record-box {
+            padding: 18px;
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+        }
+
+        .record-field {
+            margin-bottom: 18px;
+        }
+
+        .record-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #17495a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #cfd7db;
+            border-radius: 7px;
+            resize: vertical;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1f5f75;
+        }
+
+        .completion {
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .completion h2 {
+            margin: 0 0 10px;
+            color: #17495a;
+            font-size: 20px;
+        }
+
+        .completion p {
+            margin: 0;
+            color: #68767d;
+            font-size: 13px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 20px;
+            background: #1f5f75;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #17495a;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #1f5f75;
+            border: 1px solid #1f5f75;
+        }
+
+        .btn-secondary:hover {
+            background: #eef5f7;
+        }
+
+        footer {
+            border-top: 1px solid #d9dee3;
+            padding: 20px;
+            text-align: center;
+            color: #89959a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .section h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-container">
+
+        <a href="../offline-learning.html" class="back">
+            ← Back to Offline Practical Learning
+        </a>
+
+        <div>
+            <span class="badge">
+                PRACTICAL 4
+            </span>
+        </div>
+
+        <h1>
+            Drying
+        </h1>
+
+        <p>
+            Spray Drying and Freeze Drying
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- OFFLINE NOTICE -->
+
+    <div class="offline-notice">
+
+        <strong>
+            OFFLINE LEARNING MODE
+        </strong>
+
+        <p>
+            You are viewing the cached learning material for
+            Practical 4. Reading this material is available
+            offline. Saving progress, practical reports and
+            simulation results requires a server connection.
+        </p>
+
+    </div>
+
+
+    <!-- INTRODUCTION -->
+
+    <section class="section">
+
+        <h2>
+            1. Introduction
+        </h2>
+
+        <p>
+            Drying is an important food processing operation used
+            to remove moisture from food materials. Removal of
+            moisture can improve storage stability and reduce the
+            amount of water available for undesirable reactions
+            and microbial growth.
+        </p>
+
+        <p>
+            This practical covers two important drying processes:
+            <strong>spray drying</strong> and
+            <strong>freeze drying</strong>.
+        </p>
+
+        <p>
+            Spray drying converts a liquid or slurry into a dry
+            powder by atomizing the feed into a stream of hot air.
+            Freeze drying removes water from a frozen product
+            mainly through sublimation.
+        </p>
+
+    </section>
+
+
+    <!-- OBJECTIVES -->
+
+    <section class="section">
+
+        <h2>
+            2. Objectives
+        </h2>
+
+        <ol>
+
+            <li>
+                Understand the purpose of drying in food processing.
+            </li>
+
+            <li>
+                Identify the main components of a spray dryer.
+            </li>
+
+            <li>
+                Record important temperatures during spray drying.
+            </li>
+
+            <li>
+                Determine the amount of material processed.
+            </li>
+
+            <li>
+                Determine dry-matter content of milk and milk powder.
+            </li>
+
+            <li>
+                Calculate the amount of powder collected.
+            </li>
+
+            <li>
+                Understand the principle of freeze drying.
+            </li>
+
+            <li>
+                Explain sublimation in freeze drying.
+            </li>
+
+            <li>
+                Understand the effect of product thickness on
+                freeze-drying time.
+            </li>
+
+            <li>
+                Record heating-plate temperature and chamber
+                pressure.
+            </li>
+
+            <li>
+                Compare theoretical and experimental drying
+                behaviour.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+    <!-- SPRAY DRYING -->
+
+    <section class="section">
+
+        <h2>
+            3. Spray Drying
+        </h2>
+
+        <p>
+            Spray drying is a drying process in which a liquid
+            feed is converted into a dry powder. The feed is
+            atomized into small droplets and brought into contact
+            with hot drying air.
+        </p>
+
+        <p>
+            Because the droplets have a large surface area,
+            moisture can evaporate rapidly as the droplets move
+            through the drying chamber.
+        </p>
+
+
+        <h3>
+            Main Components of a Spray Dryer
+        </h3>
+
+        <ul>
+
+            <li>
+                Feed system
+            </li>
+
+            <li>
+                Atomizer
+            </li>
+
+            <li>
+                Drying chamber
+            </li>
+
+            <li>
+                Hot-air system
+            </li>
+
+            <li>
+                Cyclone separator
+            </li>
+
+            <li>
+                Powder collection system
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- SPRAY DRYING PROCEDURE -->
+
+    <section class="section">
+
+        <h2>
+            4. Spray Drying Procedure
+        </h2>
+
+        <div class="step">
+            <strong>Step 1</strong><br>
+            <span>
+                Prepare the material to be spray dried.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong><br>
+            <span>
+                Check the spray dryer and make sure the
+                equipment is ready for operation.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong><br>
+            <span>
+                Set the required inlet temperature.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong><br>
+            <span>
+                Introduce the feed into the spray dryer.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong><br>
+            <span>
+                Allow the feed to be atomized into droplets.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong><br>
+            <span>
+                Allow hot air to remove moisture from the
+                droplets.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 7</strong><br>
+            <span>
+                Collect the resulting powder.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 8</strong><br>
+            <span>
+                Record the required temperatures, quantities
+                and observations.
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- SPRAY DRYING MEASUREMENTS -->
+
+    <section class="section">
+
+        <h2>
+            5. Spray Drying Measurements
+        </h2>
+
+        <h3>
+            Inlet Temperature
+        </h3>
+
+        <p>
+            The inlet temperature is the temperature of the hot
+            air entering the spray dryer. Record the value used
+            during the practical.
+        </p>
+
+
+        <h3>
+            Outlet/Product Temperature
+        </h3>
+
+        <p>
+            Record the outlet or product temperature during
+            spray drying together with the room temperature
+            where required.
+        </p>
+
+
+        <h3>
+            Amount of Material Spray Dried
+        </h3>
+
+        <p>
+            Record or calculate the amount of material introduced
+            into the drying process.
+        </p>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>
+                            Measurement
+                        </th>
+
+                        <th>
+                            Value
+                        </th>
+
+                        <th>
+                            Unit
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            Inlet temperature
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            °C
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Outlet/product temperature
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            °C
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Room temperature
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            °C
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Material spray dried
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            g / kg
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- DRY MATTER -->
+
+    <section class="section">
+
+        <h2>
+            6. Dry-Matter Content
+        </h2>
+
+        <p>
+            Dry-matter content represents the portion of a
+            material that remains after moisture has been
+            removed.
+        </p>
+
+        <h3>
+            Dry-Matter Percentage
+        </h3>
+
+        <div class="formula">
+
+            Dry Matter (%) =
+            (Mass of Dry Matter ÷ Mass of Sample) × 100
+
+        </div>
+
+        <p>
+            The dry-matter content of the milk and milk powder
+            can be determined and compared.
+        </p>
+
+    </section>
+
+
+    <!-- POWDER COLLECTION -->
+
+    <section class="section">
+
+        <h2>
+            7. Calculation of Powder Collected
+        </h2>
+
+        <p>
+            The amount of powder collected after spray drying
+            should be recorded and compared with the amount of
+            material processed.
+        </p>
+
+        <div class="formula">
+
+            Powder Collected =
+            Final Mass of Collected Powder
+
+        </div>
+
+        <p>
+            Where appropriate, the collected powder can be used
+            to determine the efficiency or recovery of the drying
+            process.
+        </p>
+
+    </section>
+
+
+    <!-- FREEZE DRYING -->
+
+    <section class="section">
+
+        <h2>
+            8. Freeze Drying
+        </h2>
+
+        <p>
+            Freeze drying is a drying process in which water is
+            removed from a frozen product under reduced pressure.
+        </p>
+
+        <p>
+            The frozen water changes directly from a solid state
+            to vapour without passing through the liquid state.
+            This process is called <strong>sublimation</strong>.
+        </p>
+
+
+        <div class="info-box">
+
+            <strong>
+                Principle of Sublimation
+            </strong>
+
+            <p>
+                Sublimation is the direct change of a substance
+                from the solid state to the vapour state.
+                In freeze drying, frozen water is removed from
+                the product through this process.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FREEZE DRYING PROCEDURE -->
+
+    <section class="section">
+
+        <h2>
+            9. Freeze-Drying Procedure
+        </h2>
+
+        <div class="step">
+            <strong>Step 1</strong><br>
+            <span>
+                Prepare the food sample for freeze drying.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong><br>
+            <span>
+                Freeze the product before the drying stage.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong><br>
+            <span>
+                Place the frozen product inside the drying
+                chamber.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong><br>
+            <span>
+                Establish the required chamber pressure.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong><br>
+            <span>
+                Apply the required heating conditions.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong><br>
+            <span>
+                Allow sublimation to remove water from the
+                frozen product.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 7</strong><br>
+            <span>
+                Record temperature, pressure and drying
+                observations.
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCT THICKNESS -->
+
+    <section class="section">
+
+        <h2>
+            10. Effect of Product Thickness on Freeze-Drying Time
+        </h2>
+
+        <p>
+            Product thickness affects the distance that moisture
+            must travel during freeze drying. A thicker product
+            generally requires a longer period for moisture to
+            be removed compared with a thinner product under
+            comparable conditions.
+        </p>
+
+        <div class="info-box">
+
+            <strong>
+                Practical Point
+            </strong>
+
+            <p>
+                Product thickness should therefore be considered
+                when comparing freeze-drying times.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- TEMPERATURE AND PRESSURE -->
+
+    <section class="section">
+
+        <h2>
+            11. Heating-Plate Temperature and Chamber Pressure
+        </h2>
+
+        <p>
+            During freeze drying, record the heating-plate
+            temperature and chamber pressure used during the
+            practical.
+        </p>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>
+                            Parameter
+                        </th>
+
+                        <th>
+                            Recorded Value
+                        </th>
+
+                        <th>
+                            Unit
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            Heating-plate temperature
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            °C
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Chamber pressure
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            Record unit
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- THEORETICAL VS EXPERIMENTAL -->
+
+    <section class="section">
+
+        <h2>
+            12. Theoretical and Experimental Drying Behaviour
+        </h2>
+
+        <p>
+            Theoretical drying behaviour describes the expected
+            change in moisture or drying conditions based on the
+            principles of drying. Experimental behaviour is based
+            on measurements obtained during the practical.
+        </p>
+
+        <p>
+            Comparing the two helps identify differences between
+            expected and observed drying behaviour.
+        </p>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>
+                            Aspect
+                        </th>
+
+                        <th>
+                            Theoretical Behaviour
+                        </th>
+
+                        <th>
+                            Experimental Behaviour
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            Drying rate
+                        </td>
+
+                        <td>
+                            Expected trend
+                        </td>
+
+                        <td>
+                            Record observed trend
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Moisture removal
+                        </td>
+
+                        <td>
+                            Expected reduction
+                        </td>
+
+                        <td>
+                            Record observed reduction
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Drying time
+                        </td>
+
+                        <td>
+                            Expected time
+                        </td>
+
+                        <td>
+                            Record actual time
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- SIMULATION -->
+
+    <section class="section">
+
+        <h2>
+            Drying Simulation
+        </h2>
+
+        <div class="simulation-box">
+
+            <h3>
+                Interactive Drying Simulation
+            </h3>
+
+            <p>
+                The main Food Process System contains an
+                interactive drying simulation for studying
+                drying behaviour and moisture changes.
+            </p>
+
+            <p>
+                When the system is connected to the server,
+                the simulation can be opened from Practical 4.
+                This offline page provides the learning material
+                needed before running the simulation.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTIVITIES -->
+
+    <section class="section">
+
+        <h2>
+            Practical 4 Activities
+        </h2>
+
+        <p>
+            Study and complete the following twelve activities
+            as part of the Practical 4 learning sequence.
+        </p>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                1
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Introduction to Drying
+                </strong>
+
+                <span>
+                    Read the introduction and explain the purpose
+                    of drying in food processing.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                2
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Spray Dryer Components
+                </strong>
+
+                <span>
+                    Identify the main components of a spray dryer.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                3
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Spray-Drying Inlet Temperature
+                </strong>
+
+                <span>
+                    Record the spray-drying inlet temperature
+                    used in the practical.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                4
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Outlet and Room Temperature
+                </strong>
+
+                <span>
+                    Record the outlet/product temperature and
+                    room temperature.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                5
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Amount of Material Spray Dried
+                </strong>
+
+                <span>
+                    Record or calculate the amount of material
+                    spray dried.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                6
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Dry-Matter Content
+                </strong>
+
+                <span>
+                    Determine the dry-matter content of the milk
+                    and milk powder.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                7
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Powder Collected
+                </strong>
+
+                <span>
+                    Calculate the amount of powder collected.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                8
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Freeze-Drying Introduction
+                </strong>
+
+                <span>
+                    Read the freeze-drying introduction and
+                    explain the principle of sublimation.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                9
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Product Thickness
+                </strong>
+
+                <span>
+                    Explain how product thickness affects
+                    freeze-drying time.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                10
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Heating Plate and Chamber Pressure
+                </strong>
+
+                <span>
+                    Record the heating-plate temperature and
+                    chamber pressure.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                11
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Drying Behaviour Comparison
+                </strong>
+
+                <span>
+                    Compare theoretical and experimental
+                    drying behaviour.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                12
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Observations, Questions and Conclusion
+                </strong>
+
+                <span>
+                    Write observations, answer the practical
+                    questions and state your conclusion.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STUDENT RECORD -->
+
+    <section class="section">
+
+        <h2>
+            Student Practical Record
+        </h2>
+
+        <div class="record-box">
+
+            <div class="record-field">
+
+                <label>
+                    Results
+                </label>
+
+                <textarea
+                    placeholder="Enter your Practical 4 results when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+            <div class="record-field">
+
+                <label>
+                    Observations
+                </label>
+
+                <textarea
+                    placeholder="Enter your observations when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+            <div class="record-field">
+
+                <label>
+                    Conclusion
+                </label>
+
+                <textarea
+                    placeholder="Write your conclusion when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+            <div class="warning-box">
+
+                <strong>
+                    Offline Mode
+                </strong>
+
+                <p>
+                    Saving this practical record requires a
+                    connection to the Food Process System server.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- KEY LEARNING -->
+
+    <section class="section">
+
+        <h2>
+            Key Learning Points
+        </h2>
+
+        <ul>
+
+            <li>
+                Drying removes moisture from food materials.
+            </li>
+
+            <li>
+                Spray drying can convert liquid feed into
+                dry powder.
+            </li>
+
+            <li>
+                Spray-dryer components work together to atomize,
+                dry and collect the product.
+            </li>
+
+            <li>
+                Dry-matter content can be used to describe the
+                amount of material remaining after moisture
+                removal.
+            </li>
+
+            <li>
+                Freeze drying involves removal of water from
+                a frozen product.
+            </li>
+
+            <li>
+                Sublimation is an important principle in
+                freeze drying.
+            </li>
+
+            <li>
+                Product thickness affects freeze-drying time.
+            </li>
+
+            <li>
+                Theoretical drying behaviour can be compared
+                with experimental observations.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- END -->
+
+    <section class="completion">
+
+        <h2>
+            Practical 4 Learning Material
+        </h2>
+
+        <p>
+            You have reached the end of the offline learning
+            material for Practical 4.
+        </p>
+
+        <a
+            href="../offline-learning.html"
+            class="btn"
+        >
+            Back to Practicals
+        </a>
+
+        <a
+            href="practical5.html"
+            class="btn btn-secondary"
+        >
+            Next: Practical 5 →
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Food Process Practical Learning &amp; Simulation System
+</footer>
+
+</body>
+</html>

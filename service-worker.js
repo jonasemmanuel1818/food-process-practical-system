@@ -1,39 +1,53 @@
-const CACHE_NAME = "food-process-system-v2";
+const CACHE_NAME = "food-process-system-v3";
 
 const APP_SHELL = [
+
+    // Main pages
     "/food_process_system/",
     "/food_process_system/index.php",
     "/food_process_system/offline.html",
+    "/food_process_system/offline-learning.html",
     "/food_process_system/manifest.json",
 
+    // Main CSS
     "/food_process_system/assets/css/style.css",
 
+    // Simulation JavaScript
     "/food_process_system/assets/js/practical2_simulation.js",
     "/food_process_system/assets/js/practical3_simulation.js",
     "/food_process_system/assets/js/practical4_simulation.js",
     "/food_process_system/assets/js/practical5_filtration.js",
 
+    // PWA icons
     "/food_process_system/assets/icons/icon-192.png",
-    "/food_process_system/assets/icons/icon-512.png"
+    "/food_process_system/assets/icons/icon-512.png",
+
+    // Offline Practical Learning Pages
+    "/food_process_system/offline/practical1.html",
+    "/food_process_system/offline/practical2.html",
+    "/food_process_system/offline/practical3.html",
+    "/food_process_system/offline/practical4.html",
+    "/food_process_system/offline/practical5.html"
+
 ];
 
 
-/*
-|--------------------------------------------------------------------------
-| INSTALL
-|--------------------------------------------------------------------------
-*/
+// =========================================================
+// INSTALL
+// =========================================================
 
 self.addEventListener("install", function (event) {
 
     event.waitUntil(
 
         caches.open(CACHE_NAME)
+
             .then(function (cache) {
 
                 return cache.addAll(APP_SHELL);
 
             })
+
             .catch(function (error) {
 
                 console.error(
@@ -45,22 +59,22 @@ self.addEventListener("install", function (event) {
 
     );
 
+    // Activate the new service worker immediately
     self.skipWaiting();
 
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| ACTIVATE
-|--------------------------------------------------------------------------
-*/
+// =========================================================
+// ACTIVATE
+// =========================================================
 
 self.addEventListener("activate", function (event) {
 
     event.waitUntil(
 
         caches.keys()
+
             .then(function (cacheNames) {
 
                 return Promise.all(
@@ -68,10 +82,13 @@ self.addEventListener("activate", function (event) {
                     cacheNames.map(function (cacheName) {
 
                         if (
+
                             cacheName !== CACHE_NAME &&
+
                             cacheName.startsWith(
                                 "food-process-system-"
                             )
+
                         ) {
 
                             return caches.delete(cacheName);
@@ -86,40 +103,39 @@ self.addEventListener("activate", function (event) {
 
     );
 
+    // Take control of open pages immediately
     self.clients.claim();
 
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| FETCH
-|--------------------------------------------------------------------------
-*/
+// =========================================================
+// FETCH
+// =========================================================
 
 self.addEventListener("fetch", function (event) {
 
-    /*
-     * Only handle GET requests.
-     */
-
+    // Only handle GET requests
     if (event.request.method !== "GET") {
+
         return;
+
     }
 
 
-    const requestURL = new URL(event.request.url);
+    const requestURL =
+        new URL(event.request.url);
 
 
-    /*
-     * Only handle requests belonging to our application.
-     */
-
+    // Only handle requests from this application
     if (
+
         requestURL.origin !== self.location.origin ||
+
         !requestURL.pathname.startsWith(
             "/food_process_system/"
         )
+
     ) {
 
         return;
@@ -127,16 +143,23 @@ self.addEventListener("fetch", function (event) {
     }
 
 
-    /*
-     * PHP pages other than index.php should normally
-     * remain network-dependent because they may contain
-     * login sessions, database information and
-     * user-specific content.
-     */
+    // -----------------------------------------------------
+    // PHP pages
+    // -----------------------------------------------------
+    //
+    // We do NOT cache logged-in PHP pages because they depend
+    // on sessions and database information.
+    //
+    // index.php is allowed because it is the public landing
+    // page.
+    //
 
     if (
+
         requestURL.pathname.endsWith(".php") &&
+
         !requestURL.pathname.endsWith("/index.php")
+
     ) {
 
         return;
@@ -150,10 +173,7 @@ self.addEventListener("fetch", function (event) {
 
             .then(function (cachedResponse) {
 
-                /*
-                 * Return cached version when available.
-                 */
-
+                // Use cached version when available
                 if (cachedResponse) {
 
                     return cachedResponse;
@@ -161,22 +181,19 @@ self.addEventListener("fetch", function (event) {
                 }
 
 
-                /*
-                 * Otherwise try the network.
-                 */
-
+                // Otherwise try the network
                 return fetch(event.request)
 
                     .then(function (networkResponse) {
 
-                        /*
-                         * Only cache successful responses.
-                         */
-
                         if (
+
                             !networkResponse ||
+
                             networkResponse.status !== 200 ||
+
                             networkResponse.type !== "basic"
+
                         ) {
 
                             return networkResponse;
@@ -184,14 +201,13 @@ self.addEventListener("fetch", function (event) {
                         }
 
 
-                        /*
-                         * Store a copy in the cache.
-                         */
-
+                        // Save successful response
                         const responseClone =
                             networkResponse.clone();
 
+
                         caches.open(CACHE_NAME)
+
                             .then(function (cache) {
 
                                 cache.put(
@@ -206,12 +222,11 @@ self.addEventListener("fetch", function (event) {
 
                     })
 
+
                     .catch(function () {
 
-                        /*
-                         * If the network is unavailable,
-                         * show the offline page.
-                         */
+                        // If the requested page is unavailable,
+                        // show the custom offline page.
 
                         return caches.match(
                             "/food_process_system/offline.html"

@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#1f5f75"
+    >
+
+    <title>
+        Practical 5 - Filtration and Separation
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            background: #f4f6f8;
+
+            color: #243746;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            line-height: 1.65;
+        }
+
+
+        .header {
+            background: #1f5f75;
+
+            color: #ffffff;
+
+            padding: 20px;
+        }
+
+
+        .header-container {
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        .back {
+            display: inline-block;
+
+            margin-bottom: 15px;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+
+        .badge {
+            display: inline-block;
+
+            padding: 6px 11px;
+
+            margin-bottom: 10px;
+
+            background: #e8f1f4;
+
+            color: #1f5f75;
+
+            border-radius: 5px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .header h1 {
+            margin: 0 0 7px;
+
+            font-size: 28px;
+        }
+
+
+        .header p {
+            margin: 0;
+
+            color: #dbeaf0;
+
+            font-size: 14px;
+        }
+
+
+        .container {
+            max-width: 1100px;
+
+            margin: auto;
+
+            padding: 30px 20px 50px;
+        }
+
+
+        .offline-notice {
+            background: #ffffff;
+
+            border: 1px solid #d9dee3;
+
+            border-left: 4px solid #1f5f75;
+
+            border-radius: 8px;
+
+            padding: 16px 18px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .offline-notice strong {
+            color: #17495a;
+        }
+
+
+        .offline-notice p {
+            margin: 5px 0 0;
+
+            color: #68767d;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .section {
+            background: #ffffff;
+
+            border: 1px solid #d9dee3;
+
+            border-radius: 10px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .section h2 {
+            margin: 0 0 16px;
+
+            padding-bottom: 10px;
+
+            border-bottom: 1px solid #e1e5e7;
+
+            color: #17495a;
+
+            font-size: 21px;
+        }
+
+
+        .section h3 {
+            margin: 22px 0 10px;
+
+            color: #1f5f75;
+
+            font-size: 17px;
+        }
+
+
+        .section p {
+            color: #5f6d74;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        .section ul,
+        .section ol {
+            color: #5f6d74;
+
+            font-size: 14px;
+
+            line-height: 1.8;
+
+            padding-left: 25px;
+        }
+
+
+        .info-box {
+            padding: 16px 18px;
+
+            background: #eef5f7;
+
+            border: 1px solid #d3e2e7;
+
+            border-radius: 8px;
+
+            margin-top: 15px;
+        }
+
+
+        .info-box strong {
+            color: #17495a;
+        }
+
+
+        .info-box p {
+            margin: 6px 0 0;
+        }
+
+
+        .warning-box {
+            padding: 16px 18px;
+
+            background: #f8f5ea;
+
+            border: 1px solid #e4dcc2;
+
+            border-radius: 8px;
+
+            margin-top: 15px;
+        }
+
+
+        .warning-box strong {
+            color: #6b5a20;
+        }
+
+
+        .step {
+            padding: 14px 16px;
+
+            margin-bottom: 10px;
+
+            background: #f8fafb;
+
+            border: 1px solid #e1e5e7;
+
+            border-radius: 7px;
+        }
+
+
+        .step strong {
+            color: #17495a;
+        }
+
+
+        .step span {
+            color: #68767d;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .formula {
+            padding: 17px;
+
+            margin: 15px 0;
+
+            background: #f8fafb;
+
+            border: 1px solid #dfe5e8;
+
+            border-radius: 8px;
+
+            color: #17495a;
+
+            text-align: center;
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+
+        .table-wrapper {
+            overflow-x: auto;
+
+            margin-top: 15px;
+        }
+
+
+        table {
+            width: 100%;
+
+            min-width: 650px;
+
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+            padding: 11px 12px;
+
+            border: 1px solid #d9dee3;
+
+            font-size: 13px;
+
+            text-align: left;
+        }
+
+
+        th {
+            background: #eef3f5;
+
+            color: #17495a;
+        }
+
+
+        td {
+            background: #ffffff;
+
+            color: #5f6d74;
+        }
+
+
+        .activity {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            padding: 14px 15px;
+
+            margin-bottom: 9px;
+
+            background: #f8fafb;
+
+            border: 1px solid #e0e5e7;
+
+            border-radius: 7px;
+        }
+
+
+        .activity-number {
+            min-width: 32px;
+
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #e8f1f4;
+
+            color: #1f5f75;
+
+            border-radius: 50%;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .activity-content strong {
+            display: block;
+
+            color: #17495a;
+
+            font-size: 14px;
+
+            margin-bottom: 3px;
+        }
+
+
+        .activity-content span {
+            color: #68767d;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .simulation-box {
+            padding: 20px;
+
+            background: #f8fafb;
+
+            border: 1px solid #d9dee3;
+
+            border-radius: 9px;
+        }
+
+
+        .simulation-box h3 {
+            margin-top: 0;
+        }
+
+
+        .record-box {
+            padding: 18px;
+
+            background: #ffffff;
+
+            border: 1px solid #d9dee3;
+
+            border-radius: 8px;
+        }
+
+
+        .record-field {
+            margin-bottom: 18px;
+        }
+
+
+        .record-field label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #17495a;
+
+            font-weight: 600;
+
+            font-size: 14px;
+        }
+
+
+        textarea {
+            width: 100%;
+
+            min-height: 120px;
+
+            padding: 12px;
+
+            border: 1px solid #cfd7db;
+
+            border-radius: 7px;
+
+            resize: vertical;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 14px;
+        }
+
+
+        textarea:focus {
+            outline: none;
+
+            border-color: #1f5f75;
+        }
+
+
+        .completion {
+            text-align: center;
+
+            background: #ffffff;
+
+            border: 1px solid #d9dee3;
+
+            border-radius: 10px;
+
+            padding: 25px;
+        }
+
+
+        .completion h2 {
+            margin: 0 0 10px;
+
+            color: #17495a;
+
+            font-size: 20px;
+        }
+
+
+        .completion p {
+            margin: 0;
+
+            color: #68767d;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .btn {
+            display: inline-block;
+
+            margin-top: 18px;
+
+            padding: 11px 20px;
+
+            background: #1f5f75;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        .btn:hover {
+            background: #17495a;
+        }
+
+
+        .btn-secondary {
+            background: #ffffff;
+
+            color: #1f5f75;
+
+            border: 1px solid #1f5f75;
+        }
+
+
+        .btn-secondary:hover {
+            background: #eef5f7;
+        }
+
+
+        footer {
+            border-top: 1px solid #d9dee3;
+
+            padding: 20px;
+
+            text-align: center;
+
+            color: #89959a;
+
+            font-size: 12px;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .section h2 {
+                font-size: 19px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-container">
+
+        <a
+            href="../offline-learning.html"
+            class="back"
+        >
+            ← Back to Offline Practical Learning
+        </a>
+
+
+        <div>
+
+            <span class="badge">
+                PRACTICAL 5
+            </span>
+
+        </div>
+
+
+        <h1>
+            Filtration and Separation
+        </h1>
+
+
+        <p>
+            Gravity Filtration and Virtual Filtration Laboratory
+        </p>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <!-- OFFLINE NOTICE -->
+
+    <div class="offline-notice">
+
+        <strong>
+            OFFLINE LEARNING MODE
+        </strong>
+
+
+        <p>
+            You are viewing the cached learning material for
+            Practical 5. Reading this material is available
+            offline. Saving progress, practical reports and
+            simulation results requires a server connection.
+        </p>
+
+    </div>
+
+
+
+    <!-- INTRODUCTION -->
+
+    <section class="section">
+
+        <h2>
+            1. Introduction
+        </h2>
+
+
+        <p>
+            Filtration is a physical separation operation used
+            to separate insoluble solid particles from a liquid
+            by passing the mixture through a porous filtering
+            medium.
+        </p>
+
+
+        <p>
+            During gravity filtration, the liquid passes through
+            the pores of the filter paper while the insoluble
+            solid particles are retained on the filter paper.
+            The liquid that passes through the filter is called
+            the <strong>filtrate</strong>, while the material
+            retained by the filter paper is called the
+            <strong>residue</strong>.
+        </p>
+
+
+        <div class="info-box">
+
+            <strong>
+                Food Processing Application
+            </strong>
+
+
+            <p>
+                Filtration is used in food processing for
+                clarification of beverages, removal of suspended
+                particles, separation of solids from liquid food
+                products and treatment of process streams.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- OBJECTIVES -->
+
+    <section class="section">
+
+        <h2>
+            2. Objectives
+        </h2>
+
+
+        <ol>
+
+            <li>
+                To understand the principle of filtration.
+            </li>
+
+            <li>
+                To identify the equipment used in gravity
+                filtration.
+            </li>
+
+            <li>
+                To distinguish between filtrate and residue.
+            </li>
+
+            <li>
+                To perform a simulated filtration experiment.
+            </li>
+
+            <li>
+                To calculate filtration-related results.
+            </li>
+
+            <li>
+                To relate filtration to food processing
+                applications.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+
+    <!-- MATERIALS -->
+
+    <section class="section">
+
+        <h2>
+            3. Materials and Equipment
+        </h2>
+
+
+        <ul>
+
+            <li>
+                Sample mixture containing liquid and
+                insoluble particles.
+            </li>
+
+            <li>
+                Filtration funnel.
+            </li>
+
+            <li>
+                Filter paper.
+            </li>
+
+            <li>
+                Receiving beaker.
+            </li>
+
+            <li>
+                Laboratory stand or support.
+            </li>
+
+            <li>
+                Digital balance for mass measurement.
+            </li>
+
+            <li>
+                Stopwatch or timer.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+
+    <!-- PRINCIPLE -->
+
+    <section class="section">
+
+        <h2>
+            4. Principle of Filtration
+        </h2>
+
+
+        <div class="info-box">
+
+            <p>
+                Filtration operates because the filter medium
+                contains pores that allow the liquid phase to
+                pass through while particles larger than the
+                effective pore openings are retained.
+            </p>
+
+
+            <p>
+                The separation performance can be evaluated
+                by comparing the initial mass of the sample
+                with the mass of solids retained after
+                filtration.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FILTRATE AND RESIDUE -->
+
+    <section class="section">
+
+        <h2>
+            5. Filtrate and Residue
+        </h2>
+
+
+        <div class="step">
+
+            <strong>
+                Filtrate
+            </strong>
+
+            <br>
+
+            <span>
+                The liquid that passes through the filter medium
+                during filtration.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Residue
+            </strong>
+
+            <br>
+
+            <span>
+                The solid material retained on the filter paper
+                after filtration.
+            </span>
+
+        </div>
+
+
+        <p>
+            The difference between filtrate and residue is
+            important when interpreting the results of a
+            filtration process.
+        </p>
+
+    </section>
+
+
+
+    <!-- PROCEDURE -->
+
+    <section class="section">
+
+        <h2>
+            6. Procedure
+        </h2>
+
+
+        <div class="step">
+
+            <strong>
+                Step 1
+            </strong>
+
+            <br>
+
+            <span>
+                Prepare the sample mixture containing liquid
+                and insoluble solid particles.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 2
+            </strong>
+
+            <br>
+
+            <span>
+                Place the filtration funnel in position.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 3
+            </strong>
+
+            <br>
+
+            <span>
+                Install the filter paper inside the funnel.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 4
+            </strong>
+
+            <br>
+
+            <span>
+                Place the receiving beaker directly below
+                the funnel stem.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 5
+            </strong>
+
+            <br>
+
+            <span>
+                Transfer the sample mixture into the
+                filtration funnel.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 6
+            </strong>
+
+            <br>
+
+            <span>
+                Allow gravity to drive the liquid through
+                the filter paper.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 7
+            </strong>
+
+            <br>
+
+            <span>
+                Observe the residue remaining on the filter
+                paper and the filtrate collected below.
+            </span>
+
+        </div>
+
+
+        <div class="step">
+
+            <strong>
+                Step 8
+            </strong>
+
+            <br>
+
+            <span>
+                Record the required measurements and
+                calculate the results.
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SAFETY -->
+
+    <section class="section">
+
+        <h2>
+            7. Safety Precautions
+        </h2>
+
+
+        <ul>
+
+            <li>
+                Handle laboratory glassware carefully.
+            </li>
+
+            <li>
+                Ensure that the filtration apparatus is
+                stable before starting the experiment.
+            </li>
+
+            <li>
+                Avoid overfilling the filtration funnel.
+            </li>
+
+            <li>
+                Keep the working area clean and dry.
+            </li>
+
+            <li>
+                Follow laboratory safety instructions
+                throughout the practical.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+
+    <!-- SIMULATION -->
+
+    <section class="section">
+
+        <h2>
+            8. Virtual Filtration Laboratory
+        </h2>
+
+
+        <div class="simulation-box">
+
+            <h3>
+                Filtration Simulation
+            </h3>
+
+
+            <p>
+                Practical 5 contains an interactive virtual
+                filtration laboratory. The simulation allows
+                you to enter an initial sample mass, retained
+                solid mass and filtration time.
+            </p>
+
+
+            <p>
+                The system then calculates the filtrate mass,
+                percentage of solids retained and separation
+                percentage.
+            </p>
+
+
+            <div class="info-box">
+
+                <strong>
+                    Offline Note
+                </strong>
+
+
+                <p>
+                    The interactive simulation itself requires
+                    the main system to be available. This page
+                    provides the theoretical learning material
+                    while offline.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- CALCULATIONS -->
+
+    <section class="section">
+
+        <h2>
+            9. Filtration Calculations
+        </h2>
+
+
+        <h3>
+            Filtrate Mass
+        </h3>
+
+
+        <div class="formula">
+
+            Filtrate Mass =
+            Initial Sample Mass − Retained Solid Mass
+
+        </div>
+
+
+        <h3>
+            Percentage of Solids Retained
+        </h3>
+
+
+        <div class="formula">
+
+            Retention (%) =
+            (Retained Solid Mass ÷ Initial Sample Mass)
+            × 100
+
+        </div>
+
+
+        <h3>
+            Separation Percentage
+        </h3>
+
+
+        <div class="formula">
+
+            Separation (%) =
+            (Filtrate Mass ÷ Initial Sample Mass)
+            × 100
+
+        </div>
+
+
+        <div class="warning-box">
+
+            <strong>
+                Important
+            </strong>
+
+
+            <p>
+                The retained solid mass should not be greater
+                than the initial sample mass.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- MEASUREMENTS -->
+
+    <section class="section">
+
+        <h2>
+            10. Measurements and Results
+        </h2>
+
+
+        <p>
+            The filtration simulation uses three main input
+            measurements.
+        </p>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Measurement
+                        </th>
+
+                        <th>
+                            Description
+                        </th>
+
+                        <th>
+                            Unit
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Initial Sample Mass
+                        </td>
+
+                        <td>
+                            Total mass of the sample before
+                            filtration.
+                        </td>
+
+                        <td>
+                            g
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Retained Solid Mass
+                        </td>
+
+                        <td>
+                            Mass of solid material retained
+                            by the filter.
+                        </td>
+
+                        <td>
+                            g
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Filtration Time
+                        </td>
+
+                        <td>
+                            Time required for the filtration
+                            process.
+                        </td>
+
+                        <td>
+                            seconds
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SAMPLE CALCULATION -->
+
+    <section class="section">
+
+        <h2>
+            11. Calculation Example
+        </h2>
+
+
+        <p>
+            Consider a sample with an initial mass of
+            <strong>100 g</strong> and a retained solid mass
+            of <strong>25 g</strong>.
+        </p>
+
+
+        <h3>
+            Filtrate Mass
+        </h3>
+
+
+        <div class="formula">
+
+            Filtrate Mass =
+            100 − 25 = 75 g
+
+        </div>
+
+
+        <h3>
+            Retention Percentage
+        </h3>
+
+
+        <div class="formula">
+
+            Retention =
+            (25 ÷ 100) × 100 = 25%
+
+        </div>
+
+
+        <h3>
+            Separation Percentage
+        </h3>
+
+
+        <div class="formula">
+
+            Separation =
+            (75 ÷ 100) × 100 = 75%
+
+        </div>
+
+
+        <p>
+            These values demonstrate how the mass balance of
+            the filtration process can be interpreted.
+        </p>
+
+    </section>
+
+
+
+    <!-- OBSERVATION TABLE -->
+
+    <section class="section">
+
+        <h2>
+            12. Observation Table
+        </h2>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Parameter
+                        </th>
+
+                        <th>
+                            Value
+                        </th>
+
+                        <th>
+                            Unit
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Initial Sample Mass
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            g
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Retained Solid Mass
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            g
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Filtrate Mass
+                        </td>
+
+                        <td>
+                            Calculate value
+                        </td>
+
+                        <td>
+                            g
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Retention Percentage
+                        </td>
+
+                        <td>
+                            Calculate value
+                        </td>
+
+                        <td>
+                            %
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Separation Percentage
+                        </td>
+
+                        <td>
+                            Calculate value
+                        </td>
+
+                        <td>
+                            %
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Filtration Time
+                        </td>
+
+                        <td>
+                            Record value
+                        </td>
+
+                        <td>
+                            seconds
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ACTIVITIES -->
+
+    <section class="section">
+
+        <h2>
+            13. Practical 5 Activities
+        </h2>
+
+
+        <p>
+            Complete the following eight activities as part of
+            the Practical 5 learning sequence.
+        </p>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                1
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Introduction to Filtration
+                </strong>
+
+
+                <span>
+                    Read the introduction and explain the purpose
+                    of filtration in food processing.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                2
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Filtration Equipment
+                </strong>
+
+
+                <span>
+                    Identify the main equipment used during
+                    gravity filtration.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                3
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Filtrate and Retained Residue
+                </strong>
+
+
+                <span>
+                    Explain the difference between the filtrate
+                    and the retained residue.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                4
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Virtual Filtration Apparatus
+                </strong>
+
+
+                <span>
+                    Set up the virtual filtration apparatus by
+                    positioning the sample and filter paper
+                    correctly.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                5
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Interactive Filtration Simulation
+                </strong>
+
+
+                <span>
+                    Perform the interactive filtration simulation
+                    and observe the movement of liquid through
+                    the filter paper.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                6
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Record Measurements
+                </strong>
+
+
+                <span>
+                    Record the initial sample mass, retained
+                    solid mass and filtration time.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                7
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Calculate Filtration Results
+                </strong>
+
+
+                <span>
+                    Calculate and interpret the filtrate mass
+                    and percentage of solids retained.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                8
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Observations and Application
+                </strong>
+
+
+                <span>
+                    Write your observations and explain how
+                    filtration can be applied in food processing.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- STUDENT RECORD -->
+
+    <section class="section">
+
+        <h2>
+            14. Student Practical Record
+        </h2>
+
+
+        <div class="record-box">
+
+
+            <div class="record-field">
+
+                <label>
+                    Results
+                </label>
+
+
+                <textarea
+                    placeholder="Enter your filtration results when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+
+            <div class="record-field">
+
+                <label>
+                    Observations
+                </label>
+
+
+                <textarea
+                    placeholder="Describe your observations when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+
+            <div class="record-field">
+
+                <label>
+                    Conclusion
+                </label>
+
+
+                <textarea
+                    placeholder="Write your conclusion when the system is online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+            <div class="warning-box">
+
+                <strong>
+                    Offline Mode
+                </strong>
+
+
+                <p>
+                    Saving the student practical record requires
+                    a connection to the Food Process System server.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- KEY LEARNING -->
+
+    <section class="section">
+
+        <h2>
+            Key Learning Points
+        </h2>
+
+
+        <ul>
+
+            <li>
+                Filtration separates insoluble solid particles
+                from a liquid using a porous filtering medium.
+            </li>
+
+            <li>
+                The liquid passing through the filter is called
+                the filtrate.
+            </li>
+
+            <li>
+                The material retained by the filter paper is
+                called the residue.
+            </li>
+
+            <li>
+                Gravity can drive liquid through the filter
+                paper during gravity filtration.
+            </li>
+
+            <li>
+                Filtrate mass can be determined from the initial
+                sample mass and retained solid mass.
+            </li>
+
+            <li>
+                Retention percentage describes the proportion
+                of the initial sample retained as solid.
+            </li>
+
+            <li>
+                Filtration has applications in food processing,
+                including clarification and removal of suspended
+                particles.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+
+    <!-- END -->
+
+    <section class="completion">
+
+        <h2>
+            Practical 5 Learning Material
+        </h2>
+
+
+        <p>
+            You have reached the end of the offline learning
+            material for Practical 5.
+        </p>
+
+
+        <a
+            href="../offline-learning.html"
+            class="btn"
+        >
+            Back to Practicals
+        </a>
+
+
+        <a
+            href="practical1.html"
+            class="btn btn-secondary"
+        >
+            ← Practical 1
+        </a>
+
+    </section>
+
+</main>
+
+
+
+<footer>
+
+    Food Process Practical Learning &amp;
+    Simulation System
+
+</footer>
+
+
+</body>
+</html>

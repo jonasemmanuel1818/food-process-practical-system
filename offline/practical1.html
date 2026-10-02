@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f5f75">
+
+    <title>Practical 1 - Laboratory Orientation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #24343b;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background: #1f5f75;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .header-container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeaf0;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+            padding: 30px 20px 50px;
+        }
+
+        .offline-notice {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-left: 4px solid #1f5f75;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-bottom: 25px;
+        }
+
+        .offline-notice strong {
+            color: #17495a;
+        }
+
+        .offline-notice p {
+            margin: 5px 0 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin: 0 0 15px;
+            color: #17495a;
+            font-size: 21px;
+            border-bottom: 1px solid #e1e5e7;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #1f5f75;
+            font-size: 17px;
+            margin: 20px 0 10px;
+        }
+
+        .section p {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .section ul,
+        .section ol {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .objectives {
+            background: #f8fafb;
+            border: 1px solid #dfe5e8;
+            border-radius: 8px;
+            padding: 15px 20px;
+        }
+
+        .safety-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8fafb;
+            border: 1px solid #e1e5e7;
+            border-radius: 7px;
+        }
+
+        .safety-item strong {
+            display: block;
+            color: #17495a;
+            margin-bottom: 4px;
+        }
+
+        .safety-item span {
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .completion {
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .completion h2 {
+            margin: 0 0 10px;
+            color: #17495a;
+            font-size: 20px;
+        }
+
+        .completion p {
+            margin: 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 20px;
+            background: #1f5f75;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #17495a;
+        }
+
+        footer {
+            border-top: 1px solid #d9dee3;
+            padding: 20px;
+            text-align: center;
+            color: #89959a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-container">
+
+        <a href="../offline-learning.html" class="back">
+            ← Back to Offline Practical Learning
+        </a>
+
+        <h1>
+            PRACTICAL 1: Laboratory Orientation
+        </h1>
+
+        <p>
+            Food Process Practical Learning &amp; Simulation System
+        </p>
+
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="offline-notice">
+        <strong>OFFLINE LEARNING MODE</strong>
+
+        <p>
+            You are viewing the cached learning material for
+            Practical 1. This page is available without a
+            server connection. Database operations such as
+            saving progress require an online connection.
+        </p>
+    </div>
+
+
+    <!-- INTRODUCTION -->
+
+    <section class="section">
+
+        <h2>
+            1. Laboratory Orientation
+        </h2>
+
+        <p>
+            Laboratory orientation introduces students to the
+            food processing laboratory environment, the equipment
+            used in practical work, health and safety requirements,
+            and the rules that should be followed during laboratory
+            activities.
+        </p>
+
+        <p>
+            Students should understand the laboratory environment
+            before beginning practical experiments. Proper
+            preparation and observation of safety procedures help
+            to protect students, laboratory personnel, equipment
+            and experimental materials.
+        </p>
+
+    </section>
+
+
+    <!-- OBJECTIVES -->
+
+    <section class="section">
+
+        <h2>
+            2. Objectives
+        </h2>
+
+        <div class="objectives">
+
+            <ol>
+                <li>
+                    To become familiar with the food processing
+                    laboratory environment.
+                </li>
+
+                <li>
+                    To identify health and safety equipment
+                    available in the laboratory.
+                </li>
+
+                <li>
+                    To understand laboratory rules and safety
+                    procedures.
+                </li>
+
+                <li>
+                    To understand the importance of following
+                    safety procedures during practical activities.
+                </li>
+            </ol>
+
+        </div>
+
+    </section>
+
+
+    <!-- HEALTH AND SAFETY EQUIPMENT -->
+
+    <section class="section">
+
+        <h2>
+            3. Health and Safety Equipment
+        </h2>
+
+        <p>
+            Appropriate safety equipment should be available
+            and used when carrying out laboratory activities.
+            Students should know the purpose of the available
+            safety equipment before starting practical work.
+        </p>
+
+
+        <div class="safety-item">
+
+            <strong>
+                Laboratory Coat
+            </strong>
+
+            <span>
+                Used to protect clothing and the body from
+                accidental spills and contamination.
+            </span>
+
+        </div>
+
+
+        <div class="safety-item">
+
+            <strong>
+                Protective Gloves
+            </strong>
+
+            <span>
+                Used where appropriate to protect the hands
+                during laboratory activities.
+            </span>
+
+        </div>
+
+
+        <div class="safety-item">
+
+            <strong>
+                Safety Goggles
+            </strong>
+
+            <span>
+                Used to protect the eyes from splashes,
+                particles and other laboratory hazards.
+            </span>
+
+        </div>
+
+
+        <div class="safety-item">
+
+            <strong>
+                Laboratory Footwear
+            </strong>
+
+            <span>
+                Appropriate footwear helps protect the feet
+                from spills, broken materials and other
+                laboratory hazards.
+            </span>
+
+        </div>
+
+
+        <div class="safety-item">
+
+            <strong>
+                First Aid Equipment
+            </strong>
+
+            <span>
+                First aid equipment should be accessible
+                for responding to minor injuries and
+                emergencies.
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- LABORATORY RULES -->
+
+    <section class="section">
+
+        <h2>
+            4. Laboratory Rules
+        </h2>
+
+        <ol>
+
+            <li>
+                Follow all instructions given by the lecturer,
+                laboratory instructor or responsible laboratory
+                personnel.
+            </li>
+
+            <li>
+                Wear appropriate protective clothing and
+                equipment when required.
+            </li>
+
+            <li>
+                Keep the laboratory working area clean and
+                organized.
+            </li>
+
+            <li>
+                Do not eat, drink or engage in activities that
+                may compromise laboratory safety.
+            </li>
+
+            <li>
+                Handle laboratory equipment carefully and
+                according to the provided instructions.
+            </li>
+
+            <li>
+                Report accidents, injuries, spills or damaged
+                equipment immediately.
+            </li>
+
+            <li>
+                Dispose of laboratory waste using the
+                appropriate procedures.
+            </li>
+
+            <li>
+                Wash hands after completing laboratory work.
+            </li>
+
+            <li>
+                Do not operate equipment without proper
+                instruction or authorization.
+            </li>
+
+            <li>
+                Leave the laboratory clean and properly
+                organized after completing practical work.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+    <!-- SAFETY PROCEDURES -->
+
+    <section class="section">
+
+        <h2>
+            5. Safety Procedures
+        </h2>
+
+        <h3>
+            Before Starting Practical Work
+        </h3>
+
+        <ul>
+
+            <li>
+                Read and understand the practical instructions.
+            </li>
+
+            <li>
+                Identify possible hazards associated with
+                the activity.
+            </li>
+
+            <li>
+                Check the condition of laboratory equipment
+                before use.
+            </li>
+
+            <li>
+                Wear the required protective equipment.
+            </li>
+
+        </ul>
+
+
+        <h3>
+            During Practical Work
+        </h3>
+
+        <ul>
+
+            <li>
+                Follow the correct experimental procedure.
+            </li>
+
+            <li>
+                Handle equipment and materials carefully.
+            </li>
+
+            <li>
+                Keep the working area organized.
+            </li>
+
+            <li>
+                Report any unsafe condition immediately.
+            </li>
+
+        </ul>
+
+
+        <h3>
+            After Practical Work
+        </h3>
+
+        <ul>
+
+            <li>
+                Switch off equipment where applicable.
+            </li>
+
+            <li>
+                Clean the working area.
+            </li>
+
+            <li>
+                Return equipment to its appropriate location.
+            </li>
+
+            <li>
+                Dispose of waste appropriately.
+            </li>
+
+            <li>
+                Wash hands before leaving the laboratory.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- KEY POINTS -->
+
+    <section class="section">
+
+        <h2>
+            6. Key Points to Remember
+        </h2>
+
+        <ul>
+
+            <li>
+                Safety is an essential part of laboratory work.
+            </li>
+
+            <li>
+                Laboratory equipment should only be used
+                correctly and carefully.
+            </li>
+
+            <li>
+                Personal protective equipment should be used
+                when required.
+            </li>
+
+            <li>
+                Accidents and unsafe conditions should be
+                reported immediately.
+            </li>
+
+            <li>
+                The laboratory should be left clean and
+                organized after practical work.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- OFFLINE COMPLETION -->
+
+    <section class="completion">
+
+        <h2>
+            Practical 1 Learning Material
+        </h2>
+
+        <p>
+            You have reached the end of the offline learning
+            material for Practical 1.
+        </p>
+
+        <a
+            href="../offline-learning.html"
+            class="btn"
+        >
+            Back to Practicals
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Food Process Practical Learning &amp; Simulation System
+</footer>
+
+</body>
+</html>

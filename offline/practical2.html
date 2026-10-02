@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f5f75">
+
+    <title>Practical 2 - Physical Separation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #24343b;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background: #1f5f75;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .header-container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .header h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeaf0;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+            padding: 30px 20px 50px;
+        }
+
+        .offline-notice {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-left: 4px solid #1f5f75;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-bottom: 25px;
+        }
+
+        .offline-notice strong {
+            color: #17495a;
+        }
+
+        .offline-notice p {
+            margin: 5px 0 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin: 0 0 15px;
+            color: #17495a;
+            font-size: 21px;
+            border-bottom: 1px solid #e1e5e7;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #1f5f75;
+            font-size: 17px;
+            margin: 22px 0 10px;
+        }
+
+        .section p {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .section ul,
+        .section ol {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .objective-box {
+            background: #f8fafb;
+            border: 1px solid #dfe5e8;
+            border-radius: 8px;
+            padding: 15px 20px;
+        }
+
+        .formula {
+            margin: 15px 0;
+            padding: 15px 18px;
+            background: #f8fafb;
+            border: 1px solid #dfe5e8;
+            border-radius: 7px;
+            text-align: center;
+            color: #17495a;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .highlight {
+            padding: 15px 18px;
+            background: #eef5f7;
+            border: 1px solid #d3e2e7;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .highlight strong {
+            color: #17495a;
+        }
+
+        .highlight p {
+            margin: 6px 0 0;
+        }
+
+        .step {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #f8fafb;
+            border: 1px solid #e1e5e7;
+            border-radius: 7px;
+        }
+
+        .step strong {
+            color: #17495a;
+        }
+
+        .step span {
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 11px 12px;
+            border: 1px solid #d9dee3;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background: #eef3f5;
+            color: #17495a;
+        }
+
+        td {
+            color: #5f6d74;
+            background: #ffffff;
+        }
+
+        .completion {
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .completion h2 {
+            margin: 0 0 10px;
+            color: #17495a;
+            font-size: 20px;
+        }
+
+        .completion p {
+            margin: 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 20px;
+            background: #1f5f75;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #17495a;
+        }
+
+        footer {
+            border-top: 1px solid #d9dee3;
+            padding: 20px;
+            text-align: center;
+            color: #89959a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-container">
+
+        <a href="../offline-learning.html" class="back">
+            ← Back to Offline Practical Learning
+        </a>
+
+        <h1>
+            PRACTICAL 2: Physical Separation
+        </h1>
+
+        <p>
+            Centrifugation and Sieve Analysis
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="offline-notice">
+
+        <strong>
+            OFFLINE LEARNING MODE
+        </strong>
+
+        <p>
+            You are viewing the cached learning material for
+            Practical 2. The learning content is available
+            offline. Database operations and saving simulation
+            results require an online connection.
+        </p>
+
+    </div>
+
+
+    <!-- INTRODUCTION -->
+
+    <section class="section">
+
+        <h2>
+            1. Introduction
+        </h2>
+
+        <p>
+            Physical separation is an important operation in
+            food processing. It involves separating components
+            of a mixture based on differences in their physical
+            properties.
+        </p>
+
+        <p>
+            In this practical, physical separation is studied
+            using two methods: <strong>centrifugation</strong>
+            and <strong>sieve analysis</strong>.
+        </p>
+
+        <p>
+            Centrifugation uses centrifugal force to separate
+            components according to differences in density,
+            while sieve analysis separates particles according
+            to particle size.
+        </p>
+
+    </section>
+
+
+    <!-- OBJECTIVES -->
+
+    <section class="section">
+
+        <h2>
+            2. Objectives
+        </h2>
+
+        <div class="objective-box">
+
+            <ol>
+
+                <li>
+                    To understand the principle of physical
+                    separation in food processing.
+                </li>
+
+                <li>
+                    To understand the principle and application
+                    of centrifugation.
+                </li>
+
+                <li>
+                    To calculate centrifugal force and understand
+                    the relationship between RPM and RCF.
+                </li>
+
+                <li>
+                    To understand sieve analysis as a particle
+                    size separation method.
+                </li>
+
+                <li>
+                    To determine the distribution of particles
+                    according to sieve size.
+                </li>
+
+            </ol>
+
+        </div>
+
+    </section>
+
+
+    <!-- MATERIALS -->
+
+    <section class="section">
+
+        <h2>
+            3. Materials and Equipment
+        </h2>
+
+        <ul>
+
+            <li>
+                Centrifuge
+            </li>
+
+            <li>
+                Centrifuge tubes
+            </li>
+
+            <li>
+                Sample material
+            </li>
+
+            <li>
+                Sieve set
+            </li>
+
+            <li>
+                Weighing balance
+            </li>
+
+            <li>
+                Collection containers
+            </li>
+
+            <li>
+                Stopwatch or timer
+            </li>
+
+            <li>
+                Laboratory protective equipment
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- PART A -->
+
+    <section class="section">
+
+        <h2>
+            4. Centrifugation
+        </h2>
+
+        <p>
+            Centrifugation is a physical separation process
+            in which centrifugal force is used to separate
+            components of a mixture.
+        </p>
+
+        <p>
+            When a sample is rotated at high speed, particles
+            experience centrifugal force. Components with
+            greater density tend to move outward and sediment
+            more rapidly than components with lower density.
+        </p>
+
+
+        <h3>
+            Principle of Centrifugation
+        </h3>
+
+        <p>
+            The separation effect in a centrifuge depends on
+            factors such as rotational speed, radius of rotation,
+            particle properties and the difference in density
+            between components.
+        </p>
+
+
+        <div class="highlight">
+
+            <strong>
+                Important:
+            </strong>
+
+            <p>
+                The centrifuge should be properly balanced before
+                operation. Uneven loading can cause vibration and
+                may damage the equipment.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- RCF -->
+
+    <section class="section">
+
+        <h2>
+            5. Relative Centrifugal Force (RCF)
+        </h2>
+
+        <p>
+            Relative centrifugal force describes the centrifugal
+            force applied to a sample relative to the gravitational
+            force.
+        </p>
+
+        <div class="formula">
+            RCF = 1.118 × 10<sup>-5</sup> × r × RPM<sup>2</sup>
+        </div>
+
+        <p>
+            Where:
+        </p>
+
+        <ul>
+
+            <li>
+                <strong>RCF</strong> = Relative Centrifugal Force
+                (× g)
+            </li>
+
+            <li>
+                <strong>r</strong> = radius of rotation in centimetres
+            </li>
+
+            <li>
+                <strong>RPM</strong> = revolutions per minute
+            </li>
+
+        </ul>
+
+
+        <h3>
+            Example Calculation
+        </h3>
+
+        <p>
+            If the radius of rotation is known together with
+            the centrifuge speed, the RCF can be calculated using
+            the equation above.
+        </p>
+
+        <div class="formula">
+            RCF = 1.118 × 10<sup>-5</sup> × r × RPM²
+        </div>
+
+        <p>
+            The simulation can be used to investigate how changing
+            the rotational speed affects the centrifugal force.
+        </p>
+
+    </section>
+
+
+    <!-- CENTRIFUGATION PROCEDURE -->
+
+    <section class="section">
+
+        <h2>
+            6. Centrifugation Procedure
+        </h2>
+
+        <div class="step">
+            <strong>Step 1</strong><br>
+            <span>
+                Prepare the sample to be separated.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong><br>
+            <span>
+                Transfer equal or appropriately balanced amounts
+                of sample into centrifuge tubes.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong><br>
+            <span>
+                Balance the centrifuge tubes correctly.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong><br>
+            <span>
+                Place the tubes in the centrifuge.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong><br>
+            <span>
+                Set the required rotational speed and operating
+                time.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong><br>
+            <span>
+                Start the centrifuge and allow the separation
+                process to occur.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 7</strong><br>
+            <span>
+                Allow the centrifuge to stop completely before
+                opening it.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 8</strong><br>
+            <span>
+                Observe the separated components and record
+                the observations.
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- PART B -->
+
+    <section class="section">
+
+        <h2>
+            7. Sieve Analysis
+        </h2>
+
+        <p>
+            Sieve analysis is a method used to determine the
+            particle-size distribution of a material.
+        </p>
+
+        <p>
+            A set of sieves with different mesh sizes is arranged
+            from the largest opening at the top to the smallest
+            opening at the bottom. When the sample is placed on
+            the sieve stack and shaken, particles are separated
+            according to size.
+        </p>
+
+
+        <h3>
+            Principle of Sieve Analysis
+        </h3>
+
+        <p>
+            Particles smaller than the sieve openings pass through
+            the sieve, while larger particles are retained.
+            The mass retained on each sieve can then be measured
+            to determine the particle-size distribution.
+        </p>
+
+    </section>
+
+
+    <!-- SIEVE PROCEDURE -->
+
+    <section class="section">
+
+        <h2>
+            8. Sieve Analysis Procedure
+        </h2>
+
+        <div class="step">
+            <strong>Step 1</strong><br>
+            <span>
+                Prepare and weigh the sample.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong><br>
+            <span>
+                Arrange the sieves in order of mesh size.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong><br>
+            <span>
+                Place the sample on the top sieve.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong><br>
+            <span>
+                Secure the sieve stack properly.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong><br>
+            <span>
+                Shake or operate the sieve shaker for the
+                required period.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong><br>
+            <span>
+                Carefully remove each sieve.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 7</strong><br>
+            <span>
+                Weigh the material retained on each sieve.
+            </span>
+        </div>
+
+        <div class="step">
+            <strong>Step 8</strong><br>
+            <span>
+                Record the results and calculate the particle
+                distribution.
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- CALCULATIONS -->
+
+    <section class="section">
+
+        <h2>
+            9. Sieve Analysis Calculations
+        </h2>
+
+        <h3>
+            Percentage Retained
+        </h3>
+
+        <div class="formula">
+            % Retained =
+            (Mass Retained / Total Sample Mass) × 100
+        </div>
+
+        <h3>
+            Percentage Passing
+        </h3>
+
+        <div class="formula">
+            % Passing =
+            100 − Cumulative % Retained
+        </div>
+
+        <p>
+            These calculations can be used to describe how the
+            sample is distributed across the different particle
+            size ranges.
+        </p>
+
+    </section>
+
+
+    <!-- OBSERVATION TABLE -->
+
+    <section class="section">
+
+        <h2>
+            10. Results Recording
+        </h2>
+
+        <p>
+            Experimental measurements can be recorded using a
+            table similar to the following.
+        </p>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>
+                            Sieve
+                        </th>
+
+                        <th>
+                            Sieve Size
+                        </th>
+
+                        <th>
+                            Mass Retained
+                        </th>
+
+                        <th>
+                            % Retained
+                        </th>
+
+                        <th>
+                            % Passing
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            1
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            2
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            3
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            4
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- SAFETY -->
+
+    <section class="section">
+
+        <h2>
+            11. Safety Precautions
+        </h2>
+
+        <ul>
+
+            <li>
+                Wear appropriate laboratory protective equipment.
+            </li>
+
+            <li>
+                Ensure centrifuge tubes are properly balanced.
+            </li>
+
+            <li>
+                Do not open the centrifuge while it is rotating.
+            </li>
+
+            <li>
+                Inspect equipment before use.
+            </li>
+
+            <li>
+                Handle samples carefully.
+            </li>
+
+            <li>
+                Ensure the sieve assembly is properly secured
+                before operation.
+            </li>
+
+            <li>
+                Keep the working area clean.
+            </li>
+
+            <li>
+                Report damaged equipment or unsafe conditions.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- CONCLUSION -->
+
+    <section class="section">
+
+        <h2>
+            12. Key Learning Points
+        </h2>
+
+        <ul>
+
+            <li>
+                Physical separation uses differences in physical
+                properties to separate components.
+            </li>
+
+            <li>
+                Centrifugation uses centrifugal force for
+                separation.
+            </li>
+
+            <li>
+                RCF depends on the radius of rotation and
+                rotational speed.
+            </li>
+
+            <li>
+                Sieve analysis separates particles according
+                to particle size.
+            </li>
+
+            <li>
+                The mass retained on different sieves can be
+                used to determine particle-size distribution.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <section class="completion">
+
+        <h2>
+            Practical 2 Learning Material
+        </h2>
+
+        <p>
+            You have reached the end of the offline learning
+            material for Practical 2.
+        </p>
+
+        <a
+            href="../offline-learning.html"
+            class="btn"
+        >
+            Back to Practicals
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Food Process Practical Learning &amp; Simulation System
+</footer>
+
+</body>
+</html>

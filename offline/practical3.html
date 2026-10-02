@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f5f75">
+
+    <title>Practical 3 - Thermal Processing</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #263238;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .header {
+            background: #1f5f75;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 11px;
+            background: #e8f1f4;
+            color: #1f5f75;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeaf0;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 20px 50px;
+        }
+
+        .offline-notice {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-left: 4px solid #1f5f75;
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 25px;
+        }
+
+        .offline-notice strong {
+            color: #17495a;
+        }
+
+        .offline-notice p {
+            margin: 5px 0 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin: 0 0 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e5e7;
+            color: #17495a;
+            font-size: 21px;
+        }
+
+        .section h3 {
+            margin: 22px 0 10px;
+            color: #1f5f75;
+            font-size: 17px;
+        }
+
+        .section h4 {
+            margin: 20px 0 9px;
+            color: #17495a;
+            font-size: 15px;
+        }
+
+        .section p {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .section ul,
+        .section ol {
+            color: #5f6d74;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .objective-item,
+        .material-item,
+        .precaution-item {
+            margin-bottom: 9px;
+        }
+
+        .info-box {
+            padding: 16px 18px;
+            background: #eef5f7;
+            border: 1px solid #d3e2e7;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .info-box strong {
+            color: #17495a;
+        }
+
+        .info-box p {
+            margin: 7px 0 0;
+        }
+
+        .warning-box {
+            padding: 16px 18px;
+            background: #f8f5ea;
+            border: 1px solid #e4dcc2;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box strong {
+            color: #6b5a20;
+        }
+
+        .formula {
+            padding: 17px;
+            margin: 15px 0;
+            background: #f8fafb;
+            border: 1px solid #dfe5e8;
+            border-radius: 8px;
+            color: #17495a;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .step {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #f8fafb;
+            border: 1px solid #e1e5e7;
+            border-radius: 7px;
+        }
+
+        .step strong {
+            color: #17495a;
+        }
+
+        .step span {
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 11px 12px;
+            border: 1px solid #d9dee3;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #eef3f5;
+            color: #17495a;
+        }
+
+        td {
+            color: #5f6d74;
+            background: #ffffff;
+        }
+
+        .simulation-box {
+            background: #f8fafb;
+            border: 1px solid #d9dee3;
+            border-radius: 9px;
+            padding: 20px;
+        }
+
+        .simulation-box h3 {
+            margin-top: 0;
+            color: #17495a;
+        }
+
+        .simulation-box p {
+            margin-bottom: 0;
+        }
+
+        .record-box {
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .record-field {
+            margin-bottom: 18px;
+        }
+
+        .record-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #17495a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #cfd7db;
+            border-radius: 7px;
+            resize: vertical;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1f5f75;
+        }
+
+        .activity {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 13px 15px;
+            margin-bottom: 9px;
+            background: #f8fafb;
+            border: 1px solid #e0e5e7;
+            border-radius: 7px;
+        }
+
+        .activity-number {
+            min-width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f1f4;
+            color: #1f5f75;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .activity-content strong {
+            display: block;
+            color: #17495a;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .activity-content span {
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .completion {
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #d9dee3;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .completion h2 {
+            margin: 0 0 10px;
+            color: #17495a;
+            font-size: 20px;
+        }
+
+        .completion p {
+            margin: 0;
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 20px;
+            background: #1f5f75;
+            color: #ffffff;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #17495a;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #1f5f75;
+            border: 1px solid #1f5f75;
+        }
+
+        .btn-secondary:hover {
+            background: #eef5f7;
+        }
+
+        footer {
+            border-top: 1px solid #d9dee3;
+            padding: 20px;
+            text-align: center;
+            color: #89959a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .section h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-container">
+
+        <a href="../offline-learning.html" class="back">
+            ← Back to Offline Practical Learning
+        </a>
+
+        <div>
+            <span class="badge">
+                PRACTICAL 3
+            </span>
+        </div>
+
+        <h1>
+            Thermal Processing
+        </h1>
+
+        <p>
+            Heat Penetration and Cold Point Determination
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- OFFLINE NOTICE -->
+
+    <div class="offline-notice">
+
+        <strong>
+            OFFLINE LEARNING MODE
+        </strong>
+
+        <p>
+            You are viewing the cached learning material for
+            Practical 3. The learning content is available
+            without a server connection. Saving practical work,
+            simulation history and database progress require
+            an online connection.
+        </p>
+
+    </div>
+
+
+    <!-- WELCOME -->
+
+    <section class="section">
+
+        <h2>
+            Welcome
+        </h2>
+
+        <p>
+            This practical introduces you to thermal processing,
+            heat penetration, determination of the cold point and
+            interpretation of temperature-time data.
+        </p>
+
+        <div class="info-box">
+
+            <strong>
+                Important
+            </strong>
+
+            <p>
+                Use your actual laboratory readings when performing
+                calculations and recording results.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- INTRODUCTION -->
+
+    <section class="section">
+
+        <h2>
+            1. Introduction
+        </h2>
+
+        <p>
+            Thermal processing is a food preservation method in
+            which food is heated to a specified temperature for
+            a specified period of time to reduce microorganisms
+            and improve product safety and shelf stability.
+        </p>
+
+        <p>
+            During thermal processing, heat must penetrate from
+            the heating medium into the food product. The point
+            within the product that heats most slowly is known
+            as the <strong>cold point</strong>.
+        </p>
+
+        <p>
+            Determining the cold point is important because it
+            helps evaluate whether the entire product receives
+            adequate thermal treatment.
+        </p>
+
+    </section>
+
+
+    <!-- OBJECTIVES -->
+
+    <section class="section">
+
+        <h2>
+            2. Objectives
+        </h2>
+
+        <ol>
+
+            <li class="objective-item">
+                Explain the concept of thermal processing.
+            </li>
+
+            <li class="objective-item">
+                Understand the concept of the cold point.
+            </li>
+
+            <li class="objective-item">
+                Determine the cold point of a processed product.
+            </li>
+
+            <li class="objective-item">
+                Determine the heating curve of the product.
+            </li>
+
+            <li class="objective-item">
+                Interpret temperature-time data.
+            </li>
+
+            <li class="objective-item">
+                Perform basic thermal processing calculations.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+    <!-- MATERIALS -->
+
+    <section class="section">
+
+        <h2>
+            3. Materials and Methods
+        </h2>
+
+        <h3>
+            Materials
+        </h3>
+
+        <ul>
+
+            <li class="material-item">
+                Retort
+            </li>
+
+            <li class="material-item">
+                Food sample containers
+            </li>
+
+            <li class="material-item">
+                Thermocouples or temperature sensors
+            </li>
+
+            <li class="material-item">
+                Data logger
+            </li>
+
+            <li class="material-item">
+                Stopwatch
+            </li>
+
+            <li class="material-item">
+                Retort baskets or holders
+            </li>
+
+            <li class="material-item">
+                Measuring instruments
+            </li>
+
+            <li class="material-item">
+                Personal protective equipment
+            </li>
+
+        </ul>
+
+
+        <h3>
+            Methods
+        </h3>
+
+        <ol>
+
+            <li>
+                Place the food samples inside the retort.
+            </li>
+
+            <li>
+                Position the temperature sensors at the required
+                locations inside the product.
+            </li>
+
+            <li>
+                Operate the retort according to the laboratory
+                procedure.
+            </li>
+
+            <li>
+                Record product temperature at regular time
+                intervals.
+            </li>
+
+            <li>
+                Compare temperature readings from different
+                locations.
+            </li>
+
+            <li>
+                Identify the location that heats most slowly
+                as the cold point.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+    <!-- PRECAUTIONS -->
+
+    <section class="section">
+
+        <h2>
+            4. Precautions
+        </h2>
+
+        <ul>
+
+            <li class="precaution-item">
+                Wear appropriate personal protective equipment.
+            </li>
+
+            <li class="precaution-item">
+                Follow all laboratory instructions.
+            </li>
+
+            <li class="precaution-item">
+                Do not operate the retort without proper
+                instruction.
+            </li>
+
+            <li class="precaution-item">
+                Handle hot equipment carefully.
+            </li>
+
+            <li class="precaution-item">
+                Ensure temperature sensors are correctly
+                positioned.
+            </li>
+
+            <li class="precaution-item">
+                Record temperature readings accurately.
+            </li>
+
+            <li class="precaution-item">
+                Do not touch hot surfaces directly.
+            </li>
+
+            <li class="precaution-item">
+                Report damaged or malfunctioning equipment
+                to the instructor.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- COLD POINT -->
+
+    <section class="section">
+
+        <h2>
+            5. Finding the Cold Point of the Retort
+        </h2>
+
+        <h3>
+            Procedure
+        </h3>
+
+        <ol>
+
+            <li>
+                Place temperature sensors at different positions
+                within the food sample.
+            </li>
+
+            <li>
+                Start the thermal processing operation.
+            </li>
+
+            <li>
+                Record the temperature of each sensor at regular
+                intervals.
+            </li>
+
+            <li>
+                Compare the temperature-time profiles.
+            </li>
+
+            <li>
+                Identify the position with the lowest temperature
+                or slowest heating response.
+            </li>
+
+            <li>
+                Record this position as the cold point.
+            </li>
+
+        </ol>
+
+        <div class="info-box">
+
+            <strong>
+                Expected Result
+            </strong>
+
+            <p>
+                The cold point should be identified as the
+                location within the product that heats most
+                slowly during thermal processing.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- HEATING CURVE -->
+
+    <section class="section">
+
+        <h2>
+            6. Determining the Heating Curve
+        </h2>
+
+        <h3>
+            Procedure
+        </h3>
+
+        <ol>
+
+            <li>
+                Record the initial product temperature.
+            </li>
+
+            <li>
+                Record the retort temperature.
+            </li>
+
+            <li>
+                Record product temperature at regular time
+                intervals.
+            </li>
+
+            <li>
+                Plot product temperature against processing
+                time.
+            </li>
+
+            <li>
+                Examine the resulting heating curve.
+            </li>
+
+        </ol>
+
+
+        <h3>
+            Sample Temperature Table
+        </h3>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Product Temperature
+                        </th>
+
+                        <th>
+                            Retort Temperature
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            0 min
+                        </td>
+
+                        <td>
+                            Initial reading
+                        </td>
+
+                        <td>
+                            Initial reading
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            5 min
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            10 min
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            15 min
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+
+                        <td>
+                            Record reading
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- CALCULATIONS -->
+
+    <section class="section">
+
+        <h2>
+            7. Calculations
+        </h2>
+
+        <h3>
+            Heating Rate
+        </h3>
+
+        <div class="formula">
+
+            Heating Rate =
+            (Final Temperature − Initial Temperature)
+            ÷ Processing Time
+
+        </div>
+
+
+        <h3>
+            Temperature Difference
+        </h3>
+
+        <div class="formula">
+
+            Temperature Difference =
+            Retort Temperature − Product Temperature
+
+        </div>
+
+
+        <div class="warning-box">
+
+            <strong>
+                Note
+            </strong>
+
+            <p>
+                Use your actual laboratory readings when carrying
+                out the calculations.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- SIMULATION -->
+
+    <section class="section">
+
+        <h2>
+            8. Thermal Processing Simulation
+        </h2>
+
+        <div class="simulation-box">
+
+            <h3>
+                Interactive Simulation
+            </h3>
+
+            <p>
+                The main system provides an interactive thermal
+                processing simulation for studying temperature
+                profiles and heating/cooling behaviour.
+            </p>
+
+            <p>
+                The simulation can be used when the system is
+                connected to the server. This offline learning
+                page provides the theoretical material needed
+                before running the simulation.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- STUDENT RECORD -->
+
+    <section class="section">
+
+        <h2>
+            9. Student Practical Record
+        </h2>
+
+        <div class="record-box">
+
+            <div class="record-field">
+
+                <label>
+                    Results
+                </label>
+
+                <textarea
+                    placeholder="Enter your experimental results here when you are online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+            <div class="record-field">
+
+                <label>
+                    Observations
+                </label>
+
+                <textarea
+                    placeholder="Enter your observations here when you are online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+
+            <div class="record-field">
+
+                <label>
+                    Conclusion
+                </label>
+
+                <textarea
+                    placeholder="Write your conclusion here when you are online..."
+                    readonly
+                ></textarea>
+
+            </div>
+
+            <div class="warning-box">
+
+                <strong>
+                    Offline Mode
+                </strong>
+
+                <p>
+                    Saving the student practical record requires
+                    a connection to the Food Process System server.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTIVITIES -->
+
+    <section class="section">
+
+        <h2>
+            10. Practical 3 Activities
+        </h2>
+
+        <p>
+            Study each item below as part of the Practical 3
+            learning sequence.
+        </p>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                1
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Read the introduction
+                </strong>
+
+                <span>
+                    Study the introduction to thermal processing,
+                    heat penetration and the cold point.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                2
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study the objectives
+                </strong>
+
+                <span>
+                    Review the objectives of Practical 3 and
+                    understand what the practical is designed
+                    to teach.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                3
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Review materials and methods
+                </strong>
+
+                <span>
+                    Study the materials required and the method
+                    used for thermal processing.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                4
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study precautions
+                </strong>
+
+                <span>
+                    Review the safety precautions that must be
+                    followed during thermal processing.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                5
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study the cold point procedure
+                </strong>
+
+                <span>
+                    Learn how temperature sensors and
+                    temperature-time profiles are used to
+                    identify the cold point.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                6
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study the heating curve procedure
+                </strong>
+
+                <span>
+                    Review how product temperature is recorded
+                    and plotted against processing time.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                7
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Review calculations
+                </strong>
+
+                <span>
+                    Study the heating rate and temperature
+                    difference calculations.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                8
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Record experimental results and observations
+                </strong>
+
+                <span>
+                    Record your actual laboratory results and
+                    observations when the system is online.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity">
+
+            <div class="activity-number">
+                9
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Write the conclusion
+                </strong>
+
+                <span>
+                    Write a conclusion based on your practical
+                    observations and experimental results.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- KEY LEARNING -->
+
+    <section class="section">
+
+        <h2>
+            Key Learning Points
+        </h2>
+
+        <ul>
+
+            <li>
+                Thermal processing involves heating food for
+                a specified temperature and time.
+            </li>
+
+            <li>
+                Heat must penetrate the food product during
+                thermal processing.
+            </li>
+
+            <li>
+                The cold point is the location that heats
+                most slowly.
+            </li>
+
+            <li>
+                Temperature-time data can be used to study
+                heating behaviour.
+            </li>
+
+            <li>
+                Heating curves help illustrate changes in
+                product temperature during processing.
+            </li>
+
+            <li>
+                Accurate temperature measurements are important
+                for thermal processing analysis.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- END -->
+
+    <section class="completion">
+
+        <h2>
+            Practical 3 Learning Material
+        </h2>
+
+        <p>
+            You have reached the end of the offline learning
+            material for Practical 3.
+        </p>
+
+        <a
+            href="../offline-learning.html"
+            class="btn"
+        >
+            Back to Practicals
+        </a>
+
+        <a
+            href="practical4.html"
+            class="btn btn-secondary"
+        >
+            Next: Practical 4 →
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Food Process Practical Learning &amp; Simulation System
+</footer>
+
+</body>
+</html>
