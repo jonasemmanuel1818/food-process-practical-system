@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta name="theme-color" content="#1f5f75">
 
     <title>Practical 2 - Physical Separation</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -225,13 +230,31 @@
             background: #1f5f75;
             color: #ffffff;
             text-decoration: none;
+            border: none;
             border-radius: 7px;
             font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
         }
 
         .btn:hover {
             background: #17495a;
+        }
+
+        .btn-secondary {
+            background: #68767d;
+        }
+
+        .btn-secondary:hover {
+            background: #526068;
+        }
+
+        .btn-danger {
+            background: #b42318;
+        }
+
+        .btn-danger:hover {
+            background: #8f1c13;
         }
 
         footer {
@@ -240,6 +263,214 @@
             text-align: center;
             color: #89959a;
             font-size: 12px;
+        }
+
+        /* FORM */
+
+        .record-box {
+            margin-top: 15px;
+        }
+
+        .record-field {
+            margin-bottom: 15px;
+        }
+
+        .record-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #17495a;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .record-field input,
+        .record-field textarea,
+        .editable-input,
+        .simulation-input {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid #cfd7db;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #24343b;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .record-field textarea {
+            min-height: 110px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .record-field input:focus,
+        .record-field textarea:focus,
+        .editable-input:focus,
+        .simulation-input:focus {
+            border-color: #1f5f75;
+            box-shadow: 0 0 0 2px rgba(31, 95, 117, 0.10);
+        }
+
+        .record-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* STATUS */
+
+        .offline-status {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border: 1px solid #d9dee3;
+            border-radius: 7px;
+            background: #f8fafb;
+            color: #68767d;
+            font-size: 13px;
+        }
+
+        .offline-status.success {
+            background: #eef7f1;
+            border-color: #b9dcc5;
+            color: #25613b;
+        }
+
+        .offline-status.error {
+            background: #fff1f0;
+            border-color: #efc0bc;
+            color: #9b2c24;
+        }
+
+        /* ACTIVITY */
+
+        .activity {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 13px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #dfe5e8;
+            border-radius: 8px;
+            background: #f8fafb;
+            cursor: pointer;
+        }
+
+        .activity:hover {
+            border-color: #b9cbd2;
+        }
+
+        .activity-check {
+            margin-top: 4px;
+            width: 17px;
+            height: 17px;
+            accent-color: #1f5f75;
+        }
+
+        .activity-number {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #1f5f75;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .activity-content strong {
+            display: block;
+            color: #17495a;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+
+        .activity-content span {
+            color: #68767d;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* PROGRESS */
+
+        .progress-track {
+            height: 10px;
+            background: #e5eaed;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: #1f5f75;
+            transition: width 0.2s ease;
+        }
+
+        /* SIMULATION */
+
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result-card {
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+            padding: 13px;
+            background: #f8fafb;
+        }
+
+        .result-card small {
+            display: block;
+            color: #68767d;
+            margin-bottom: 5px;
+        }
+
+        .result-card strong {
+            color: #17495a;
+            font-size: 16px;
+        }
+
+        /* EDITABLE RESULTS */
+
+        #resultsRecordingTable td {
+            vertical-align: middle;
+        }
+
+        .percentage-cell {
+            font-weight: 600;
+            color: #17495a;
+            white-space: nowrap;
+        }
+
+        .editable-input {
+            min-width: 120px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .simulation-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #resultsRecordingTable {
+                min-width: 900px;
+            }
         }
 
         @media (max-width: 600px) {
@@ -256,10 +487,14 @@
                 font-size: 23px;
             }
         }
+
     </style>
+
 </head>
 
+
 <body>
+
 
 <header class="header">
 
@@ -283,6 +518,7 @@
 
 
 <main class="container">
+
 
     <div class="offline-notice">
 
@@ -422,7 +658,7 @@
     </section>
 
 
-    <!-- PART A -->
+    <!-- CENTRIFUGATION -->
 
     <section class="section">
 
@@ -443,7 +679,6 @@
             more rapidly than components with lower density.
         </p>
 
-
         <h3>
             Principle of Centrifugation
         </h3>
@@ -454,7 +689,6 @@
             particle properties and the difference in density
             between components.
         </p>
-
 
         <div class="highlight">
 
@@ -488,7 +722,9 @@
         </p>
 
         <div class="formula">
+
             RCF = 1.118 × 10<sup>-5</sup> × r × RPM<sup>2</sup>
+
         </div>
 
         <p>
@@ -499,7 +735,6 @@
 
             <li>
                 <strong>RCF</strong> = Relative Centrifugal Force
-                (× g)
             </li>
 
             <li>
@@ -511,26 +746,6 @@
             </li>
 
         </ul>
-
-
-        <h3>
-            Example Calculation
-        </h3>
-
-        <p>
-            If the radius of rotation is known together with
-            the centrifuge speed, the RCF can be calculated using
-            the equation above.
-        </p>
-
-        <div class="formula">
-            RCF = 1.118 × 10<sup>-5</sup> × r × RPM²
-        </div>
-
-        <p>
-            The simulation can be used to investigate how changing
-            the rotational speed affects the centrifugal force.
-        </p>
 
     </section>
 
@@ -544,36 +759,37 @@
         </h2>
 
         <div class="step">
-            <strong>Step 1</strong><br>
+            <strong>Step 1:</strong>
             <span>
-                Prepare the sample to be separated.
+                Prepare the sample and transfer it into centrifuge
+                tubes.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 2</strong><br>
+            <strong>Step 2:</strong>
             <span>
-                Transfer equal or appropriately balanced amounts
-                of sample into centrifuge tubes.
+                Balance the centrifuge tubes by ensuring that
+                opposite tubes have approximately equal masses.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 3</strong><br>
+            <strong>Step 3:</strong>
             <span>
-                Balance the centrifuge tubes correctly.
+                Place the balanced tubes into the centrifuge.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 4</strong><br>
+            <strong>Step 4:</strong>
             <span>
-                Place the tubes in the centrifuge.
+                Close the centrifuge securely.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 5</strong><br>
+            <strong>Step 5:</strong>
             <span>
                 Set the required rotational speed and operating
                 time.
@@ -581,33 +797,33 @@
         </div>
 
         <div class="step">
-            <strong>Step 6</strong><br>
+            <strong>Step 6:</strong>
             <span>
                 Start the centrifuge and allow the separation
-                process to occur.
+                process to take place.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 7</strong><br>
+            <strong>Step 7:</strong>
             <span>
-                Allow the centrifuge to stop completely before
-                opening it.
+                Wait until the centrifuge has completely stopped
+                before opening it.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 8</strong><br>
+            <strong>Step 8:</strong>
             <span>
-                Observe the separated components and record
-                the observations.
+                Remove the samples carefully and observe the
+                separated components.
             </span>
         </div>
 
     </section>
 
 
-    <!-- PART B -->
+    <!-- SIEVE ANALYSIS -->
 
     <section class="section">
 
@@ -616,29 +832,29 @@
         </h2>
 
         <p>
-            Sieve analysis is a method used to determine the
-            particle-size distribution of a material.
+            Sieve analysis is a physical separation method used
+            to determine particle-size distribution.
         </p>
 
         <p>
-            A set of sieves with different mesh sizes is arranged
-            from the largest opening at the top to the smallest
-            opening at the bottom. When the sample is placed on
-            the sieve stack and shaken, particles are separated
-            according to size.
+            A sample is passed through a series of sieves having
+            different mesh sizes. Larger particles are retained
+            on sieves with larger openings while smaller particles
+            pass through to lower sieves.
         </p>
 
+        <div class="highlight">
 
-        <h3>
-            Principle of Sieve Analysis
-        </h3>
+            <strong>
+                Principle:
+            </strong>
 
-        <p>
-            Particles smaller than the sieve openings pass through
-            the sieve, while larger particles are retained.
-            The mass retained on each sieve can then be measured
-            to determine the particle-size distribution.
-        </p>
+            <p>
+                Sieve analysis separates particles mainly according
+                to particle size.
+            </p>
+
+        </div>
 
     </section>
 
@@ -652,59 +868,59 @@
         </h2>
 
         <div class="step">
-            <strong>Step 1</strong><br>
+            <strong>Step 1:</strong>
             <span>
                 Prepare and weigh the sample.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 2</strong><br>
+            <strong>Step 2:</strong>
             <span>
-                Arrange the sieves in order of mesh size.
+                Arrange the sieves from the largest opening at
+                the top to the smallest opening at the bottom.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 3</strong><br>
+            <strong>Step 3:</strong>
             <span>
-                Place the sample on the top sieve.
+                Place a collection container below the sieve set.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 4</strong><br>
+            <strong>Step 4:</strong>
             <span>
-                Secure the sieve stack properly.
+                Transfer the sample onto the upper sieve.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 5</strong><br>
+            <strong>Step 5:</strong>
             <span>
-                Shake or operate the sieve shaker for the
-                required period.
+                Shake the sieve assembly for the required period.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 6</strong><br>
+            <strong>Step 6:</strong>
             <span>
-                Carefully remove each sieve.
+                Remove each sieve carefully.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 7</strong><br>
+            <strong>Step 7:</strong>
             <span>
                 Weigh the material retained on each sieve.
             </span>
         </div>
 
         <div class="step">
-            <strong>Step 8</strong><br>
+            <strong>Step 8:</strong>
             <span>
-                Record the results and calculate the particle
+                Record the measurements and calculate the particle
                 distribution.
             </span>
         </div>
@@ -720,170 +936,892 @@
             9. Sieve Analysis Calculations
         </h2>
 
-        <h3>
-            Percentage Retained
-        </h3>
+        <p>
+            The mass retained on each sieve can be used to
+            calculate the percentage retained.
+        </p>
 
         <div class="formula">
+
             % Retained =
             (Mass Retained / Total Sample Mass) × 100
-        </div>
 
-        <h3>
-            Percentage Passing
-        </h3>
-
-        <div class="formula">
-            % Passing =
-            100 − Cumulative % Retained
         </div>
 
         <p>
-            These calculations can be used to describe how the
-            sample is distributed across the different particle
-            size ranges.
+            The cumulative percentage retained is calculated by
+            adding the percentage retained on the current sieve
+            to all previous percentages.
         </p>
+
+        <div class="formula">
+
+            % Passing =
+            100 − Cumulative % Retained
+
+        </div>
+
+        <div class="highlight">
+
+            <strong>
+                Important:
+            </strong>
+
+            <p>
+                Use the actual measurements obtained during the
+                laboratory practical when completing the results
+                table.
+            </p>
+
+        </div>
 
     </section>
 
 
-    <!-- OBSERVATION TABLE -->
+    <!-- =========================================================
+     RESULTS RECORDING
+     ========================================================= -->
 
-    <section class="section">
+<section class="section">
 
-        <h2>
-            10. Results Recording
-        </h2>
+    <h2>
+        10. Results Recording
+    </h2>
 
-        <p>
-            Experimental measurements can be recorded using a
-            table similar to the following.
-        </p>
+    <p>
+        Enter the experimental results obtained during
+        centrifugation and sieve analysis. Calculated values
+        can be entered after performing the required calculations.
+    </p>
 
-        <div class="table-wrapper">
+    <div class="table-responsive">
 
-            <table>
+        <table class="table table-bordered align-middle">
+
+            <thead>
+                <tr>
+                    <th>Sieve Size / Measurement</th>
+                    <th>Mass / Value</th>
+                    <th>Unit</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <!-- ROW 1 -->
+                <tr>
+
+                    <td>
+                        <input
+                            type="text"
+                            class="form-control sieve-size"
+                            placeholder="e.g. 2.0 mm"
+                        >
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control sieve-mass"
+                            placeholder="Enter mass"
+                        >
+                    </td>
+
+                    <td>
+                        g
+                    </td>
+
+                    <td>
+                        <span class="sieve-percentage">—</span>
+                    </td>
+
+                </tr>
+
+
+                <!-- ROW 2 -->
+                <tr>
+
+                    <td>
+                        <input
+                            type="text"
+                            class="form-control sieve-size"
+                            placeholder="e.g. 1.0 mm"
+                        >
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control sieve-mass"
+                            placeholder="Enter mass"
+                        >
+                    </td>
+
+                    <td>
+                        g
+                    </td>
+
+                    <td>
+                        <span class="sieve-percentage">—</span>
+                    </td>
+
+                </tr>
+
+
+                <!-- ROW 3 -->
+                <tr>
+
+                    <td>
+                        <input
+                            type="text"
+                            class="form-control sieve-size"
+                            placeholder="e.g. 500 µm"
+                        >
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control sieve-mass"
+                            placeholder="Enter mass"
+                        >
+                    </td>
+
+                    <td>
+                        g
+                    </td>
+
+                    <td>
+                        <span class="sieve-percentage">—</span>
+                    </td>
+
+                </tr>
+
+
+                <!-- ROW 4 -->
+                <tr>
+
+                    <td>
+                        <input
+                            type="text"
+                            class="form-control sieve-size"
+                            placeholder="e.g. Pan"
+                        >
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control sieve-mass"
+                            placeholder="Enter mass"
+                        >
+                    </td>
+
+                    <td>
+                        g
+                    </td>
+
+                    <td>
+                        <span class="sieve-percentage">—</span>
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- TOTAL SAMPLE MASS -->
+
+    <div class="row mt-3">
+
+        <div class="col-md-6">
+
+            <label
+                for="offlineTotalSampleMass"
+                class="form-label"
+            >
+                Total Sample Mass (g)
+            </label>
+
+            <input
+                type="number"
+                id="offlineTotalSampleMass"
+                class="form-control"
+                step="0.01"
+                min="0"
+                placeholder="Enter total sample mass"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="calculateOfflineSieve"
+        >
+            <i class="bi bi-calculator"></i>
+            Calculate Sieve Results
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            id="clearOfflineSieve"
+        >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Clear Results
+        </button>
+
+    </div>
+
+
+    <!-- CALCULATION RESULT -->
+
+    <div
+        id="sieveCalculationStatus"
+        class="mt-3"
+        style="display:none;"
+    ></div>
+
+
+    <div
+        id="sieveResultsContainer"
+        class="mt-4"
+        style="display:none;"
+    >
+
+        <h5>
+            Calculated Sieve Analysis Results
+        </h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
 
                 <thead>
 
                     <tr>
-                        <th>
-                            Sieve
-                        </th>
-
-                        <th>
-                            Sieve Size
-                        </th>
-
-                        <th>
-                            Mass Retained
-                        </th>
-
-                        <th>
-                            % Retained
-                        </th>
-
-                        <th>
-                            % Passing
-                        </th>
+                        <th>Sieve Size</th>
+                        <th>Mass Retained (g)</th>
+                        <th>% Retained</th>
+                        <th>Cumulative % Retained</th>
+                        <th>% Passing</th>
                     </tr>
 
                 </thead>
 
-                <tbody>
-
-                    <tr>
-                        <td>
-                            1
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            2
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            3
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            4
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-
-                        <td>
-                            —
-                        </td>
-                    </tr>
-
-                </tbody>
+                <tbody id="sieveResultsBody"></tbody>
 
             </table>
 
+        </div>
+
+    </div>
+
+</section>
+
+
+    <!-- CENTRIFUGATION SIMULATION -->
+
+    <section class="section">
+
+        <h2>
+            11. Centrifugation Simulation
+        </h2>
+
+        <p>
+            Use the simulation to calculate Relative Centrifugal
+            Force (RCF) from the radius and rotational speed.
+        </p>
+
+        <div class="simulation-grid">
+
+            <div class="record-field">
+
+                <label for="offlineRadius">
+                    Radius (cm)
+                </label>
+
+                <input
+                    type="number"
+                    id="offlineRadius"
+                    class="simulation-input"
+                    min="0"
+                    step="0.01"
+                    placeholder="e.g. 10"
+                >
+
+            </div>
+
+            <div class="record-field">
+
+                <label for="offlineRPM">
+                    Rotational Speed (RPM)
+                </label>
+
+                <input
+                    type="number"
+                    id="offlineRPM"
+                    class="simulation-input"
+                    min="0"
+                    step="1"
+                    placeholder="e.g. 3000"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="record-actions">
+
+            <button
+                type="button"
+                class="btn"
+                id="runOfflineCentrifugation"
+            >
+                Calculate RCF
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                id="clearOfflineCentrifugation"
+            >
+                Clear
+            </button>
+
+        </div>
+
+        <div class="result-grid">
+
+            <div class="result-card">
+
+                <small>
+                    Radius
+                </small>
+
+                <strong id="centrifugationRadiusResult">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="result-card">
+
+                <small>
+                    RPM
+                </small>
+
+                <strong id="centrifugationRPMResult">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="result-card">
+
+                <small>
+                    RCF
+                </small>
+
+                <strong id="centrifugationRCFResult">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div
+            id="centrifugationStatus"
+            class="offline-status"
+        >
+            Enter radius and RPM, then calculate.
+        </div>
+
+    </section>
+
+
+    <!-- STUDENT RECORD -->
+
+    <section class="section">
+
+        <h2>
+            12. Student Practical Record
+        </h2>
+
+        <div class="record-box">
+
+            <div class="record-field">
+
+                <label for="offlineStudentName">
+                    Student Name
+                </label>
+
+                <input
+                    id="offlineStudentName"
+                    type="text"
+                    placeholder="Enter student name"
+                >
+
+            </div>
+
+            <div class="record-field">
+
+                <label for="offlineRegistrationNumber">
+                    Registration Number
+                </label>
+
+                <input
+                    id="offlineRegistrationNumber"
+                    type="text"
+                    placeholder="Enter registration number"
+                >
+
+            </div>
+
+            <div class="record-field">
+
+                <label for="offlineRecordResults">
+                    Results
+                </label>
+
+                <textarea
+                    id="offlineRecordResults"
+                    placeholder="Enter your experimental results and calculations..."
+                ></textarea>
+
+            </div>
+
+            <div class="record-field">
+
+                <label for="offlineRecordObservations">
+                    Observations
+                </label>
+
+                <textarea
+                    id="offlineRecordObservations"
+                    placeholder="Enter your observations..."
+                ></textarea>
+
+            </div>
+
+            <div class="record-field">
+
+                <label for="offlineRecordConclusion">
+                    Conclusion
+                </label>
+
+                <textarea
+                    id="offlineRecordConclusion"
+                    placeholder="Write your conclusion..."
+                ></textarea>
+
+            </div>
+
+            <div
+                id="offlineRecordStatus"
+                class="offline-status"
+            >
+                Your practical record is stored on this device.
+            </div>
+
+            <div class="record-actions">
+
+                <button
+                    type="button"
+                    class="btn"
+                    id="saveOfflineRecord"
+                >
+                    Save Record
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="clearOfflineRecord"
+                >
+                    Clear Record
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTIVITIES -->
+
+    <section class="section">
+
+        <h2>
+            13. Practical 2 Activities
+        </h2>
+
+        <p>
+            Complete each learning activity. Your progress is
+            saved automatically on this device.
+        </p>
+
+        <div class="offline-status">
+
+            <strong id="offlineActivityProgress">
+                0 of 9 activities completed
+            </strong>
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-bar"
+                    id="offlineProgressBar"
+                ></div>
+
+            </div>
+
+            <div
+                id="offlineCompletedText"
+                style="margin-top:8px;"
+            >
+                Practical 2 is in progress.
+            </div>
+
+        </div>
+
+
+        <label
+            class="activity"
+            for="offlineActivity1"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity1"
+                data-activity="1"
+            >
+
+            <div class="activity-number">
+                1
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Read the introduction
+                </strong>
+
+                <span>
+                    Study the importance of physical separation
+                    in food processing.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity2"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity2"
+                data-activity="2"
+            >
+
+            <div class="activity-number">
+                2
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study the objectives
+                </strong>
+
+                <span>
+                    Review the learning objectives of Practical 2.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity3"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity3"
+                data-activity="3"
+            >
+
+            <div class="activity-number">
+                3
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study centrifugation
+                </strong>
+
+                <span>
+                    Review the principle and factors affecting
+                    centrifugation.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity4"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity4"
+                data-activity="4"
+            >
+
+            <div class="activity-number">
+                4
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Calculate RCF
+                </strong>
+
+                <span>
+                    Use the RCF formula and understand the
+                    relationship between radius and RPM.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity5"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity5"
+                data-activity="5"
+            >
+
+            <div class="activity-number">
+                5
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study centrifugation procedure
+                </strong>
+
+                <span>
+                    Review the correct laboratory procedure and
+                    balancing requirements.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity6"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity6"
+                data-activity="6"
+            >
+
+            <div class="activity-number">
+                6
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Study sieve analysis
+                </strong>
+
+                <span>
+                    Review particle-size separation and the
+                    sieve analysis procedure.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity7"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity7"
+                data-activity="7"
+            >
+
+            <div class="activity-number">
+                7
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Record sieve results
+                </strong>
+
+                <span>
+                    Enter your actual sieve sizes and mass
+                    measurements in the editable table.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity8"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity8"
+                data-activity="8"
+            >
+
+            <div class="activity-number">
+                8
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Review calculations
+                </strong>
+
+                <span>
+                    Check percentage retained, cumulative
+                    percentage retained and percentage passing.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <label
+            class="activity"
+            for="offlineActivity9"
+        >
+
+            <input
+                class="activity-check"
+                type="checkbox"
+                id="offlineActivity9"
+                data-activity="9"
+            >
+
+            <div class="activity-number">
+                9
+            </div>
+
+            <div class="activity-content">
+
+                <strong>
+                    Complete the practical record
+                </strong>
+
+                <span>
+                    Enter observations and conclusion based on
+                    your experimental work.
+                </span>
+
+            </div>
+
+        </label>
+
+
+        <div class="record-actions">
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                id="clearOfflineProgress"
+            >
+                Clear Activity Progress
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="syncOfflineP2"
+            >
+                Sync Practical 2
+            </button>
+
+        </div>
+
+        <div
+            id="offlineSyncStatus"
+            class="offline-status"
+        >
+            Synchronization requires an online connection
+            and a logged-in student account.
         </div>
 
     </section>
@@ -894,7 +1832,7 @@
     <section class="section">
 
         <h2>
-            11. Safety Precautions
+            14. Safety Precautions
         </h2>
 
         <ul>
@@ -937,12 +1875,12 @@
     </section>
 
 
-    <!-- CONCLUSION -->
+    <!-- KEY LEARNING -->
 
     <section class="section">
 
         <h2>
-            12. Key Learning Points
+            15. Key Learning Points
         </h2>
 
         <ul>
@@ -977,6 +1915,8 @@
     </section>
 
 
+    <!-- COMPLETION -->
+
     <section class="completion">
 
         <h2>
@@ -997,12 +1937,1162 @@
 
     </section>
 
+
 </main>
 
 
 <footer>
+
     Food Process Practical Learning &amp; Simulation System
+
 </footer>
 
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const PROGRESS_KEY =
+        "food_process_offline_practical_2_progress";
+
+    const RECORD_KEY =
+        "food_process_offline_practical_2_student_record";
+
+    const CENT_KEY =
+        "food_process_offline_practical_2_centrifugation";
+
+    const SIEVE_KEY =
+        "food_process_offline_practical_2_sieve";
+
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    function status(id, message, type) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+        element.textContent =
+            message;
+
+        element.className =
+            "offline-status";
+
+        if (type) {
+
+            element.classList.add(type);
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ACTIVITY PROGRESS
+    ===================================================== */
+
+    const activityChecks =
+        [
+            ...document.querySelectorAll(
+                ".activity-check"
+            )
+        ];
+
+
+    function updateProgress() {
+
+        const completed =
+            activityChecks.filter(
+                function (checkbox) {
+                    return checkbox.checked;
+                }
+            ).length;
+
+        const total =
+            activityChecks.length;
+
+        const percentage =
+            total > 0
+                ? (completed / total) * 100
+                : 0;
+
+
+        const progressText =
+            document.getElementById(
+                "offlineActivityProgress"
+            );
+
+        const progressBar =
+            document.getElementById(
+                "offlineProgressBar"
+            );
+
+        const completionText =
+            document.getElementById(
+                "offlineCompletedText"
+            );
+
+
+        if (progressText) {
+
+            progressText.textContent =
+                completed +
+                " of " +
+                total +
+                " activities completed";
+
+        }
+
+
+        if (progressBar) {
+
+            progressBar.style.width =
+                percentage + "%";
+
+        }
+
+
+        if (completionText) {
+
+            if (completed === total) {
+
+                completionText.textContent =
+                    "Practical 2 activities completed.";
+
+            }
+            else {
+
+                completionText.textContent =
+                    "Practical 2 is in progress.";
+
+            }
+
+        }
+
+    }
+
+
+    function saveProgress() {
+
+        const progress = {};
+
+
+        activityChecks.forEach(
+            function (checkbox) {
+
+                progress[
+                    checkbox.dataset.activity
+                ] =
+                    checkbox.checked;
+
+            }
+        );
+
+
+        localStorage.setItem(
+            PROGRESS_KEY,
+            JSON.stringify(progress)
+        );
+
+
+        updateProgress();
+
+    }
+
+
+    function loadProgress() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        PROGRESS_KEY
+                    ) || "{}"
+                );
+
+
+            activityChecks.forEach(
+                function (checkbox) {
+
+                    checkbox.checked =
+                        !!saved[
+                            checkbox.dataset.activity
+                        ];
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not load activity progress:",
+                error
+            );
+
+        }
+
+
+        updateProgress();
+
+    }
+
+
+    activityChecks.forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                saveProgress
+            );
+
+        }
+    );
+
+
+    document
+        .getElementById(
+            "clearOfflineProgress"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    !confirm(
+                        "Clear all Practical 2 activity progress?"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                localStorage.removeItem(
+                    PROGRESS_KEY
+                );
+
+
+                activityChecks.forEach(
+                    function (checkbox) {
+
+                        checkbox.checked = false;
+
+                    }
+                );
+
+
+                updateProgress();
+
+
+                status(
+                    "offlineSyncStatus",
+                    "Activity progress has been cleared.",
+                    "success"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       STUDENT RECORD
+    ===================================================== */
+
+    const recordIds = [
+
+        "offlineStudentName",
+
+        "offlineRegistrationNumber",
+
+        "offlineRecordResults",
+
+        "offlineRecordObservations",
+
+        "offlineRecordConclusion"
+
+    ];
+
+
+    function saveRecord(showMessage) {
+
+        const record = {};
+
+
+        recordIds.forEach(
+            function (id) {
+
+                const element =
+                    document.getElementById(id);
+
+                if (element) {
+
+                    record[id] =
+                        element.value;
+
+                }
+
+            }
+        );
+
+
+        record.savedAt =
+            new Date().toISOString();
+
+
+        localStorage.setItem(
+            RECORD_KEY,
+            JSON.stringify(record)
+        );
+
+
+        if (showMessage) {
+
+            status(
+                "offlineRecordStatus",
+                "Practical record saved on this device.",
+                "success"
+            );
+
+        }
+
+    }
+
+
+    function loadRecord() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        RECORD_KEY
+                    ) || "{}"
+                );
+
+
+            recordIds.forEach(
+                function (id) {
+
+                    const element =
+                        document.getElementById(id);
+
+                    if (element) {
+
+                        element.value =
+                            saved[id] || "";
+
+                    }
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not load student record:",
+                error
+            );
+
+        }
+
+    }
+
+
+    recordIds.forEach(
+        function (id) {
+
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+
+                element.addEventListener(
+                    "input",
+                    function () {
+
+                        saveRecord(false);
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    document
+        .getElementById(
+            "saveOfflineRecord"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                saveRecord(true);
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "clearOfflineRecord"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    !confirm(
+                        "Clear the student practical record?"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                localStorage.removeItem(
+                    RECORD_KEY
+                );
+
+
+                recordIds.forEach(
+                    function (id) {
+
+                        const element =
+                            document.getElementById(id);
+
+                        if (element) {
+
+                            element.value = "";
+
+                        }
+
+                    }
+                );
+
+
+                status(
+                    "offlineRecordStatus",
+                    "Practical record cleared.",
+                    "success"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       CENTRIFUGATION
+    ===================================================== */
+
+    function calculateCentrifugation() {
+
+        const radius =
+            parseFloat(
+                document.getElementById(
+                    "offlineRadius"
+                ).value
+            );
+
+
+        const rpm =
+            parseFloat(
+                document.getElementById(
+                    "offlineRPM"
+                ).value
+            );
+
+
+        if (
+            !Number.isFinite(radius) ||
+            radius <= 0 ||
+            !Number.isFinite(rpm) ||
+            rpm <= 0
+        ) {
+
+            status(
+                "centrifugationStatus",
+                "Enter valid radius and RPM values.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const rcf =
+            1.118e-5 *
+            radius *
+            rpm *
+            rpm;
+
+
+        document.getElementById(
+            "centrifugationRadiusResult"
+        ).textContent =
+            radius.toFixed(2) +
+            " cm";
+
+
+        document.getElementById(
+            "centrifugationRPMResult"
+        ).textContent =
+            rpm.toFixed(0) +
+            " RPM";
+
+
+        document.getElementById(
+            "centrifugationRCFResult"
+        ).textContent =
+            rcf.toFixed(2) +
+            " × g";
+
+
+        localStorage.setItem(
+            CENT_KEY,
+            JSON.stringify(
+                {
+                    radius: radius,
+                    rpm: rpm,
+                    rcf: rcf,
+                    savedAt:
+                        new Date().toISOString()
+                }
+            )
+        );
+
+
+        status(
+            "centrifugationStatus",
+            "RCF calculated and saved.",
+            "success"
+        );
+
+    }
+
+
+    function loadCentrifugation() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        CENT_KEY
+                    ) || "{}"
+                );
+
+
+            if (saved.radius) {
+
+                document.getElementById(
+                    "offlineRadius"
+                ).value =
+                    saved.radius;
+
+            }
+
+
+            if (saved.rpm) {
+
+                document.getElementById(
+                    "offlineRPM"
+                ).value =
+                    saved.rpm;
+
+            }
+
+
+            if (saved.rcf) {
+
+                document.getElementById(
+                    "centrifugationRadiusResult"
+                ).textContent =
+                    Number(
+                        saved.radius
+                    ).toFixed(2) +
+                    " cm";
+
+
+                document.getElementById(
+                    "centrifugationRPMResult"
+                ).textContent =
+                    Number(
+                        saved.rpm
+                    ).toFixed(0) +
+                    " RPM";
+
+
+                document.getElementById(
+                    "centrifugationRCFResult"
+                ).textContent =
+                    Number(
+                        saved.rcf
+                    ).toFixed(2) +
+                    " × g";
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not load centrifugation data:",
+                error
+            );
+
+        }
+
+    }
+
+
+    document
+        .getElementById(
+            "runOfflineCentrifugation"
+        )
+        ?.addEventListener(
+            "click",
+            calculateCentrifugation
+        );
+
+
+    document
+        .getElementById(
+            "clearOfflineCentrifugation"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                localStorage.removeItem(
+                    CENT_KEY
+                );
+
+
+                document.getElementById(
+                    "offlineRadius"
+                ).value = "";
+
+
+                document.getElementById(
+                    "offlineRPM"
+                ).value = "";
+
+
+                document.getElementById(
+                    "centrifugationRadiusResult"
+                ).textContent = "—";
+
+
+                document.getElementById(
+                    "centrifugationRPMResult"
+                ).textContent = "—";
+
+
+                document.getElementById(
+                    "centrifugationRCFResult"
+                ).textContent = "—";
+
+
+                status(
+                    "centrifugationStatus",
+                    "Centrifugation simulation cleared.",
+                    "success"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       EDITABLE SIEVE RESULTS
+    ===================================================== */
+
+    const resultsBody =
+        document.getElementById(
+            "sieveResultsBody"
+        );
+
+
+    const totalSampleMass =
+        document.getElementById(
+            "offlineTotalSampleMass"
+        );
+
+
+    function collectSieveData() {
+
+        return {
+
+            totalSampleMass:
+                totalSampleMass.value,
+
+            rows:
+                [
+                    ...resultsBody.querySelectorAll(
+                        "tr"
+                    )
+                ].map(
+                    function (row, index) {
+
+                        return {
+
+                            sieve:
+                                index + 1,
+
+                            sieveSize:
+                                row.querySelector(
+                                    ".sieve-size"
+                                )?.value || "",
+
+                            massRetained:
+                                row.querySelector(
+                                    ".sieve-mass"
+                                )?.value || "",
+
+                            percentRetained:
+                                row.cells[3]
+                                    ?.textContent || "—",
+
+                            cumulativeRetained:
+                                row.cells[4]
+                                    ?.textContent || "—",
+
+                            percentPassing:
+                                row.cells[5]
+                                    ?.textContent || "—"
+
+                        };
+
+                    }
+                ),
+
+            savedAt:
+                new Date().toISOString()
+
+        };
+
+    }
+
+
+    function saveSieveResults(
+        showMessage
+    ) {
+
+        localStorage.setItem(
+
+            SIEVE_KEY,
+
+            JSON.stringify(
+                collectSieveData()
+            )
+
+        );
+
+
+        if (showMessage) {
+
+            status(
+                "sieveResultsStatus",
+                "Results recording saved on this device.",
+                "success"
+            );
+
+        }
+
+    }
+
+
+    function calculateSieveResults() {
+
+        const total =
+            parseFloat(
+                totalSampleMass.value
+            );
+
+
+        if (
+            !Number.isFinite(total) ||
+            total <= 0
+        ) {
+
+            status(
+                "sieveResultsStatus",
+                "Please enter a valid total sample mass.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        let cumulative =
+            0;
+
+
+        resultsBody
+            .querySelectorAll("tr")
+            .forEach(
+                function (row) {
+
+                    const mass =
+                        parseFloat(
+                            row.querySelector(
+                                ".sieve-mass"
+                            )?.value
+                        );
+
+
+                    if (
+                        !Number.isFinite(mass) ||
+                        mass < 0
+                    ) {
+
+                        row.cells[3]
+                            .textContent = "—";
+
+                        row.cells[4]
+                            .textContent = "—";
+
+                        row.cells[5]
+                            .textContent = "—";
+
+                        return;
+
+                    }
+
+
+                    const percentage =
+                        (
+                            mass /
+                            total
+                        ) *
+                        100;
+
+
+                    cumulative +=
+                        percentage;
+
+
+                    const passing =
+                        Math.max(
+                            0,
+                            100 -
+                            cumulative
+                        );
+
+
+                    row.cells[3]
+                        .textContent =
+                        percentage.toFixed(2) +
+                        "%";
+
+
+                    row.cells[4]
+                        .textContent =
+                        cumulative.toFixed(2) +
+                        "%";
+
+
+                    row.cells[5]
+                        .textContent =
+                        passing.toFixed(2) +
+                        "%";
+
+                }
+            );
+
+
+        saveSieveResults(false);
+
+
+        status(
+            "sieveResultsStatus",
+            "Results calculated and saved successfully.",
+            "success"
+        );
+
+    }
+
+
+    function loadSieveResults() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        SIEVE_KEY
+                    ) || "{}"
+                );
+
+
+            totalSampleMass.value =
+                saved.totalSampleMass || "";
+
+
+            if (
+                Array.isArray(
+                    saved.rows
+                )
+            ) {
+
+                const rows =
+                    resultsBody.querySelectorAll(
+                        "tr"
+                    );
+
+
+                saved.rows.forEach(
+                    function (
+                        savedRow,
+                        index
+                    ) {
+
+                        const row =
+                            rows[index];
+
+                        if (!row) {
+
+                            return;
+
+                        }
+
+
+                        const sizeInput =
+                            row.querySelector(
+                                ".sieve-size"
+                            );
+
+
+                        const massInput =
+                            row.querySelector(
+                                ".sieve-mass"
+                            );
+
+
+                        if (sizeInput) {
+
+                            sizeInput.value =
+                                savedRow.sieveSize ||
+                                "";
+
+                        }
+
+
+                        if (massInput) {
+
+                            massInput.value =
+                                savedRow.massRetained ||
+                                "";
+
+                        }
+
+
+                        row.cells[3]
+                            .textContent =
+                            savedRow.percentRetained ||
+                            "—";
+
+
+                        row.cells[4]
+                            .textContent =
+                            savedRow.cumulativeRetained ||
+                            "—";
+
+
+                        row.cells[5]
+                            .textContent =
+                            savedRow.percentPassing ||
+                            "—";
+
+                    }
+                );
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not load sieve results:",
+                error
+            );
+
+        }
+
+    }
+
+
+    document
+        .getElementById(
+            "calculateOfflineSieve"
+        )
+        ?.addEventListener(
+            "click",
+            calculateSieveResults
+        );
+
+
+    document
+        .getElementById(
+            "saveOfflineSieve"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                saveSieveResults(true);
+
+            }
+        );
+
+
+    totalSampleMass
+        ?.addEventListener(
+            "input",
+            function () {
+
+                saveSieveResults(false);
+
+            }
+        );
+
+
+    resultsBody
+        ?.querySelectorAll("input")
+        .forEach(
+            function (input) {
+
+                input.addEventListener(
+                    "input",
+                    function () {
+
+                        saveSieveResults(false);
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "clearOfflineSieve"
+        )
+        ?.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    !confirm(
+                        "Clear all sieve results?"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                localStorage.removeItem(
+                    SIEVE_KEY
+                );
+
+
+                totalSampleMass.value =
+                    "";
+
+
+                resultsBody
+                    .querySelectorAll("tr")
+                    .forEach(
+                        function (row) {
+
+                            row.querySelector(
+                                ".sieve-size"
+                            ).value = "";
+
+
+                            row.querySelector(
+                                ".sieve-mass"
+                            ).value = "";
+
+
+                            row.cells[3]
+                                .textContent = "—";
+
+
+                            row.cells[4]
+                                .textContent = "—";
+
+
+                            row.cells[5]
+                                .textContent = "—";
+
+                        }
+                    );
+
+
+                status(
+                    "sieveResultsStatus",
+                    "Sieve results cleared.",
+                    "success"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       INITIAL LOAD
+    ===================================================== */
+
+    loadProgress();
+
+    loadRecord();
+
+    loadCentrifugation();
+
+    loadSieveResults();
+
+
+})();
+
+</script>
+
+
+<!-- PRACTICAL 2 EXTERNAL MODULES -->
+
+<script src="../assets/js/offline-progress2.js"></script>
+
+<script src="../assets/js/offline-record2.js"></script>
+
+<script src="../assets/js/offline-centrifugation2.js"></script>
+
+<script src="../assets/js/offline-sync2.js"></script>
+
+
 </body>
+
 </html>
